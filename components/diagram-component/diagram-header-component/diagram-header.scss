@@ -1,0 +1,148 @@
+@import "./../diagram-vars.scss";
+
+
+.diagram-header {
+  $shadow: rgba(128, 128, 128, 0.15);
+  grid-area: header;
+  background-color: #fff;
+  box-shadow: 2px 2px 10px 0px $shadow;
+  z-index: 2;
+  height: $header-size;
+  border-bottom: 1px solid $shadow;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  position: fixed;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+
+  .settings {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0px;
+    border: 0px;
+    outline: none;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+  }
+
+  .users {
+    height: 40px;
+    width: auto;
+    display: flex;
+    position: absolute;
+    right: 15px;
+
+    &__avatar {
+      position: relative;
+      width: 30px;
+      outline: none;
+      padding: 0;
+      border: none;
+      background: transparent;
+
+      &:hover {
+        z-index: 20 !important;
+        cursor: pointer;
+
+        img {
+          border: 2px solid rgb(251, 0, 96);
+        }
+      }
+
+      img {
+        height: 100%;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 2px solid #fff;
+        width: 40px;
+        position: relative;
+        height: 100%;
+      }
+    }
+  }
+
+  .diagram-name {
+    .name {
+      padding: 5px 15px;
+      min-width: 40px;
+      &:focus {
+        outline-color: rgba(0, 255, 242, 0.918);
+      }
+    }
+  }
+
+  &__mode {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 80px;
+    border: none;
+    outline: none;
+    text-align: left;
+    margin: 0px;
+    padding: 0px;
+
+    &:focus {
+      ul {
+        display: block;
+      }
+    }
+
+
+    .text {
+      position: relative;
+      display: inline-block;
+      padding: 5px 10px;
+      overflow: hidden;
+      cursor: pointer;
+      width: 100%;
+      background-color: rgb(255, 255, 255);
+      box-shadow: 1px 1px 4px 0px rgba(41, 39, 39, 0.2);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    ul {
+      display: none;
+      transform-origin: center top;
+      position: absolute;
+      padding: 0px;
+      left: 0px;
+      width: 100%;
+      top: 30px;
+      background: #fff;
+      filter: drop-shadow(2px 2px 4px rgba(128, 128, 128, 0.2));
+
+      li {
+        background: #fff;
+        padding: 5px 10px;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+
+        img {
+          height: 20px;
+          width: 20px;
+        }
+
+        &:hover {
+          background: rgba(128, 128, 128, 0.2);
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

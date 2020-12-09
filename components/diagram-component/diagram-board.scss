@@ -1,0 +1,12 @@
+@import "./diagram-vars.scss";
+
+.diagram-board {
+  max-height: 100vh;
+  max-width: 100vw;
+  overflow: hidden;
+
+  svg.canvas {
+    position: relative;
+    margin-top: 60px;
+  }
+}

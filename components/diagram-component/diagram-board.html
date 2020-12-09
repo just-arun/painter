@@ -1,0 +1,24 @@
+<div class="diagram-board">
+  <d-header
+  :name="name"
+  :diagramMode="diagramMode"
+  @switch-mode="switchMode($event)"
+  @update-name="updateName($event)" />
+  <svg class="canvas" :height="canvas.height - 60" :width="canvas.width">
+    <rect x="0" y="0" :height="canvas.height - 60" :width="canvas.width" fill="#f4f4f4" />
+    <g 
+    :transform="matrixValue"
+    >
+      <rect 
+      x="200"
+      y="200"
+      height="100"
+      width="100"
+      fill="transparent"
+      stroke="red"
+      />
+    </g>
+  </svg>
+  <d-tool :selected="selectedTool" @change="updateSelectedTool($event)" />
+  <d-footer :scale="scale" @change-scale="updateScale($event)" />
+</div>

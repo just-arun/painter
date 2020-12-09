@@ -1,0 +1,38 @@
+@import "./../diagram-vars.scss";
+
+.diagram-tool {
+    position: fixed;
+    left: 5px;
+    top: calc(50%);
+    transform: translateY(-50%);
+    background-color: #fff;
+    padding: 10px;
+    ul {
+        padding: 0px;
+        li {
+            list-style: none;
+            button {
+                height: 40px;
+                width: 40px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: none;
+                outline: none;
+                background: transparent;
+                cursor: pointer;
+                border: 2px solid transparent;
+                margin: 2px 0;
+                &.active, &:hover {
+                    background: rgba(0, 0, 0, 0.12);
+                }
+                &.active {
+                    // box-shadow: inset 
+                    // 2px 2px 10px rgba(92, 92, 92, 0.3),
+                    // -2px -2px 10px #fff;
+                }
+            }
+        }
+    }
+}
