@@ -1,26 +1,21 @@
 <template src="./diagram.html"></template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  useContext,
-  ref,
-  watch,
-  watchEffect,
-  reactive,
-  toRefs,
-  toRef,
-  onMounted,
-} from "@nuxtjs/composition-api";
 import DiagramBoard from "~/components/diagram-component/diagram-board.vue";
+import { Component, Vue } from 'vue-property-decorator';
 
 
-
-export default defineComponent({
+@Component({
   components: {
     "diagram-board-component": DiagramBoard,
-  },
-});
+  }
+})
+export default class DiagramPage extends Vue {
+  socket: any;
+  constructor() {
+    super();
+  }
+};
 </script>
 
 <style lang="scss">

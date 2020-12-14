@@ -36,8 +36,17 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    'nuxt-socket-io',
     '@nuxtjs/composition-api'
   ],
+
+  io: {
+    // module options
+    sockets: [{
+      name: 'main',
+      url: 'http://localhost:4000'
+    }]
+  },
 
   env: {
     baseUrl: process.env.BASE_URL

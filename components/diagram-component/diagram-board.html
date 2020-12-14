@@ -1,24 +1,97 @@
 <div class="diagram-board">
   <d-header
   :name="name"
+  :fillMode="fillMode"
   :diagramMode="diagramMode"
   @switch-mode="switchMode($event)"
-  @update-name="updateName($event)" />
-  <svg class="canvas" :height="canvas.height - 60" :width="canvas.width">
-    <rect x="0" y="0" :height="canvas.height - 60" :width="canvas.width" fill="#f4f4f4" />
-    <g 
-    :transform="matrixValue"
+  @update-name="updateName($event)"
+  @change-fill-mode="changeFillMode($event)" />
+  <div>
+    <svg 
+    @click="onClick($event)"
+    @mousedown="onMouseDown($event)"
+    @mousemove="onMouseMove($event)"
+    @mouseup="onMouseUp($event)"
+    @contextmenu="contextMenu($event)"
+    class="canvas" 
+    :height="canvas.height" 
+    :width="canvas.width"
+    :viewBox="viewBoxValue"
     >
-      <rect 
-      x="200"
-      y="200"
-      height="100"
-      width="100"
-      fill="transparent"
-      stroke="red"
+      <rect x="0" y="0" 
+      :height="canvas.height" 
+      :width="canvas.width" 
+      fill="#f4f4f4"
+      class="canvas-background" 
+      @click="focusOut()"
       />
-    </g>
-  </svg>
-  <d-tool :selected="selectedTool" @change="updateSelectedTool($event)" />
+      <g 
+      ref="mainGroup"
+      id="mainGroup"
+      :transform="`${matrixValue}`"
+      >
+
+
+      <g v-if="selectedElements.length == 1 && selectElementDimension">
+        <rect 
+        v-if="!!selectElementDimension"
+        :x="selectElementDimension.x"
+        :y="selectElementDimension.y"
+        :width="selectElementDimension.w"
+        :height="selectElementDimension.h"
+        fill="transparent"
+        stroke-width="1"
+        class="select-square"
+        ></rect>
+      </g>
+
+      
+
+        <shapes-component
+        :diagramMode="diagramMode"
+        v-for="shape in shapes"
+        :key="shape._id"
+        :shape="shape"
+        @select-element="selectElement($event)"
+        @mouse-over="mouseOverShapeFun($event)"
+        @mouse-out="mouseOutShapeFun($event)"
+        ></shapes-component>
+        <text x="200" y="200">{{selectedElements.length}}</text>
+
+
+
+        <g v-if="selectedElements.length == 1 && selectElementDimension">
+          <rect
+          draggable="true"
+          v-for="(itm, i) in selectElementDimension.dragPart"
+          :key="`dragabl-${i}`"
+          :x="itm.x"
+          :y="itm.y"
+          height="6"
+          width="6"
+          @mousedown="selectedElements[0].rect.startResize()"
+          @mouseup="selectedElements[0].rect.stopResize()"
+          @mousemove="startResize($event, itm.type)"
+          :class="`resize-hand ${itm.type}`"
+          />
+        </g>
+      </g>
+    </svg>
+  </div>
+  <d-tool
+  :diagramMode="diagramMode" 
+  :selected="selectedTool" 
+  @change="updateSelectedTool($event)" 
+  />
+
+  <!-- context menu -->
+  <!-- <div :style="menuPF()" class="context-menu" v-if="openMenu">
+    <ul>
+      <li @click="openMenu=false">one twer</li>
+      <li @click="openMenu=false">one twer</li>
+      <li @click="openMenu=false">one twer</li>
+    </ul>
+  </div>
+  <div v-if="openMenu" @click="openMenu=false" class="close-menu"></div> -->
   <d-footer :scale="scale" @change-scale="updateScale($event)" />
 </div>

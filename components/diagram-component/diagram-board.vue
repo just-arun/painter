@@ -3,26 +3,74 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { defineComponent } from "@nuxtjs/composition-api";
-import diagramHeaderComponentVue from "./diagram-header-component/diagram-header-component.vue";
 import diagramToolVue from "./diagram-tool/diagram-tool.vue";
 import diagramFooterVue from "./diagram-footer/footer-component.vue";
 import { mixins } from "vue-class-component";
-import CanvasMixin from './canvas-mixin';
-import { DiagramMode, ShapeType } from "./shape-types";
+import CanvasMixin from "./canvas-mixin";
+import {
+  DiagramMode,
+  RelativePositionType,
+  Shape,
+  ShapeFillType,
+  ShapeType,
+} from "./shape-types";
+import { Rect } from "./shapes-type/rectangle-type";
+import ShapeComponent from "./shapes-component/shapes-component.vue";
+import DiagramHeader from "./diagram-header-component/diagram-header-component.vue";
+import { Circle } from "./shapes-type/circle-type";
+import { Triangle } from "./shapes-type/triangle-type";
+import { Pencil } from "./shapes-type/pencil-type";
+import { Line } from "./shapes-type/line-type";
+import io from "socket.io-client";
 
 @Component({
   components: {
-    "d-header": diagramHeaderComponentVue,
+    "d-header": DiagramHeader,
     "d-tool": diagramToolVue,
     "d-footer": diagramFooterVue,
+    "shapes-component": ShapeComponent,
   },
 })
 export default class DiagramBoard extends mixins(CanvasMixin) {
   name = "undefined";
-  diagramMode: DiagramMode = DiagramMode.Edit
+  editing = false;
+  diagramMode: DiagramMode = DiagramMode.Edit;
   selectedTool: ShapeType | null = null;
-  
-  
+  shapes: Shape[] = [];
+  selectedElements: Shape[] = [];
+  stagingShape: Shape | null = null;
+  fillMode: ShapeFillType = ShapeFillType.stroke;
+  openMenu = false;
+  menuPosition = {
+    x: 0,
+    y: 0,
+  };
+  socket: any;
+  mouseOverShape = false;
+
+  menuPF() {
+    const { x, y } = this.menuPosition;
+    return `left: ${x};top: ${y};`;
+  }
+
+  mounted() {
+    document.addEventListener("loadeddata", () => {});
+    this.mouseScroll();
+    document.addEventListener("keydown", (e) => {
+      // zoomin
+      if ((e.ctrlKey && e.keyCode == 187) || (e.metaKey && e.keyCode == 187)) {
+        e.preventDefault();
+        this.zoomIn();
+      }
+      // zoomout
+      if ((e.ctrlKey && e.keyCode == 189) || (e.metaKey && e.keyCode == 189)) {
+        e.preventDefault();
+        this.zoomOut();
+      }
+      this.onKeyCode(e);
+    });
+  }
+
   updateName(e: string) {
     this.name = String(e).trim();
   }
@@ -32,7 +80,242 @@ export default class DiagramBoard extends mixins(CanvasMixin) {
   }
 
   switchMode(val: DiagramMode) {
-    this.diagramMode = val
+    this.diagramMode = val;
+  }
+
+  changeFillMode(val: ShapeFillType) {
+    this.fillMode = val;
+  }
+
+  selectElement(shape: Shape) {
+    if (this.diagramMode == DiagramMode.View) {
+      return;
+    }
+    this.selectedElements = [shape];
+  }
+
+  mouseOverShapeFun() {
+    this.mouseOverShape = false;
+  }
+  mouseOutShapeFun() {
+    this.mouseOverShape = false;
+  }
+
+  get selectElementDimension() {
+    if (this.selectedElements.length == 1) {
+      if (this.selectedElements[0].type == ShapeType.Rect) {
+        let elem = this.selectedElements[0].rect;
+        if (!!elem) {
+          let x = elem.x - 2;
+          let y = elem.y - 2;
+          let h = elem.h + 4;
+          let w = elem.w + 4;
+          let dragPart = [];
+          dragPart.push({
+            type: "tl",
+            x: x - 2,
+            y: y - 2,
+          });
+          dragPart.push({
+            type: "tc",
+            x: x + w / 2 - 3,
+            y: y - 2,
+          });
+
+          dragPart.push({
+            type: "cl",
+            x: x - 2,
+            y: y + h / 2 - 3,
+          });
+          dragPart.push({
+            type: "cr",
+            x: x + w - 3,
+            y: y + h / 2 - 3,
+          });
+
+          dragPart.push({
+            type: "bl",
+            x: x - 2,
+            y: y + h - 3,
+          });
+          dragPart.push({
+            type: "bc",
+            x: x + w / 2 - 3,
+            y: y + h - 3,
+          });
+          dragPart.push({
+            type: "br",
+            x: x + w - 3,
+            y: y + h - 3,
+          });
+          return { x, y, h, w, dragPart };
+        }
+        return false;
+      }
+      return false;
+    }
+    return false;
+  }
+
+  mouseScroll() {
+    document.addEventListener("wheel", (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        this.zoomInOut(e);
+      } else {
+        this.matrix.tx -= e.deltaX;
+        this.matrix.ty -= e.deltaY;
+      }
+    });
+  }
+
+  onKeyCode(e: KeyboardEvent) {
+    console.log(e.keyCode);
+  }
+
+  onClick(event: MouseEvent) {}
+
+  onMouseDown(event: MouseEvent) {
+    this.editing = true;
+    // edit mode
+    if (this.diagramMode == DiagramMode.Edit) {
+      let e = this.relativePosition(event);
+      if (this.editing) {
+        if (this.selectedTool == ShapeType.Rect) {
+          let id = Date.now().toString();
+          let shape = new Shape({
+            _id: id,
+            type: ShapeType.Rect,
+            data: new Rect({
+              x: e.clientX - 50,
+              y: e.clientY - 50,
+              h: 100,
+              w: 100,
+              type: this.fillMode,
+              fill: "#000",
+            }),
+          });
+          this.shapes.push(shape);
+          this.focusOut();
+          this.selectedElements.push(shape);
+        }
+        if (this.selectedTool == ShapeType.Triangle) {
+          let id = Date.now().toString();
+          let shape = new Shape({
+            _id: id,
+            type: ShapeType.Triangle,
+            data: new Triangle({
+              x: e.clientX - 50,
+              y: e.clientY - 50,
+              h: 100,
+              w: 100,
+              type: this.fillMode,
+              fill: "#000",
+            }),
+          });
+          this.shapes.push(shape);
+          this.focusOut();
+        }
+        if (this.selectedTool == ShapeType.Circle) {
+          let id = Date.now().toString();
+          let shape = new Shape({
+            _id: id,
+            type: ShapeType.Circle,
+            data: new Circle({
+              x: e.clientX,
+              y: e.clientY,
+              r: 50,
+              type: this.fillMode,
+              fill: "#000",
+            }),
+          });
+          this.shapes.push(shape);
+          this.focusOut();
+        }
+        if (this.selectedTool == ShapeType.Pencil) {
+          let id = Date.now().toString();
+          let shape = new Shape({
+            _id: id,
+            type: ShapeType.Pencil,
+            data: new Pencil({
+              path: "",
+              fill: "#000",
+            }),
+          });
+          shape.pencil?.draw(e);
+          this.stagingShape = shape;
+          this.shapes.push(this.stagingShape);
+        }
+        if (this.selectedTool == ShapeType.Line) {
+          let id = Date.now().toString();
+          let shape = new Shape({
+            _id: id,
+            type: ShapeType.Line,
+            data: new Line({
+              x: e.clientX,
+              y: e.clientY,
+              x1: e.clientX,
+              y1: e.clientY,
+              fill: "#000",
+            }),
+          });
+          shape.pencil?.draw(e);
+          this.stagingShape = shape;
+          this.shapes.push(this.stagingShape);
+        }
+      }
+    }
+  }
+
+  onMouseMove(event: MouseEvent) {
+    this.updateLastPosition(event);
+    const e = this.relativePosition(event);
+    if (this.diagramMode == DiagramMode.Edit) {
+      if (this.editing) {
+        if (this.selectedTool == ShapeType.Pencil) {
+          this.stagingShape?.pencil?.extend(e);
+        }
+        if (this.selectedTool == ShapeType.Line) {
+          this.stagingShape?.line?.updateEnd(e);
+        }
+      }
+    }
+  }
+
+  onMouseUp(e: MouseEvent) {
+    this.editing = false;
+    this.selectedTool = null;
+    if (this.mouseOverShape) {
+      this.stagingShape = null;
+    }
+  }
+
+  contextMenu(e: MouseEvent) {
+    e.preventDefault();
+    this.menuPosition.x = e.clientX;
+    this.menuPosition.y = e.clientY;
+    this.openMenu = true;
+  }
+
+  startResize(event: MouseEvent, type: string) {
+    if (this.diagramMode == DiagramMode.View) {
+      return;
+    }
+    let e = this.relativePosition(event);
+    if (!!this.selectedElements.length)
+      this.selectedElements[0].rect?.makeResize(e, type);
+  }
+
+  focusOut() {
+    if (this.diagramMode == DiagramMode.View) {
+      return;
+    }
+    if (!!this.selectedElements.length) {
+      if (!!this.selectedElements[0].rect) {
+        this.selectedElements[0].rect.resize = false;
+        this.selectedElements[0].rect.canMove = false;
+      }
+    }
+    this.selectedElements = [];
   }
 }
 </script>

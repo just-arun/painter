@@ -7,6 +7,69 @@
 
   svg.canvas {
     position: relative;
-    margin-top: 60px;
+    margin-top: 0px;
+  }
+
+  .context-menu {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.568);
+    backdrop-filter: blur(20px);
+    box-shadow: 
+    10px 10px 10px rgba(40, 91, 121, 0.144),
+    -5px -5px 5px rgba(181, 192, 199, 0.144);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 3;
+    ul {
+      padding: 0px;
+      li {
+        list-style: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        &:hover {
+          background: rgba(158, 157, 157, 0.5);
+        }
+      }
+    }
   }
 }
+
+.close-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0);
+  z-index: 2;
+}
+
+.rect {
+  cursor: pointer;
+}
+
+.canvas-background {
+  // cursor: default;
+}
+
+
+.select-square {
+  stroke: rgb(0, 119, 255);
+}
+
+.resize-hand {
+  fill:rgb(0, 119, 255);
+  stroke: transparent;
+  // stroke: rgb(0, 119, 255);
+  stroke-width: 30px;
+}
+
+.br { cursor: se-resize; }
+.bl { cursor: sw-resize; }
+.bc { cursor: s-resize; }
+.cl { cursor: w-resize; }
+.cr { cursor: e-resize; }
+.tl { cursor: nw-resize; }
+.tc { cursor: n-resize; }

@@ -4,8 +4,8 @@
       {{ scale }}
       <input type="range" 
       :value="scale"
-      min="20"
-      max="500"
+      min="2"
+      max="1000"
       @input="changeScale($event)" />
     </div>
   </div>

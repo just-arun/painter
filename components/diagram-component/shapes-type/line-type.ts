@@ -1,16 +1,40 @@
+import { RelativePositionType } from "../shape-types";
+
 export interface LineType {
-    id: string;
-    path: string;
+    x: number;
+    y: number;
+    x1: number;
+    y1: number;
+    fill: string;
 }
 
 export class Line {
-    id: string;
-    path: string;
+    x: number;
+    y: number;
+    x1: number;
+    y1: number;
+    fill: string;
     constructor({
-        id,
-        path
+        x,
+        y,
+        x1,
+        y1,
+        fill
     }: LineType) {
-        this.id = id;
-        this.path = path;
+        this.x = x;
+        this.y = y;
+        this.x1 = x1;
+        this.y1 = y1;
+        this.fill = fill;
+    }
+
+    updateEnd(e: RelativePositionType) {
+        this.x1 = e.clientX;
+        this.y1 = e.clientY;
+    }
+
+    updateStart(e: RelativePositionType) {
+        this.x = e.clientX;
+        this.y = e.clientY;
     }
 }

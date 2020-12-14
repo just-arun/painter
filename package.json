@@ -13,14 +13,18 @@
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/composition-api": "^0.16.4",
     "@nuxtjs/pwa": "^3.0.2",
+    "@types/socket.io-client": "^1.4.34",
     "@vue/composition-api": "^1.0.0-beta.20",
     "core-js": "^3.6.5",
     "fibers": "^5.0.0",
     "nuxt": "^2.14.6",
+    "nuxt-socket-io": "^1.1.13",
     "sass": "^1.30.0",
     "sass-loader": "^10.1.0",
+    "socket.io-client": "^3.0.4",
     "vue-class-component": "^7.2.6",
-    "vue-property-decorator": "^9.1.2"
+    "vue-property-decorator": "^9.1.2",
+    "vue-socket.io": "^3.0.10"
   },
   "devDependencies": {
     "@nuxt/types": "^2.14.6",

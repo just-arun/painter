@@ -1,16 +1,15 @@
 import { ShapeFillType } from "../shape-types";
 
 export interface CircleType {
-    id: string;
     r: number;
     x: number;
     y: number;
     type: ShapeFillType;
     fill: string;
+    text?: string;
 }
 
 export class Circle {
-    id: string;
     r: number;
     x: number;
     y: number;
@@ -18,15 +17,15 @@ export class Circle {
     ry: number;
     type: ShapeFillType;
     fill: string;
+    text: string;
     constructor({
-        id,
         r,
         x,
         y,
         type,
-        fill
+        fill,
+        text
     }: CircleType) {
-        this.id = id;
         this.r = r;
         this.x = x;
         this.y = y;
@@ -34,6 +33,7 @@ export class Circle {
         this.ry = y;
         this.type = type;
         this.fill = fill;
+        this.text = !!text ? text : "";
     }
 }
 
