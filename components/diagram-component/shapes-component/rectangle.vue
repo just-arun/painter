@@ -9,12 +9,11 @@
       :fill="fillAble ? data.fill : 'transparent'"
       :stroke="!fillAble ? data.fill : 'transparent'"
     />
+    
   </g>
 </template>
 <style scoped lang="scss">
-.rect {
-  cursor: grab;
-}
+
 </style>
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Mixins } from "vue-property-decorator";

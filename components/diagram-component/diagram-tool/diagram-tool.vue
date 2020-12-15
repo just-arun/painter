@@ -1,7 +1,7 @@
 <template>
   <div :class="`diagram-tool ${!!diagramMode ? 'editable' : ''}`">
     <ul>
-      <li v-for="tool in tools" :key="tool.icon">
+      <li v-for="tool in toolList" :key="tool.icon">
         <button
           draggable="false"
           :disabled="!diagramMode"
@@ -21,20 +21,34 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from "vue-property-decorator";
-import { DiagramMode } from "../shape-types";
+import { DiagramMode, ShapeFillType } from "../shape-types";
 
 @Component({})
 export default class DiagramTool extends Vue {
   @Prop({ required: true, default: String }) selected!: string;
   @Prop({ required: true, default: String }) diagramMode!: DiagramMode;
-
+  @Prop({ required: true }) fillMode!: ShapeFillType;
   tools = [
     { label: "Pencil", value: "pencil", icon: "pencil" },
     { label: "Line", value: "line", icon: "line" },
     { label: "Rectangle", value: "rect", icon: "rectangle" },
     { label: "Triangle", value: "triangle", icon: "triangle" },
     { label: "Circle", value: "circle", icon: "circle" },
+    { label: "Text", value: "text", icon: "text", stroke: true },
+    { label: "Image", value: "img", icon: "img", stroke: true },
   ];
+
+  get toolList() {
+    if (this.fillMode == ShapeFillType.fill) {
+      return this.tools.filter((res) => {
+        if (!res.stroke) {
+          return res
+        }
+      });
+    } else {
+      return this.tools;
+    }
+  }
 
   @Emit("change")
   changeEvent(val: string) {

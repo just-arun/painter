@@ -71,6 +71,13 @@ export default class DiagramBoard extends mixins(CanvasMixin) {
     });
   }
 
+  deleteElement() {
+    let id = this.selectedElements[0]._id;
+    let ind = this.shapes.map((res) => res._id).indexOf(id);
+    this.shapes.splice(ind, 1);
+    this.selectedElements = [];
+  }
+
   updateName(e: string) {
     this.name = String(e).trim();
   }
@@ -95,7 +102,7 @@ export default class DiagramBoard extends mixins(CanvasMixin) {
   }
 
   mouseOverShapeFun() {
-    this.mouseOverShape = false;
+    this.mouseOverShape = true;
   }
   mouseOutShapeFun() {
     this.mouseOverShape = false;
@@ -103,46 +110,52 @@ export default class DiagramBoard extends mixins(CanvasMixin) {
 
   get selectElementDimension() {
     if (this.selectedElements.length == 1) {
-      if (this.selectedElements[0].type == ShapeType.Rect) {
-        let elem = this.selectedElements[0].rect;
+      if (this.selectedElements[0].type == ShapeType.Rect || this.selectedElements[0].type == ShapeType.Circle) {
+        let elem = !!this.selectedElements[0].rect ? this.selectedElements[0].rect : this.selectedElements[0].circle;
         if (!!elem) {
-          let x = elem.x - 2;
-          let y = elem.y - 2;
-          let h = elem.h + 4;
-          let w = elem.w + 4;
+          let x = elem.x - 2 * 1;
+          let y = elem.y - 2 * 1;
+          let h = elem.h + 4 * 1;
+          let w = elem.w + 4 * 1;
           let dragPart = [];
-          dragPart.push({
-            type: "tl",
-            x: x - 2,
-            y: y - 2,
-          });
-          dragPart.push({
-            type: "tc",
-            x: x + w / 2 - 3,
-            y: y - 2,
-          });
+          if (!!this.selectedElements[0].rect) {
+            dragPart.push({
+              type: "tl",
+              x: x - 2,
+              y: y - 2,
+            });
+            dragPart.push({
+              type: "tc",
+              x: x + w / 2 - 3,
+              y: y - 2,
+            });
 
-          dragPart.push({
-            type: "cl",
-            x: x - 2,
-            y: y + h / 2 - 3,
-          });
-          dragPart.push({
-            type: "cr",
-            x: x + w - 3,
-            y: y + h / 2 - 3,
-          });
+            dragPart.push({
+              type: "cl",
+              x: x - 2,
+              y: y + h / 2 - 3,
+            });
+            dragPart.push({
+              type: "cr",
+              x: x + w - 3,
+              y: y + h / 2 - 3,
+            });
 
-          dragPart.push({
-            type: "bl",
-            x: x - 2,
-            y: y + h - 3,
-          });
-          dragPart.push({
-            type: "bc",
-            x: x + w / 2 - 3,
-            y: y + h - 3,
-          });
+            dragPart.push({
+              type: "bl",
+              x: x - 2,
+              y: y + h - 3,
+            });
+            dragPart.push({
+              type: "bc",
+              x: x + w / 2 - 3,
+              y: y + h - 3,
+            });
+          }
+          if (!!this.selectedElements[0].circle) {
+            x = this.selectedElements[0].circle.x - this.selectedElements[0].circle.r - 2;
+            y = this.selectedElements[0].circle.y - this.selectedElements[0].circle.r - 2;
+          }
           dragPart.push({
             type: "br",
             x: x + w - 3,
@@ -169,7 +182,9 @@ export default class DiagramBoard extends mixins(CanvasMixin) {
   }
 
   onKeyCode(e: KeyboardEvent) {
-    console.log(e.keyCode);
+    if (e.keyCode == 46) {
+      this.deleteElement();
+    }
   }
 
   onClick(event: MouseEvent) {}
@@ -262,6 +277,22 @@ export default class DiagramBoard extends mixins(CanvasMixin) {
           this.stagingShape = shape;
           this.shapes.push(this.stagingShape);
         }
+
+        if (!!this.selectedElements.length) {
+          if (!!this.selectedElements[0].rect) {
+            this.selectedElements[0].rect.canMove = true;
+          }
+        }
+        if (this.mouseOverShape) {
+          if (this.selectedElements.length == 1) {
+            if (!!this.selectedElements[0].rect) {
+              this.selectedElements[0].rect.canMove = true;
+            }
+            if (!!this.selectedElements[0].circle) {
+              this.selectedElements[0].circle.canMove = true;
+            }
+          }
+        }
       }
     }
   }
@@ -279,6 +310,20 @@ export default class DiagramBoard extends mixins(CanvasMixin) {
         }
       }
     }
+    if (this.mouseOverShape) {
+      if (this.selectedElements.length == 1) {
+        if (!!this.selectedElements[0].rect) {
+          if (this.selectedElements[0].rect.canMove) {
+            this.selectedElements[0].rect.move(e);
+          }
+        }
+        if (!!this.selectedElements[0].circle) {
+          if (this.selectedElements[0].circle.canMove) {
+            this.selectedElements[0].circle.move(e);
+          }
+        }
+      }
+    }
   }
 
   onMouseUp(e: MouseEvent) {
@@ -286,6 +331,25 @@ export default class DiagramBoard extends mixins(CanvasMixin) {
     this.selectedTool = null;
     if (this.mouseOverShape) {
       this.stagingShape = null;
+    }
+    if (this.selectedElements.length == 1) {
+      if (!!this.selectedElements[0].rect) {
+        this.selectedElements[0].rect.canMove = false;
+      }
+      if (!!this.selectedElements[0].circle) {
+        this.selectedElements[0].circle.canMove = false;
+      }
+    }
+  }
+
+  onMouseOut(e: MouseEvent) {
+    if (this.selectedElements.length == 1) {
+      if (!!this.selectedElements[0].rect) {
+        this.selectedElements[0].rect.canMove = false;
+      }
+      if (!!this.selectedElements[0].circle) {
+        this.selectedElements[0].circle.canMove = false;
+      }
     }
   }
 
@@ -301,8 +365,36 @@ export default class DiagramBoard extends mixins(CanvasMixin) {
       return;
     }
     let e = this.relativePosition(event);
-    if (!!this.selectedElements.length)
-      this.selectedElements[0].rect?.makeResize(e, type);
+    if (!!this.selectedElements.length) {
+      if (!!this.selectedElements[0].rect) {
+        this.selectedElements[0].rect?.makeResize(e, type);
+      }
+      if (!!this.selectedElements[0].circle) {
+        this.selectedElements[0].circle?.makeResize(e, type);
+      }
+    }
+  }
+
+  startResizeFun() {
+    if (!!this.selectedElements.length) {
+      if (!!this.selectedElements[0].rect) {
+        this.selectedElements[0].rect.startResize();
+      }
+      if (!!this.selectedElements[0].circle) {
+        this.selectedElements[0].circle.startResize();
+      }
+    }
+  }
+  
+  stopResizeFun() {
+    if (!!this.selectedElements.length) {
+      if (!!this.selectedElements[0].rect) {
+        this.selectedElements[0].rect.stopResize();
+      }
+      if (!!this.selectedElements[0].circle) {
+        this.selectedElements[0].circle.stopResize();
+      }
+    }
   }
 
   focusOut() {
@@ -313,6 +405,10 @@ export default class DiagramBoard extends mixins(CanvasMixin) {
       if (!!this.selectedElements[0].rect) {
         this.selectedElements[0].rect.resize = false;
         this.selectedElements[0].rect.canMove = false;
+      }
+      if (!!this.selectedElements[0].circle) {
+        this.selectedElements[0].circle.resize = false;
+        this.selectedElements[0].circle.canMove = false;
       }
     }
     this.selectedElements = [];

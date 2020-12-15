@@ -8,6 +8,10 @@
   svg.canvas {
     position: relative;
     margin-top: 0px;
+    cursor: url('./../../assets/images/cursor.svg'), auto;
+    &.over-shape {
+      cursor: grab;
+    }
   }
 
   .context-menu {

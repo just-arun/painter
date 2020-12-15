@@ -12,8 +12,9 @@
     @mousedown="onMouseDown($event)"
     @mousemove="onMouseMove($event)"
     @mouseup="onMouseUp($event)"
+    @mouseout="onMouseOut($event)"
     @contextmenu="contextMenu($event)"
-    class="canvas" 
+    :class="`canvas ${mouseOverShape ? 'over-shape' : ''}`" 
     :height="canvas.height" 
     :width="canvas.width"
     :viewBox="viewBoxValue"
@@ -56,7 +57,7 @@
         @mouse-over="mouseOverShapeFun($event)"
         @mouse-out="mouseOutShapeFun($event)"
         ></shapes-component>
-        <text x="200" y="200">{{selectedElements.length}}</text>
+        <text x="200" y="200">{{mouseOverShape}}</text>
 
 
 
@@ -69,8 +70,8 @@
           :y="itm.y"
           height="6"
           width="6"
-          @mousedown="selectedElements[0].rect.startResize()"
-          @mouseup="selectedElements[0].rect.stopResize()"
+          @mousedown="startResizeFun()"
+          @mouseup="stopResizeFun()"
           @mousemove="startResize($event, itm.type)"
           :class="`resize-hand ${itm.type}`"
           />
@@ -81,6 +82,7 @@
   <d-tool
   :diagramMode="diagramMode" 
   :selected="selectedTool" 
+  :fillMode="fillMode"
   @change="updateSelectedTool($event)" 
   />
 

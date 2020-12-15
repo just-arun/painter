@@ -25,6 +25,16 @@ export class Rect {
     resize = false;
     canMove = false;
 
+    get path() {
+        const {
+            x,
+            y,
+            h,
+            w
+        } = this;
+        return `M${x} ${y} h${w} v${h} h${-w} v${-h}`;
+    }
+
     constructor({
         x,
         y,
