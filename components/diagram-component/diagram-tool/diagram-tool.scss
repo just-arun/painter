@@ -12,15 +12,19 @@
     border: 1px solid transparent;
     // background-clip: padding-box;
     box-sizing: border-box;
+    user-select: none;
     &.editable {
         transform: translate(0px, -50%);
         background: rgba(255, 255, 255, 0.5);
         backdrop-filter: blur(20px);
+        user-select: none;
     }
     ul {
         padding: 0px;
+        user-select: none;
         li {
             list-style: none;
+            user-select: none;
             button {
                 height: 40px;
                 width: 40px;
@@ -32,11 +36,13 @@
                 outline: none;
                 background: transparent;
                 cursor: pointer;
+                user-select: none;
                 border: 2px solid transparent;
                 margin: 2px 0;
                 img {
                     height: 100%;
                     width: 100%;
+                    user-select: none;
                 }
                 &.active, &:hover {
                     background: rgba(0, 0, 0, 0.12);
@@ -51,6 +57,7 @@
                 $color-stuff: rgb(187, 186, 186);
                 display: flex;
                 height: 20px;
+                user-select: none;
                 .stroke {
                     width: 50%;
                     box-sizing: border-box;

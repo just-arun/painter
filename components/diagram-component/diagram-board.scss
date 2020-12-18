@@ -8,6 +8,8 @@
   svg.canvas {
     position: relative;
     margin-top: 0px;
+    user-select: none;
+    -moz-user-select: none;
     cursor: url('./../../assets/images/cursor.svg'), auto;
     &.over-shape {
       cursor: grab;
@@ -66,8 +68,9 @@
 .resize-hand {
   fill:rgb(0, 119, 255);
   stroke: transparent;
-  // stroke: rgb(0, 119, 255);
-  stroke-width: 30px;
+  &:hover {
+    stroke-width: 30px;
+  }
 }
 
 .br { cursor: se-resize; }
@@ -77,3 +80,12 @@
 .cr { cursor: e-resize; }
 .tl { cursor: nw-resize; }
 .tc { cursor: n-resize; }
+
+.bg-cross {
+  stroke: rgb(226, 226, 226);
+  stroke: #ff0077;
+}
+
+* {
+  // user-select: none;
+}

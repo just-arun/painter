@@ -1,5 +1,5 @@
 <template>
-  <g :id="id">
+  <g>
     <path
       :d="data.path"
       fill="transparent"
@@ -16,7 +16,6 @@ import { Pencil } from "../shapes-type/pencil-type";
 
 @Component({})
 export default class PencilComponent extends Vue {
-  @Prop({ required: true, type: String }) id!: string;
   @Prop({ required: true, type: Pencil, default: Object }) data!: Pencil;
 }
 </script>

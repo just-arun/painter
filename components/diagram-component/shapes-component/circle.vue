@@ -1,8 +1,9 @@
 <template>
-  <g :id="id">
+  <g >
     <circle  stroke-width="2" :cx="data.x" :cy="data.y" :r="data.r"
             :fill="fillAble ? data.fill : 'transparent'"
             :stroke="!fillAble ? data.fill : 'transparent'" />
+          
   </g>
 </template>
 
@@ -13,7 +14,6 @@ import { Circle } from "../shapes-type/circle-type";
 
 @Component({})
 export default class CircleComponent extends Vue {
-    @Prop({ required: true, default: String }) id!: string;
     @Prop({ required: true, default: Object, type: Circle }) data!: Circle;
 
     get fillAble() {

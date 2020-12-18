@@ -1,5 +1,5 @@
 <template>
-  <g :id="id">
+  <g>
     <line 
     :x1="data.x"
     :y1="data.y"
@@ -16,7 +16,6 @@ import { Line } from '../shapes-type/line-type';
 
 @Component({})
 export default class LineComponent extends Vue {
-    @Prop({ type: String, required: true }) id!: string;
     @Prop({ type: Line, required: true, default: Object }) data!: Line;
 }
 </script>

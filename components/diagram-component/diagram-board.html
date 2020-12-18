@@ -6,7 +6,7 @@
   @switch-mode="switchMode($event)"
   @update-name="updateName($event)"
   @change-fill-mode="changeFillMode($event)" />
-  <div>
+  <div ref="canvasWrapper" id="canvasWrapper">
     <svg 
     @click="onClick($event)"
     @mousedown="onMouseDown($event)"
@@ -26,25 +26,24 @@
       class="canvas-background" 
       @click="focusOut()"
       />
+      <!-- <path @click="focusOut()"
+       fill="transparent"
+       class="bg-cross"
+      :d="mousePos" /> -->
       <g 
       ref="mainGroup"
       id="mainGroup"
       :transform="`${matrixValue}`"
       >
 
-
-      <g v-if="selectedElements.length == 1 && selectElementDimension">
-        <rect 
-        v-if="!!selectElementDimension"
-        :x="selectElementDimension.x"
-        :y="selectElementDimension.y"
-        :width="selectElementDimension.w"
-        :height="selectElementDimension.h"
-        fill="transparent"
-        stroke-width="1"
-        class="select-square"
-        ></rect>
-      </g>
+      
+      <path 
+      v-if="selectedElements.length == 1 && selectElementDimension"
+      :d="selectElementDimension.path"
+      fill="transparent"
+      stroke-width="1"
+      class="select-square"
+      />
 
       
 
@@ -57,7 +56,8 @@
         @mouse-over="mouseOverShapeFun($event)"
         @mouse-out="mouseOutShapeFun($event)"
         ></shapes-component>
-        <text x="200" y="200">{{mouseOverShape}}</text>
+
+
 
 
 
@@ -85,7 +85,10 @@
   :fillMode="fillMode"
   @change="updateSelectedTool($event)" 
   />
-
+  <d-detail
+  v-if="selectedElements.length == 1"
+  :data="selectedElements[0]"
+  />
   <!-- context menu -->
   <!-- <div :style="menuPF()" class="context-menu" v-if="openMenu">
     <ul>

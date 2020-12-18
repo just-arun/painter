@@ -1,21 +1,17 @@
 <template src="./diagram.html"></template>
 
 <script lang="ts">
-import DiagramBoard from "~/components/diagram-component/diagram-board.vue";
-import { Component, Vue } from 'vue-property-decorator';
+import Vue from 'vue';
+import DiagramBoard from '~/components/diagram-component/diagram-board.vue';
 
-
-@Component({
+export default Vue.extend({
   components: {
     "diagram-board-component": DiagramBoard,
+  },
+  data() {
+    return {}
   }
-})
-export default class DiagramPage extends Vue {
-  socket: any;
-  constructor() {
-    super();
-  }
-};
+});
 </script>
 
 <style lang="scss">

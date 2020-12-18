@@ -9,35 +9,42 @@
       :diagramMode="diagramMode"
       v-if="shape.type == 'rect'"
       :data="shape.rect"
-      :id="shape._id"
     />
+    <outline-image-component 
+      :class="shape.type"
+      :diagramMode="diagramMode"
+      v-if="shape.type == 'image'"
+      :data="shape.image"
+      />
     <triangle-component
       :class="shape.type"
       :diagramMode="diagramMode"
       v-if="shape.type == 'triangle'"
       :data="shape.triangle"
-      :id="shape._id"
     />
     <circle-component
       :class="shape.type"
       :diagramMode="diagramMode"
       v-if="shape.type == 'circle'"
       :data="shape.circle"
-      :id="shape._id"
     />
     <pencil-component
       :class="shape.type"
       :diagramMode="diagramMode"
       v-if="shape.type == 'pencil'"
       :data="shape.pencil"
-      :id="shape._id"
     />
     <line-component
       :class="shape.type"
       :diagramMode="diagramMode"
       v-if="shape.type == 'line'"
       :data="shape.line"
-      :id="shape._id"
+    />
+    <text-component
+      :class="shape.type"
+      :diagramMode="diagramMode"
+      v-if="shape.type == 'text'"
+      :data="shape.text"
     />
   </g>
 </template>
@@ -47,17 +54,21 @@ import { Component, Emit, Prop, Vue } from "vue-property-decorator";
 import { DiagramMode, Shape, ShapeType } from "../shape-types";
 import CircleComponent from "./circle.vue";
 import LineComponent from "./line.vue";
+import OutlineImageComponent from "./outline-image.vue";
 import PencilComponent from "./pencil.vue";
 import RectangleComponent from "./rectangle.vue";
+import TextComponent from "./text.vue";
 import TriangleComponent from "./triangle.vue";
 
 @Component({
   components: {
     "rect-component": RectangleComponent,
+    "outline-image-component": OutlineImageComponent,
     "triangle-component": TriangleComponent,
     "circle-component": CircleComponent,
     "pencil-component": PencilComponent,
     "line-component": LineComponent,
+    "text-component": TextComponent,
   },
 })
 export default class ShapeComponent extends Vue {

@@ -24,4 +24,7 @@ export class Pencil {
     extend(e: RelativePositionType) {
         this.path += ` L${e.clientX} ${e.clientY}`
     }
+    get getJson() {
+        return this;
+    }
 }

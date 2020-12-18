@@ -1,3 +1,4 @@
+import { Rect, RectType } from './rectangle-type';
 import { ShapeFillType } from "../shape-types";
 
 export interface TriangleType {
@@ -10,23 +11,29 @@ export interface TriangleType {
     text?: string;
 }
 
-export class Triangle {
-    x: number = 0;
-    y: number = 0;
-    h: number = 0;
-    w: number = 0;
-    type: ShapeFillType;
-    fill: string;
-    text: string;
-
-    constructor({ x, y, h, w, type, fill, text }: TriangleType) {
-        this.x = x;
-        this.y = y;
-        this.h = h;
-        this.w = w;
-        this.type = type;
-        this.fill = fill;
-        this.text = !!text ? text : '';
+export class Triangle extends Rect {
+    constructor({
+            x,
+            y,
+            h,
+            w,
+            type,
+            fill,
+            text,
+            color,
+            fontSize
+        }: RectType) {
+        super({
+            x,
+            y,
+            h,
+            w,
+            type,
+            fill,
+            text,
+            color,
+            fontSize
+        });
     }
 
     get points() {
@@ -35,4 +42,7 @@ export class Triangle {
         return point;
     }
 
+    get getJson() {
+        return this;
+    }
 }

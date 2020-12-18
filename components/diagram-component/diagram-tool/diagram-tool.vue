@@ -9,7 +9,7 @@
           @click="changeTool(tool.value)"
         >
           <img
-          draggable="false"
+            draggable="false"
             :src="require(`./../../../assets/icons/tools/${tool.icon}.svg`)"
             alt=""
           />
@@ -34,20 +34,12 @@ export default class DiagramTool extends Vue {
     { label: "Rectangle", value: "rect", icon: "rectangle" },
     { label: "Triangle", value: "triangle", icon: "triangle" },
     { label: "Circle", value: "circle", icon: "circle" },
-    { label: "Text", value: "text", icon: "text", stroke: true },
-    { label: "Image", value: "img", icon: "img", stroke: true },
+    { label: "Text", value: "text", icon: "text" },
+    { label: "Image", value: "image", icon: "img", stroke: true },
   ];
 
   get toolList() {
-    if (this.fillMode == ShapeFillType.fill) {
-      return this.tools.filter((res) => {
-        if (!res.stroke) {
-          return res
-        }
-      });
-    } else {
-      return this.tools;
-    }
+    return this.tools;
   }
 
   @Emit("change")

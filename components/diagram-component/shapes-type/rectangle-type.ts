@@ -8,6 +8,8 @@ export interface RectType {
     type: ShapeFillType;
     fill: string;
     text?: string;
+    color?: string;
+    fontSize?: number;
 }
 
 export class Rect {
@@ -21,9 +23,11 @@ export class Rect {
     w1: number;
     type: ShapeFillType;
     fill: string;
-    text: string;
+    text: string = "";
     resize = false;
     canMove = false;
+    color = "#000";
+    fontSize: number = 18;
 
     get path() {
         const {
@@ -42,7 +46,9 @@ export class Rect {
         w,
         type,
         fill,
-        text
+        text,
+        color,
+        fontSize
     }: RectType) {
         this.x = x;
         this.y = y;
@@ -56,6 +62,12 @@ export class Rect {
         this.type = type;
         this.fill = fill;
         this.text = !!text ? text : '';
+        this.color = !!color ? color : '#000';
+        this.fontSize = !!fontSize ? fontSize : 16;
+    }
+
+    get getJson() {
+        return this;
     }
 
     startResize() {

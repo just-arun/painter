@@ -53,6 +53,10 @@ export class Circle {
         }
     }
 
+    get getJson() {
+        return this;
+    }
+
     startResize() {
         this.resize = true;
     }
