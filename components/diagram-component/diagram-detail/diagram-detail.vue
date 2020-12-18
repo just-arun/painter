@@ -5,46 +5,70 @@
   width: ${width}px;
   `"
   >
-  <button style="transform: scale(0)" id="focusOut"></button>
-    <h1 class="diagram-detail__name" contenteditable="true">{{ data.name }}</h1>
-
-    <div class="input-field shape-position">
-      <div style="margin-bottom: 4px">
-        <b>Position</b>
+    <div class="diagram-detail__wrapper">
+      <button style="transform: scale(0)" id="focusOut"></button>
+      <h1
+        class="diagram-detail__name"
+        contenteditable="true"
+        @keyup="updateName($event)"
+      >
+        {{ data.name }}
+      </h1>
+      <hr class="divider" />
+      <div class="input-field shape-position">
+        <div style="margin-bottom: 4px">
+          <b>Position</b>
+        </div>
+        <div class="input-field__position">
+          <b>X: </b>
+          <input v-model="data[data.type].x" type="number" />
+          <b>Y: </b>
+          <input v-model="data[data.type].y" type="number" />
+        </div>
       </div>
-      <div class="input-field__position">
-        <b>X: </b>
-        <input v-model="data[data.type].x" type="number" />
-        <b>Y: </b>
-        <input v-model="data[data.type].y" type="number" />
+      <hr class="divider" />
+      <div class="input-field shape-position">
+        <div style="margin-bottom: 4px">
+          <b>Dimentions</b>
+        </div>
+        <div class="input-field__position">
+          <b>w: </b>
+          <input v-model="data[data.type].w" type="number" />
+          <b>h: </b>
+          <input v-model="data[data.type].h" type="number" />
+        </div>
       </div>
-    </div>
-
-    <div class="input-field">
-      <b>Type:</b>
-      <span style="text-transform: capitalize">{{ data.type }}</span>
-    </div>
-    <div class="input-field font-size">
-      <b>Font Size:</b>
-      <input v-model="data[data.type].fontSize" type="number" />
-    </div>
-    <div class="input-field full-width">
-      <textarea v-model="data[data.type].text"></textarea>
-    </div>
-    <div class="input-field diagram-detail__color-input">
-      <b>background: </b>
-      <input type="color" v-model="data[data.type].fill" />
-    </div>
-    <div class="input-field">
-      <!-- <select v-model="data[data.type].type">
-        <option value="0">Wireframe</option>
-        <option value="1">Sticky Note</option>
-      </select> -->
-      <v-select
-      :value="selectList[data[data.type].type]"
-      :items="selectList"
-      @change="data[data.type].type=$event.value"
+      <hr class="divider" />
+      <v-acordian label="Typography">
+        <div @keyup="monitorText($event)" class="text-content" contenteditable="true">
+          {{ data[data.type].text }}
+        </div>
+        <div class="input-field font-size">
+          <b>Font Size:</b>
+          <input v-model="data[data.type].fontSize" type="number" />
+        </div>
+        <v-color-input
+          :value="data[data.type].textColor"
+          @change="data[data.type].textColor = $event"
+          label="Color:"
+        />
+      </v-acordian>
+      <v-color-input
+        :value="data[data.type].fill"
+        @change="data[data.type].fill = $event"
+        label="Background"
       />
+      <div class="input-field">
+        <!-- <select v-model="data[data.type].type">
+          <option value="0">Wireframe</option>
+          <option value="1">Sticky Note</option>
+        </select> -->
+        <v-select
+          :value="selectList[data[data.type].type]"
+          :items="selectList"
+          @change="data[data.type].type = $event.value"
+        />
+      </div>
     </div>
 
     <div
@@ -62,12 +86,16 @@
 </style>
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
+import acordianVue from "~/components/ui/acordian/acordian.vue";
+import colorInputVue from "~/components/ui/color-input/color-input.vue";
 import selectVue from "~/components/ui/select/select.vue";
 import { Shape, ShapeFillType } from "../shape-types";
 
 @Component({
   components: {
     "v-select": selectVue,
+    "v-acordian": acordianVue,
+    "v-color-input": colorInputVue,
   },
 })
 export default class DiagramDetail extends Vue {
@@ -100,6 +128,15 @@ export default class DiagramDetail extends Vue {
       } else {
         this.width = 200;
       }
+    }
+  }
+  updateName(e: any) {
+    this.data.name = e.target.textContent;
+  }
+  monitorText(e: any) {
+    if (this.data[this.data.type]) {
+      let ele: any = this.data[this.data.type];
+      ele.text = e.target.textContent;
     }
   }
 }

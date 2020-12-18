@@ -30,7 +30,7 @@ export class Circle {
         y,
         type,
         fill,
-        text
+        text,
     }: CircleType) {
         this.r = r;
         this.x = x;

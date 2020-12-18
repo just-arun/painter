@@ -7,7 +7,7 @@
       :height="data.h"
       :width="data.w"
       :fill="fillAble ? data.fill : 'transparent'"
-      :stroke="!fillAble ? data.fill : 'transparent'"
+      :stroke="!fillAble ? data.borderColor : 'transparent'"
     />
     <switch :x="data.x" :y="data.y">
       <foreignObject
@@ -29,8 +29,8 @@
       ref="localRef"
        :contenteditable="textEdit"
       @blur="blurTextEvent()"
-      @dblclick="textEdit=true"
       @keyup="keyUp($event)"
+      :id="`text-${id}`"
       :style="`
       cursor: ${textEdit ? 'text' : 'grab'};
       padding: 2px 15%;
@@ -38,14 +38,25 @@
       user-select: none;
       font-size: ${data.fontSize}px;
       max-width: ${data.w}px;
+      color: ${data.textColor};
       `" :autofocus="textEdit">{{text}}</div>
       </div>
       </foreignObject>
     </switch>
+    <rect 
+      style="cursore: brabing !important;"
+      v-if="!textEdit"
+      @dblclick="focusOnInput()"
+      :x="data.x"
+      :y="data.y"
+      :width="data.w"
+      :height="data.h"
+      fill="transparent"
+      stroke="transparent"
+     />
   </g>
 </template>
 <style scoped lang="scss">
-
 </style>
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Mixins, Watch } from "vue-property-decorator";
@@ -57,13 +68,17 @@ import { Rect } from "../shapes-type/rectangle-type";
 export default class RectangleComponent extends Mixins(CanvasMixin) {
   @Prop({ required: true }) diagramMode!: DiagramMode;
   @Prop({ required: true, default: Object, type: Rect }) data!: Rect | null;
+  @Prop({ required: true, default: String }) id!: string;
   textEdit=true;
-  text: any = "";
+  text: any = this.data?.text;
+  updateT = false;
 
   @Watch("data.text")
   watchText(text: string) {
-    this.text = this.data?.text;
-    this.resizeText();
+    if (this.updateT) {
+      this.text = this.data?.text;
+      this.resizeText();
+    }
   }
 
   created() {
@@ -80,6 +95,7 @@ export default class RectangleComponent extends Mixins(CanvasMixin) {
   }
 
   keyUp(e: any) {
+    this.updateT = false;
     this.updateText(e);
     let hei = e.target.clientHeight;
     this.resizeText();
@@ -90,7 +106,7 @@ export default class RectangleComponent extends Mixins(CanvasMixin) {
     let hei = ele.clientHeight;
     let rHei: any = this.data?.h;
     let calc = rHei - hei;
-      let data: any = this.data
+    let data: any = this.data
     if (calc < 10) {
       data.fontSize -= 1;
     }
@@ -105,6 +121,15 @@ export default class RectangleComponent extends Mixins(CanvasMixin) {
 
   blurTextEvent() {
     this.textEdit = false;
+    this.updateT = true;
+  }
+
+  focusOnInput() {
+    this.textEdit = true;
+    let input: any = document.querySelector(`#text-${this.id}`);
+    setTimeout(() => {
+      input.focus();
+    }, 100);
   }
 }
 </script>

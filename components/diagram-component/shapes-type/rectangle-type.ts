@@ -9,7 +9,9 @@ export interface RectType {
     fill: string;
     text?: string;
     color?: string;
+    borderColor?: string;
     fontSize?: number;
+    textColor?: string;
 }
 
 export class Rect {
@@ -28,6 +30,8 @@ export class Rect {
     canMove = false;
     color = "#000";
     fontSize: number = 18;
+    borderColor: string = "#000";
+    textColor: string = "#000";
 
     get path() {
         const {
@@ -48,7 +52,9 @@ export class Rect {
         fill,
         text,
         color,
-        fontSize
+        fontSize,
+        borderColor,
+        textColor,
     }: RectType) {
         this.x = x;
         this.y = y;
@@ -64,6 +70,8 @@ export class Rect {
         this.text = !!text ? text : '';
         this.color = !!color ? color : '#000';
         this.fontSize = !!fontSize ? fontSize : 16;
+        this.borderColor = !!borderColor ? borderColor : '#000';
+        this.textColor = !!textColor ? textColor : "#000";
     }
 
     get getJson() {
@@ -140,8 +148,17 @@ export class Rect {
     resizeBr(e: RelativePositionType) {
         let h = e.clientY - this.y;
         let w = e.clientX - this.x;
-        this.w = w > 10 ? w : 10;
-        this.h = h > 10 ? h : 10;
+        if (e.event?.ctrlKey || e.event?.metaKey) {
+            let ration = this.w / this.h;
+            let hd = (h - this.h);
+            let wd = (w - this.w) * ration;
+            this.h = this.h + hd;
+            this.w = this.w + wd;
+            return;
+        } else {
+            this.w = w > 10 ? w : 10;
+            this.h = h > 10 ? h : 10;
+        }
     }
 
     resizeBc(e: RelativePositionType) {

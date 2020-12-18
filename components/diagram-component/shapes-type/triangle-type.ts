@@ -21,7 +21,9 @@ export class Triangle extends Rect {
             fill,
             text,
             color,
-            fontSize
+            fontSize,
+            borderColor,
+            textColor
         }: RectType) {
         super({
             x,
@@ -32,7 +34,9 @@ export class Triangle extends Rect {
             fill,
             text,
             color,
-            fontSize
+            fontSize,
+            borderColor,
+            textColor
         });
     }
 

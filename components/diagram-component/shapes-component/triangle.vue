@@ -4,7 +4,7 @@
       stroke-width="2"
       :points="data.points"
       :fill="fillAble ? data.fill : 'transparent'"
-      :stroke="!fillAble ? data.fill : 'transparent'"
+      :stroke="!fillAble ? data.borderColor : 'transparent'"
     />
     <switch :x="data.x" :y="data.y">
       <foreignObject
@@ -25,7 +25,6 @@
       <div :contenteditable="textEdit"
       @keypress="updateText($event)"
       @blur="blurTextEvent()"
-      @dblclick="textEdit=true"
       @keyup="keyUp($event)"
       :style="`
       cursor: ${textEdit ? 'text' : 'grab'};
@@ -38,6 +37,16 @@
       </div>
       </foreignObject>
     </switch>
+    <rect 
+    @dblclick="textEdit=true"
+    v-if="!textEdit"
+    :x="data.x"
+    :y="data.y"
+    :width="data.w"
+    :height="data.h"
+    fill="transparent"
+    stroke="transparent"
+    ></rect>
   </g>
 </template>
 

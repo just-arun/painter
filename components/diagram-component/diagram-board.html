@@ -37,13 +37,19 @@
       >
 
       
-      <path 
+      <!-- <path 
       v-if="selectedElements.length == 1 && selectElementDimension"
       :d="selectElementDimension.path"
       fill="transparent"
       stroke-width="1"
       class="select-square"
       />
+      <text
+      :x="selectElementDimension.x"
+      :y="selectElementDimension.y - 20"
+       >
+       {{ selectElementDimension.path }}
+      </text> -->
 
       
 
@@ -52,14 +58,12 @@
         v-for="shape in shapes"
         :key="shape._id"
         :shape="shape"
+        :stagingShape="selectedElements.length == 1 ? selectedElements[0]._id : null"
         @select-element="selectElement($event)"
         @mouse-over="mouseOverShapeFun($event)"
         @mouse-out="mouseOutShapeFun($event)"
+        @delete-element="deleteElement($event)"
         ></shapes-component>
-
-
-
-
 
         <g v-if="selectedElements.length == 1 && selectElementDimension">
           <rect

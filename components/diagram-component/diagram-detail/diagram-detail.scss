@@ -1,135 +1,213 @@
+.cus-scroll-bar {
+  &::-webkit-scrollbar-track
+  {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar
+  {
+    width: 5px;
+    background: #79797917;
+  }
+
+  &::-webkit-scrollbar-thumb
+  {
+    background: #79797980;
+    border-radius: 5px;
+  }
+}
+
 .diagram-detail {
-    height: calc(100% -  40px);
-    max-height: calc(100% -  40px);
-    // overflow-y: auto;
-    // overflow-x: visible;
-    width: 220px;
-    position: fixed;
-    right: 0px;
-    top: 40px;
-    padding: 10px;
+  height: calc(100% - 40px);
+  max-height: calc(100% - 40px);
+  width: 220px;
+  position: fixed;
+  right: 0px;
+  top: 40px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  text-align: left;
+  .text-content {
+    max-height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-width: 100%;
     box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    text-align: left;
-    &__resize {
-        background: rgb(202, 202, 202);
-        width: 3px;
+    border-radius: 10px;
+    transition: .3s;
+    padding: 5px 5px;
+    margin: 0px 5px;
+    @extend .cus-scroll-bar;
+    &:hover {
+      outline: 1px solid rgba(128, 128, 128, 0.4);
+    }
+    &:focus {
+      outline: 2px solid rgb(0, 255, 179);
+    }
+  }
+  &__resize {
+    background: transparent;
+    width: 3px;
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    cursor: ew-resize;
+    left: -5px;
+    transition: 0s;
+    resize: horizontal;
+
+    &::before {
+      left: 0px;
+    }
+
+    &::after {
+      right: 0px;
+    }
+
+    &:hover {
+      left: -10px;
+      border: 5px solid transparent;
+
+      &::before,
+      &::after {
+        content: '';
         position: absolute;
-        top: 0px;
+        width: 40px;
         height: 100%;
-        cursor: ew-resize;
-        left: -5px;
-        transition: 0s;
-        resize: horizontal;
-        &::before {
-            left: 0px;
-        }
-        &::after {
-            right: 0px;
-        }
-        &:hover {
-            left: -10px;
-            border: 5px solid rgb(233, 233, 233);
-            &::before, &::after {
-                content: '';
-                position: absolute;
-                width: 40px;
-                height: 100%;
-                top: 0px;
-                background: transparent;
-            }
-            &::after {
-                left: -30px;
-            }
-            &::before {
-                right: 0px;
-            }
-        }
+        top: 0px;
+        background: transparent;
+      }
+
+      &::after {
+        left: -30px;
+      }
+
+      &::before {
+        right: 0px;
+      }
+    }
+  }
+
+  &__name {
+    $outline-color: rgb(0, 238, 255);
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    padding: 5px 10px;
+
+    &:hover {
+      outline: 1px solid $outline-color;
     }
 
-    &__name {
-        $outline-color: rgb(0, 238, 255);
+    &:focus {
+      outline: 3px solid $outline-color;
+    }
+  }
+
+  .input-field {
+    // margin-bottom: 10px;
+    padding: 5px 10px;
+
+    b {
+      margin-right: 5px;
+    }
+
+    textarea {
+      width: 100%;
+      max-width: 100%;
+      min-width: 100%;
+      min-height: 90px;
+      max-height: 150px;
+      resize: vertical;
+      background: transparent;
+    }
+
+    display: grid;
+    align-items: center;
+    grid-template-columns: 50% 50%;
+
+    input {
+      width: 100%;
+    }
+
+    &.full-width {
+      display: grid;
+      grid-template-columns: auto;
+    }
+
+    &.shape-position {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    &__position {
+      display: flex;
+      align-items: center;
+
+      b {
+        text-align: center;
+        margin-right: 4px;
+      }
+
+      input {
+        flex: 1;
+        margin-right: 5px;
+      }
+    }
+  }
+
+  &__color-input {
+    display: flex;
+    align-items: center;
+
+    b {
+      margin-right: 6px;
+    }
+
+    input {
+      flex: 1;
+      width: 50px;
+
+      &[type=color] {
+        height: 20px;
+        width: 30px;
+        max-width: 30px;
         border-radius: 4px;
-        margin-bottom: 10px;
-        &:hover {
-            outline: 1px solid $outline-color;
-        }
-        &:focus {
-            outline: 3px solid $outline-color;
-        }
-    }
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+        outline: none;
+        border: 2px solid rgb(192, 192, 192);
+      }
 
-    .input-field {
-        margin-bottom: 10px;
-        b {
-            margin-right: 5px;
-        }
-        textarea {
-            width: 100%;
-            max-width: 100%;
-            min-width: 100%;
-            min-height: 90px;
-            max-height: 150px;
-            resize: vertical;
-            background: transparent;
-        }
-        display: grid;
-        align-items: center;
-        grid-template-columns: 50% 50%;
-        input {
-            width: 100%;
-        }
-        &.full-width {
-            display: grid;
-            grid-template-columns: auto;
-        }
-        &.shape-position {
-            display: grid;
-            grid-template-columns: 1fr;
-        }
-        &__position {
-            display: flex;
-            align-items: center;
-            b {
-                text-align: center;
-                margin-right: 4px;
-            }
-            input {
-                flex: 1;
-                margin-right: 5px;
-            }
-        }
-    }
+      &[type="color"]::-webkit-color-swatch-wrapper {
+        padding: 0;
+        transform: scale(2);
+      }
 
-    &__color-input {
-        display: flex;
-        align-items: center;
-        b {
-            margin-right: 6px;
-        }
-        input {
-            flex: 1;
-            width: 50px;
-            &[type=color] {
-                height: 20px;
-                width: 30px;
-                max-width: 30px;
-                border-radius: 4px;
-                margin: 0px;
-                padding: 0px;
-                overflow: hidden;
-                outline: none;
-                border: none;
-            }
-            &[type="color"]::-webkit-color-swatch-wrapper {
-                padding: 0;
-                transform: scale(2);
-            }
-            &[type="color"]::-webkit-color-swatch {
-                border: none;
-            }
-            
-        }
+      &[type="color"]::-webkit-color-swatch {
+        border: none;
+      }
+
     }
+  }
+}
+
+input,
+textarea {
+  border: none;
+  outline: none;
+  &:hover {
+    outline: 1px solid rgba(128, 128, 128, 0.527);
+  }
+  &:focus {
+    outline: 2px solid grey;
+  }
+}
+
+
+.divider {
+  border: none;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.5);
 }
