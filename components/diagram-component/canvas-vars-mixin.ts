@@ -24,6 +24,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     stagingShape: Shape | null = null;
     fillMode: ShapeFillType = ShapeFillType.stroke;
     openMenu = false;
+    dragOver = false;
     menuPosition = {
         x: 0,
         y: 0,
@@ -122,7 +123,8 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                 this.selectedElements[0].type == ShapeType.Image ||
                 this.selectedElements[0].type == ShapeType.Circle ||
                 this.selectedElements[0].type == ShapeType.Triangle ||
-                this.selectedElements[0].type == ShapeType.Text
+                this.selectedElements[0].type == ShapeType.Text ||
+                this.selectedElements[0].type == ShapeType.Line
             ) {
                 let elem = this.selectedElements[0][this.selectedElements[0].type];
                 if (!!elem) {
@@ -131,17 +133,19 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                     let h = Number(Number(elem.h) + Number(4 * 1));
                     let w = Number(Number(elem.w) + Number(4 * 1));
                     let dragPart = [];
+                    if (!!!this.selectedElements[0].circle) {
+                        dragPart.push({
+                            type: "tl",
+                            x: x - 5,
+                            y: y - 5,
+                        });
+                    }
                     if (
                         !!this.selectedElements[0].rect ||
                         !!this.selectedElements[0].image ||
                         !!this.selectedElements[0].triangle ||
                         !!this.selectedElements[0].text
                     ) {
-                        dragPart.push({
-                            type: "tl",
-                            x: x - 5,
-                            y: y - 5,
-                        });
                         dragPart.push({
                             type: "tc",
                             x: x + (w / 2) - 3,
@@ -470,7 +474,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                     !!this.selectedElements[0].circle ||
                     !!this.selectedElements[0].image ||
                     !!this.selectedElements[0].triangle ||
-                    !!this.selectedElements[0].text || 
+                    !!this.selectedElements[0].text ||
                     !!this.selectedElements[0].pencil
                 ) {
                     let elem: any = this.selectedElements[0];
@@ -553,7 +557,8 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                 !!this.selectedElements[0].circle ||
                 !!this.selectedElements[0].image ||
                 !!this.selectedElements[0].triangle ||
-                !!this.selectedElements[0].text
+                !!this.selectedElements[0].text ||
+                !!this.selectedElements[0].line
             ) {
                 let anyShape: any = this.selectedElements[0][this.selectedElements[0].type];
                 anyShape.makeResize(e, type);
@@ -568,7 +573,8 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                 !!this.selectedElements[0].circle ||
                 !!this.selectedElements[0].image ||
                 !!this.selectedElements[0].triangle ||
-                !!this.selectedElements[0].text
+                !!this.selectedElements[0].text ||
+                !!this.selectedElements[0].line
             ) {
                 let elem: any = this.selectedElements[0][this.selectedElements[0].type];
                 elem.startResize();
@@ -583,7 +589,8 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                 !!this.selectedElements[0].circle ||
                 !!this.selectedElements[0].image ||
                 !!this.selectedElements[0].triangle ||
-                !!this.selectedElements[0].text
+                !!this.selectedElements[0].text ||
+                !!this.selectedElements[0].line
             ) {
                 let elem: any = this.selectedElements[0][this.selectedElements[0].type];
                 elem.stopResize();
@@ -609,5 +616,13 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             }
         }
         this.selectedElements = [];
+    }
+
+    onDragEnter() {
+        this.dragOver = true;
+    }
+
+    onDragLeave() {
+        this.dragOver = false;
     }
 }

@@ -155,10 +155,12 @@ export class Rect {
         let w = e.clientX - this.x;
         if (e.event?.ctrlKey || e.event?.metaKey) {
             let ration = this.w / this.h;
-            let hd = (h - this.h);
-            let wd = (w - this.w) * ration;
-            this.h = this.h + hd;
-            this.w = this.w + wd;
+            let mx = e.event.movementX;
+            let my = e.event.movementY;
+            let ma = (mx + my) / 2;
+            let w = ma * ration;
+            this.h = this.h + ma;
+            this.w = this.w + w;
             return;
         } else {
             this.w = w > 10 ? w : 10;

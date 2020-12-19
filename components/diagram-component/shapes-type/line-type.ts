@@ -6,6 +6,8 @@ export interface LineType {
     x1: number;
     y1: number;
     fill: string;
+    h?: number;
+    w?: number;
 }
 
 export class Line {
@@ -13,20 +15,27 @@ export class Line {
     y: number;
     x1: number;
     y1: number;
+    h: number;
+    w: number;
     fill: string;
+    resize = false;
     editing: boolean = true;
     constructor({
         x,
         y,
         x1,
         y1,
-        fill
+        fill,
+        h,
+        w
     }: LineType) {
         this.x = x;
         this.y = y;
         this.x1 = x1;
         this.y1 = y1;
         this.fill = fill;
+        this.h = !!h ? h : 0;
+        this.w = !!w ? w : 0;
     }
 
     updateEnd(e: RelativePositionType) {
@@ -40,6 +49,7 @@ export class Line {
         }
         let angle = this.angle(this.x, this.y, this.x1, this.y1);
         console.log(angle * -1);
+        this.updateSize();
     }
 
     angle(cx: number, cy: number, ex: number, ey: number) {
@@ -53,8 +63,40 @@ export class Line {
     updateStart(e: RelativePositionType) {
         this.x = e.clientX;
         this.y = e.clientY;
+        this.updateSize();
     }
+
+    updateSize() {
+        let h = Math.abs(this.y1 - this.y);
+        let w = Math.abs(this.x1 - this.x);
+        this.h = h;
+        this.w = w;
+    }
+
     get getJson() {
         return this;
+    }
+    startResize() {
+        this.resize = true;
+    }
+    stopResize() {
+        this.resize = false;
+    }
+
+    makeResize(e: RelativePositionType, type: string) {
+        if (this.resize) {
+            if (type == "br")
+                this.resizeBr(e);
+            if (type == "tl")
+                this.resizeTl(e);
+        }
+    }
+
+    resizeTl(e: RelativePositionType) {
+        this.updateStart(e);
+    }
+
+    resizeBr(e: RelativePositionType) {
+        this.updateEnd(e);
     }
 }

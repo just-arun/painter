@@ -62,12 +62,12 @@
     </g>
     <g v-if="diagramMode == 1 && showClose">
       <switch 
-          :x="getNamePos.x + getNamePos.w - 10"
-          :y="getNamePos.y - 10">
+          :x="getNamePos.x + getNamePos.w + 5"
+          :y="getNamePos.y - 15">
         <foreignObject
           v-if="showClose"
-          :x="getNamePos.x + getNamePos.w - 10"
-          :y="getNamePos.y - 10"
+          :x="getNamePos.x + getNamePos.w + 5"
+          :y="getNamePos.y - 15"
           width="24"
           height="24"
           requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"

@@ -6,7 +6,7 @@
   @switch-mode="switchMode($event)"
   @update-name="updateName($event)"
   @change-fill-mode="changeFillMode($event)" />
-  <div ref="canvasWrapper" id="canvasWrapper">
+  <div @dragenter="onDragEnter($event)" @dragleave="onDragLeave()" ref="canvasWrapper" id="canvasWrapper">
     <svg 
     @click="onClick($event)"
     @mousedown="onMouseDown($event)"
@@ -89,6 +89,11 @@
         </text>
       </g>
     </svg>
+    <div @dragenter="onDragEnter($event)" v-if="dragOver" class="drop-zone">
+      <div class="drop">
+        drop zone
+      </div>
+    </div>
   </div>
   <d-tool
   :diagramMode="diagramMode" 
@@ -100,14 +105,5 @@
   v-if="selectedElements.length == 1"
   :data="selectedElements[0]"
   />
-  <!-- context menu -->
-  <!-- <div :style="menuPF()" class="context-menu" v-if="openMenu">
-    <ul>
-      <li @click="openMenu=false">one twer</li>
-      <li @click="openMenu=false">one twer</li>
-      <li @click="openMenu=false">one twer</li>
-    </ul>
-  </div>
-  <div v-if="openMenu" @click="openMenu=false" class="close-menu"></div> -->
   <d-footer :scale="scale" @change-scale="updateScale($event)" />
 </div>
