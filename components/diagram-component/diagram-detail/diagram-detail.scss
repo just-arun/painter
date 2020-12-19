@@ -34,16 +34,18 @@
     overflow-x: hidden;
     max-width: 100%;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 2px;
     transition: .3s;
     padding: 5px 5px;
     margin: 0px 5px;
     @extend .cus-scroll-bar;
+    outline: none;
+    border: 2px solid transparent;
     &:hover {
-      outline: 1px solid rgba(128, 128, 128, 0.4);
+      border: 2px solid rgba(128, 128, 128, 0.1);
     }
-    &:focus {
-      outline: 2px solid rgb(0, 255, 179);
+    &:focus-within {
+      border: 2px solid rgb(0, 255, 242);
     }
   }
   &__resize {
@@ -210,4 +212,16 @@ textarea {
 .divider {
   border: none;
   border-bottom: 1px solid rgba(128, 128, 128, 0.5);
+  margin: 0px;
+  padding: 0px;
+}
+
+.single-field {
+  padding: 5px 10px;
+  display: grid;
+}
+
+.input-field-single {
+  grid-template-columns: 1fr;
+  padding: 0px 5px;
 }

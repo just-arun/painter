@@ -1,5 +1,5 @@
 <template>
-  <div :class="`diagram-tool ${!!diagramMode ? 'editable' : ''}`">
+  <div :class="`diagram-tool ${!!diagramMode ? 'editable' : ''} horizontal`">
     <ul>
       <li v-for="tool in toolList" :key="tool.icon">
         <button

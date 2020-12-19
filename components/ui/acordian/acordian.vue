@@ -16,7 +16,7 @@
     $border-color: rgba(128, 128, 128, 0.4);
     border-bottom: 1px solid $border-color;
     &__label {
-        padding: 8px 10px;
+        padding: 10px;
         cursor: pointer;
         display: flex;
         color: grey;

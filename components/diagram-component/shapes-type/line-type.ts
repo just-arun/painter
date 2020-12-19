@@ -14,6 +14,7 @@ export class Line {
     x1: number;
     y1: number;
     fill: string;
+    editing: boolean = true;
     constructor({
         x,
         y,
@@ -39,7 +40,6 @@ export class Line {
         }
         let angle = this.angle(this.x, this.y, this.x1, this.y1);
         console.log(angle * -1);
-        
     }
 
     angle(cx: number, cy: number, ex: number, ey: number) {

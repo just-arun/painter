@@ -1,9 +1,9 @@
 <template>
-  <g class="shape">
+  <g class="shape" :id="`shapeWrapper${shape._id}`">
     <text
     :class="`name ${stagingShape == shape._id ? 'focused' : ''}`"
-    :x="shape[shape.type].x"
-    :y="shape[shape.type].y - 4"
+    :x="getNamePos.x"
+    :y="getNamePos.y - 6"
     >{{ shape.name }}</text>
     <path 
     v-if="stagingShape == shape._id"
@@ -57,15 +57,17 @@
         :diagramMode="diagramMode"
         v-if="shape.type == 'text'"
         :data="shape.text"
+        :id="shape._id"
       />
     </g>
-    <g>
+    <g v-if="diagramMode == 1 && showClose">
       <switch 
-          :x="shape[shape.type].x + shape[shape.type].w - 10"
-          :y="shape[shape.type].y - 10">
+          :x="getNamePos.x + getNamePos.w - 10"
+          :y="getNamePos.y - 10">
         <foreignObject
-          :x="shape[shape.type].x + shape[shape.type].w - 10"
-          :y="shape[shape.type].y - 10"
+          v-if="showClose"
+          :x="getNamePos.x + getNamePos.w - 10"
+          :y="getNamePos.y - 10"
           width="24"
           height="24"
           requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
@@ -99,8 +101,9 @@
     justify-content: center;
     align-items: center;
     outline: none;
-    // border: none;
+    border: none;
     cursor: pointer;
+    background: white;
     &:focus {
       display: flex;
     }
@@ -114,6 +117,8 @@
 }
 
 .shape {
+  position: relative;
+  cursor: grab;
   .name {
     opacity: 0;
     font-size: 8px;
@@ -188,7 +193,53 @@ export default class ShapeComponent extends Vue {
     let y = Number(s.y) - 4;
     let w = Number(s.w) + 8;
     let h = Number(s.h) + 8;
+    if (this.shape.type == ShapeType.Circle) {
+      x = Number(s.x - (w/2));
+      y = Number(s.y - (h/2));
+    }
+    if (this.shape.type == ShapeType.Line) {
+      let x1 = s.x1;
+      let y1 = s.y1;
+      w = x1 - x;
+      h = y1 - y;
+      x = x + 2;
+      y = y + 2;
+    }
     return `M ${x} ${y} h ${w} v ${h} h ${-w} v ${-h}`;
+  }
+
+  get showClose() {
+    if (this.shape.type == ShapeType.Line ||
+      this.shape.type == ShapeType.Pencil) {
+        if (this.stagingShape == this.shape._id) {
+          return true;
+        } else {
+          return false;
+        }
+    } else {
+      return true;
+    }
+  }
+
+  get getNamePos() {
+    let s: any = this.shape[this.shape.type];
+    let x = Number(s.x);
+    let y = Number(s.y);
+    let w = Number(s.w);
+    let h = Number(s.h);
+    let r = Number(!!s.r ? s.r : 0);
+    let pos = { x, y, w, h };
+    if (this.shape.type == ShapeType.Circle) {
+      pos.x = x - r;
+      pos.y = y - r;
+    }
+    if (this.shape.type == ShapeType.Line) {
+      let x1 = s.x1;
+      let y1 = s.y1;
+      pos.w = x1 - x;
+      pos.h = y1 - y;
+    }
+    return pos;
   }
 }
 </script>

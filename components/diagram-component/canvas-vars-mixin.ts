@@ -30,6 +30,16 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     };
     socket: any;
     mouseOverShape = false;
+    cursorVal = {
+        "rect": "Rect",
+        "circle": "Circle",
+        "triangle": "Triangle",
+        "line": "Line",
+        "pencil": "Pencil",
+        "text": "Text",
+        "image": "Image",
+        "": "",
+    }
 
     get mousePos() {
         let event = this.lastMousePosition?.event;
@@ -108,12 +118,12 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     get selectElementDimension() {
         if (this.selectedElements.length == 1) {
             if (
-                    this.selectedElements[0].type == ShapeType.Rect || 
-                    this.selectedElements[0].type == ShapeType.Image || 
-                    this.selectedElements[0].type == ShapeType.Circle ||
-                    this.selectedElements[0].type == ShapeType.Triangle || 
-                    this.selectedElements[0].type == ShapeType.Text
-                ) {
+                this.selectedElements[0].type == ShapeType.Rect ||
+                this.selectedElements[0].type == ShapeType.Image ||
+                this.selectedElements[0].type == ShapeType.Circle ||
+                this.selectedElements[0].type == ShapeType.Triangle ||
+                this.selectedElements[0].type == ShapeType.Text
+            ) {
                 let elem = this.selectedElements[0][this.selectedElements[0].type];
                 if (!!elem) {
                     let x = Number(Number(elem.x) - Number(2 * 1));
@@ -126,7 +136,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                         !!this.selectedElements[0].image ||
                         !!this.selectedElements[0].triangle ||
                         !!this.selectedElements[0].text
-                        ) {
+                    ) {
                         dragPart.push({
                             type: "tl",
                             x: x - 5,
@@ -206,7 +216,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     onKeyCode(e: KeyboardEvent) {
         console.log(e.keyCode, e.keyCode == 46);
-        
+
         if (e.keyCode == 46) {
             this.deleteElement();
         }
@@ -226,7 +236,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             let nD: any = data[data.type];
             let newData = new Shape({
                 _id: id,
-                name: data.name+"(copy)",
+                name: data.name + "(copy)",
                 data: new mapObjToShape[data.type](nD.getJson),
                 type: data.type,
             })
@@ -323,11 +333,11 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                         data: new TextClass({
                             x: e.clientX - 50,
                             y: e.clientY,
-                            h: 60,
+                            h: 20,
                             w: 100,
                             type: this.fillMode,
                             fill: "#ff8585",
-                            text: 'T'
+                            text: ''
                         }),
                     });
                     this.shapes.push(shape);
@@ -390,6 +400,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                         data: new Pencil({
                             path: "",
                             fill: "#ff8585",
+                            border: 1,
                         }),
                     });
                     shape.pencil?.draw(e);
@@ -425,8 +436,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                         if (
                             !!this.selectedElements[0].rect ||
                             !!this.selectedElements[0].circle ||
-                            !!this.selectedElements[0].image || 
-                            !!this.selectedElements[0].triangle
+                            !!this.selectedElements[0].image ||
+                            !!this.selectedElements[0].triangle ||
+                            !!this.selectedElements[0].text ||
+                            !!this.selectedElements[0].pencil
                         ) {
                             let elem: any = this.selectedElements[0][this.selectedElements[0].type];
                             elem.canMove = true;
@@ -455,9 +468,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                 if (
                     !!this.selectedElements[0].rect ||
                     !!this.selectedElements[0].circle ||
-                    !!this.selectedElements[0].image || 
+                    !!this.selectedElements[0].image ||
                     !!this.selectedElements[0].triangle ||
-                    !!this.selectedElements[0].text
+                    !!this.selectedElements[0].text || 
+                    !!this.selectedElements[0].pencil
                 ) {
                     let elem: any = this.selectedElements[0];
                     if (elem[this.selectedElements[0].type].canMove) {
@@ -475,17 +489,27 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
         ) {
             this.editing = false;
             this.selectedTool = null;
+            if (this.stagingShape) {
+                if (
+                    this.stagingShape.type == ShapeType.Line ||
+                    this.stagingShape.type == ShapeType.Pencil
+                ) {
+                    let shape: any = this.stagingShape[this.stagingShape.type];
+                    shape.editing = false;
+                }
+            }
         }
         if (this.mouseOverShape) {
-            this.stagingShape = null;
+            // this.stagingShape = null;
         }
         if (this.selectedElements.length == 1) {
             if (
                 !!this.selectedElements[0].rect ||
                 !!this.selectedElements[0].circle ||
-                !!this.selectedElements[0].image || 
+                !!this.selectedElements[0].image ||
                 !!this.selectedElements[0].triangle ||
-                !!this.selectedElements[0].text
+                !!this.selectedElements[0].text ||
+                !!this.selectedElements[0].pencil
             ) {
                 let elem: any = this.selectedElements[0][this.selectedElements[0].type];
                 if (!!elem) {
@@ -500,9 +524,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             if (
                 !!this.selectedElements[0].rect ||
                 !!this.selectedElements[0].circle ||
-                !!this.selectedElements[0].image || 
+                !!this.selectedElements[0].image ||
                 !!this.selectedElements[0].triangle ||
-                !!this.selectedElements[0].text
+                !!this.selectedElements[0].text ||
+                !!this.selectedElements[0].pencil
             ) {
                 let elem: any = this.selectedElements[0][this.selectedElements[0].type];
                 elem.canMove = false;
@@ -526,10 +551,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             if (
                 !!this.selectedElements[0].rect ||
                 !!this.selectedElements[0].circle ||
-                !!this.selectedElements[0].image || 
+                !!this.selectedElements[0].image ||
                 !!this.selectedElements[0].triangle ||
                 !!this.selectedElements[0].text
-                ) {
+            ) {
                 let anyShape: any = this.selectedElements[0][this.selectedElements[0].type];
                 anyShape.makeResize(e, type);
             }
@@ -541,10 +566,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             if (
                 !!this.selectedElements[0].rect ||
                 !!this.selectedElements[0].circle ||
-                !!this.selectedElements[0].image || 
+                !!this.selectedElements[0].image ||
                 !!this.selectedElements[0].triangle ||
                 !!this.selectedElements[0].text
-                ) {
+            ) {
                 let elem: any = this.selectedElements[0][this.selectedElements[0].type];
                 elem.startResize();
             }
@@ -556,10 +581,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             if (
                 !!this.selectedElements[0].rect ||
                 !!this.selectedElements[0].circle ||
-                !!this.selectedElements[0].image || 
+                !!this.selectedElements[0].image ||
                 !!this.selectedElements[0].triangle ||
                 !!this.selectedElements[0].text
-                ) {
+            ) {
                 let elem: any = this.selectedElements[0][this.selectedElements[0].type];
                 elem.stopResize();
             }
@@ -574,10 +599,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             if (
                 !!this.selectedElements[0].rect ||
                 !!this.selectedElements[0].circle ||
-                !!this.selectedElements[0].image || 
+                !!this.selectedElements[0].image ||
                 !!this.selectedElements[0].triangle ||
                 !!this.selectedElements[0].text
-                ) {
+            ) {
                 let elem: any = this.selectedElements[0][this.selectedElements[0].type];
                 elem.resize = false;
                 elem.canMove = false;

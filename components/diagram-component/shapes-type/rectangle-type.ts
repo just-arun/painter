@@ -12,6 +12,7 @@ export interface RectType {
     borderColor?: string;
     fontSize?: number;
     textColor?: string;
+    border?: number;
 }
 
 export class Rect {
@@ -28,8 +29,10 @@ export class Rect {
     text: string = "";
     resize = false;
     canMove = false;
+    editText = false;
     color = "#000";
     fontSize: number = 18;
+    border: number = 2;
     borderColor: string = "#000";
     textColor: string = "#000";
 
@@ -55,6 +58,7 @@ export class Rect {
         fontSize,
         borderColor,
         textColor,
+        border
     }: RectType) {
         this.x = x;
         this.y = y;
@@ -72,6 +76,7 @@ export class Rect {
         this.fontSize = !!fontSize ? fontSize : 16;
         this.borderColor = !!borderColor ? borderColor : '#000';
         this.textColor = !!textColor ? textColor : "#000";
+        this.border = !!border ? border : 1;
     }
 
     get getJson() {

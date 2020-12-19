@@ -12,23 +12,34 @@
         outline: ${getOutline};
         min-width: 20px !important;
         max-width: 100%;
-        stroke: red;
-        font-size: 18px;
-        padding: 20px 0px;
-        cursor: ${!disableText ? 'text' : 'default' };
+        min-height: 100% !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: ${edit ? 'text' : 'default' };
         `"
-        :contenteditable="!disableText"
+        :id="`text-${id}`"
+        :contenteditable="edit"
         @keyup="keyUp($event)"
-        @dblclick="disableText=false"
-        @focusout="disableText=true"
-        >{{ data.text }}</div>
+        @blur="blurTextEvent()"
+        >{{ text }}</div>
       </foreignObject>
     </switch>
+    <rect
+    v-if="!edit"
+    @dblclick="edit=true"
+    :x="data.x"
+    :y="data.y"
+    :height="data.h"
+    :width="data.w"
+    fill="transparent"
+    stroke="transparent"
+     />
   </g>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { DiagramMode } from "../shape-types";
 import { TextClass } from "./../shapes-type/text-type";
 
@@ -36,12 +47,30 @@ import { TextClass } from "./../shapes-type/text-type";
 export default class TextComponent extends Vue {
   @Prop({ default: Object, required: true, type: TextClass }) data!: TextClass;
   @Prop({ required: true }) diagramMode!: DiagramMode;
-  
-  disableText = false;
+  @Prop({ required: true, default: String }) id!: string;
+  edit = true;
+  text: any = this.data?.text;
 
   keyUp(e: any) {
     let h = e.target.clientHeight;
     this.data.h = h;
+    this.data.editText = false;
+    this.updateText(e);
+  }
+
+  updateText(e: any) {
+    let text = e.target.textContent;
+    this.data.text = text;
+  }
+
+
+  @Watch("data.text")
+  watchText(text: string) {
+    if (this.data.editText) {
+      let ele: any = document.querySelector(`#text-${this.id}`);
+      ele.textContent = this.data?.text;
+      this.data.h = ele.clientHeight;
+    }
   }
 
   get getOutline() {
@@ -52,6 +81,19 @@ export default class TextComponent extends Vue {
     console.log(e);
   }
 
+
+  focusOnInput() {
+    this.edit = true;
+    let input: any = document.querySelector(`#text-${this.id}`);
+    setTimeout(() => {
+      input.focus();
+    }, 100);
+  }
+
+  blurTextEvent() {
+    this.edit = false;
+    this.data.editText = true;
+  }
 
   constructor() {
     super();

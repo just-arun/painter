@@ -2,7 +2,7 @@
   <button class="v-select">
     <div>{{ typeof value == "object" ? value.label : value }}</div>
     <ul class="v-select__list">
-      <li v-for="(item, i) in items" :key="i" @click="update(item)">
+      <li v-for="(item, i) in itemList" :key="i" @click="update(item)">
         {{ typeof item == "object" ? item.label : item }}
       </li>
     </ul>
@@ -22,7 +22,17 @@ export default Vue.extend({
     },
     items: {
       required: true,
+      type: Array
     },
+  },
+  computed: {
+    itemList(): any {
+      return this.items.filter((res: any) => {
+        if (this.value != res) {
+          return res;
+        }
+      })
+    }
   },
   methods: {
     update(val: any) {

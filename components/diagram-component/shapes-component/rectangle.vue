@@ -3,7 +3,7 @@
     <rect
       :x="data.x"
       :y="data.y"
-      stroke-width="2"
+      :stroke-width="data.border"
       :height="data.h"
       :width="data.w"
       :fill="fillAble ? data.fill : 'transparent'"
@@ -44,7 +44,7 @@
       </foreignObject>
     </switch>
     <rect 
-      style="cursore: brabing !important;"
+      style="cursore: brabing !important;cursor: grabbing;"
       v-if="!textEdit"
       @dblclick="focusOnInput()"
       :x="data.x"
@@ -67,17 +67,16 @@ import { Rect } from "../shapes-type/rectangle-type";
 @Component({})
 export default class RectangleComponent extends Mixins(CanvasMixin) {
   @Prop({ required: true }) diagramMode!: DiagramMode;
-  @Prop({ required: true, default: Object, type: Rect }) data!: Rect | null;
+  @Prop({ required: true, default: Object, type: Rect }) data!: Rect;
   @Prop({ required: true, default: String }) id!: string;
   textEdit=true;
   text: any = this.data?.text;
-  updateT = false;
 
   @Watch("data.text")
   watchText(text: string) {
-    if (this.updateT) {
-      this.text = this.data?.text;
-      this.resizeText();
+    if (this.data?.editText) {
+      let ele: any = document.querySelector(`#text-${this.id}`);
+      ele.textContent = this.data?.text;
     }
   }
 
@@ -95,7 +94,7 @@ export default class RectangleComponent extends Mixins(CanvasMixin) {
   }
 
   keyUp(e: any) {
-    this.updateT = false;
+    this.data.editText = false;
     this.updateText(e);
     let hei = e.target.clientHeight;
     this.resizeText();
@@ -121,7 +120,7 @@ export default class RectangleComponent extends Mixins(CanvasMixin) {
 
   blurTextEvent() {
     this.textEdit = false;
-    this.updateT = true;
+    this.data.editText = true;
   }
 
   focusOnInput() {

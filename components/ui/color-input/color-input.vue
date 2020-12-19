@@ -1,9 +1,9 @@
 <template>
-  <div class="color-input">
+  <label :for="label" class="color-input">
     <span>{{ label }}</span>
-    <input @change="change" type="color" v-model="colorValue" />
+    <input :id="label" @input="change" type="color" v-model="colorValue" />
     <input @keyup="change" type="text" v-model="colorValue" />
-  </div>
+  </label>
 </template>
 
 <style lang="scss">
@@ -15,11 +15,17 @@
   margin: 5px;
   padding: 5px;
   overflow: hidden;
-  span {
-      padding-right: 5px;
+  border: 2px solid transparent;
+  &:hover {
+    border: 2px solid rgba(128, 128, 128, 0.1);
   }
   &:focus-within {
-    border: 2px solid rgba(128, 128, 128, 0.4);
+    border: 2px solid rgb(0, 255, 242);
+  }
+  span {
+    padding-right: 5px;
+    flex: 1;
+    color: grey;
   }
   input[type="text"] {
     outline: none;
@@ -38,11 +44,14 @@
     outline: none;
     width: min-content;
     margin-right: 8px;
+    // background-color: grey;
+    // box-shadow: 1px 1px 2px grey,
+    //     -1px -1px 2px rgb(255, 255, 255);
+    filter: drop-shadow(.5px .5px 4px rgba(128, 128, 128, 0.3));
     &[type="color"]::-webkit-color-swatch-wrapper {
       padding: 0;
-      border: 0px !important;
+      // border: 0px !important;
     }
-
     &[type="color"]::-webkit-color-swatch {
       border: 0px !important;
     }

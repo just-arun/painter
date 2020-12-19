@@ -31,6 +31,8 @@
       padding: 2px 15%;
       outline: none;
       user-select: none;
+      user-select: none;
+      color: ${data.textColor};
       font-size: ${data.fontSize}px;
       max-width: ${data.w}px;
       `" :autofocus="textEdit">{{text}}</div>

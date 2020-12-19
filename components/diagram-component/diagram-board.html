@@ -80,6 +80,13 @@
           :class="`resize-hand ${itm.type}`"
           />
         </g>
+        <text v-if="selectedTool && lastMousePosition" 
+        :x="lastMousePosition.clientX + 10"
+        :y="lastMousePosition.clientY + 22"
+        style="font-size: 10px;"
+        >
+          {{ cursorVal[selectedTool] }}
+        </text>
       </g>
     </svg>
   </div>

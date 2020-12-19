@@ -12,7 +12,7 @@
     -moz-user-select: none;
     cursor: url('./../../assets/images/cursor.svg'), auto;
     &.over-shape {
-      cursor: grab;
+      // cursor: grabbing;
     }
   }
 
