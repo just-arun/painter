@@ -31,11 +31,9 @@
       @blur="blurTextEvent()"
       @keyup="keyUp($event)"
       :id="`text-${id}`"
+      class="text-content"
       :style="`
       cursor: ${textEdit ? 'text' : 'grab'};
-      padding: 2px 15%;
-      outline: none;
-      user-select: none;
       font-size: ${data.fontSize}px;
       max-width: ${data.w}px;
       color: ${data.textColor};
@@ -44,9 +42,10 @@
       </foreignObject>
     </switch>
     <rect 
-      style="cursore: brabing !important;cursor: grabbing;"
+      :class="`${data.canMove ?'grabbing' : 'hand'}`"
       v-if="!textEdit"
       @dblclick="focusOnInput()"
+      @mousedown="mouseDown($event)"
       :x="data.x"
       :y="data.y"
       :width="data.w"
@@ -57,6 +56,18 @@
   </g>
 </template>
 <style scoped lang="scss">
+@import "./../diagram-vars.scss";
+.text-content {
+  padding: 2px 15%;
+  outline: none;
+  user-select: none;
+}
+.grabbing {
+  cursor: url("./../../../#{$grab-cursor}"), auto;
+}
+.hand {
+  cursor: url("./../../../#{$hand-cursor}"), auto;
+}
 </style>
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Mixins, Watch } from "vue-property-decorator";
@@ -129,6 +140,10 @@ export default class RectangleComponent extends Mixins(CanvasMixin) {
     setTimeout(() => {
       input.focus();
     }, 100);
+  }
+
+  mouseDown(evt: MouseEvent) {
+    
   }
 }
 </script>

@@ -8,7 +8,9 @@
         :height="data.h + 4"
         requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
       >
-        <svg :viewBox="viewBox" :width="data.w + 4" :height="data.h + 4">
+        <svg
+        :class="`${data.canMove ? 'grabbing' : 'hand'}`"
+         :viewBox="viewBox" :width="data.w + 4" :height="data.h + 4">
           <path
             :d="data.path"
             fill="transparent"
@@ -50,5 +52,12 @@ export default class PencilComponent extends Vue {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
+@import "./../diagram-vars.scss";
+.grabbing {
+  cursor: url("./../../../#{$grab-cursor}"), auto;
+}
+.hand {
+  cursor: url("./../../../#{$hand-cursor}"), auto;
+}
 </style>

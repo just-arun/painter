@@ -21,9 +21,17 @@ export default class CanvasMixin extends Vue {
         tx: 0,
         ty: 0
     }
+    targetElement = {
+        clientX: 0,
+        clientY: 0,
+    }
+    originChanged = false;
     origin = {
         x: 0,
         y: 0
+    }
+    get transformOrigin() {
+        return `${this.origin.x} ${this.origin.y}`;
     }
 
     lastMousePosition: RelativePositionType | null = null;
@@ -106,19 +114,21 @@ export default class CanvasMixin extends Vue {
             this.scale = Math.floor(size);
         }
         // this.resetOrigin();
+        // this.updateOrigin();
     }
 
     updateOrigin() {
-        // let main: SVGElement | any = document.querySelector("#mainGroup");
-        // let x = this.matrix.tx + (!!this.lastMousePosition?.event ? this.lastMousePosition.event.offsetX : 0);
-        // let y = this.matrix.ty + (!!this.lastMousePosition?.event ? this.lastMousePosition.event.offsetY : 0);
-        // this.origin = { x, y };
+        let main: SVGElement | any = document.querySelector("#mainGroup");
+        let x = (!!this.lastMousePosition?.event ? this.lastMousePosition.event.offsetX : 0);
+        let y = (!!this.lastMousePosition?.event ? this.lastMousePosition.event.offsetY : 0);
+        this.origin = { x, y };
+        this.originChanged = true;
         // main.style.transformOrigin = `${x}px ${y}px`;
     }
 
     resetOrigin() {
-        // let main: SVGElement | any = document.querySelector("#mainGroup");
-        // main.style.transformOrigin = `0px 0px`;
+        let main: SVGElement | any = document.querySelector("#mainGroup");
+        main.style.transformOrigin = `0px 0px`;
     }
 
     updateLastPosition(e: MouseEvent) {
@@ -128,6 +138,7 @@ export default class CanvasMixin extends Vue {
 
     relativePosition(e?: MouseEvent): RelativePositionType {
         let main: SVGElement | any = document.querySelector("#mainGroup");
+        // main.style.transformOrigin = `0px 0px`;
         let boundry = main.getBoundingClientRect();
         var x = !!e ? e.clientX : 0 - boundry.left;
         var y = !!e ? e.clientY : 0 - boundry.top;

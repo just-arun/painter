@@ -25,6 +25,7 @@ import io from "socket.io-client";
 import CanvasVarsMixin from './canvas-vars-mixin';
 import DiagramDetail from "./diagram-detail/diagram-detail.vue";
 import rotateIconVue from "../icons/rotate-icon.vue";
+import ShapeList from "./shapes-list/shapes-list.vue";
 
 @Component({
   components: {
@@ -33,7 +34,8 @@ import rotateIconVue from "../icons/rotate-icon.vue";
     "d-footer": diagramFooterVue,
     "d-detail": DiagramDetail,
     "shapes-component": ShapeComponent,
-    "rotate-component": rotateIconVue
+    "rotate-component": rotateIconVue,
+    "shapes-list": ShapeList
   },
 })
 export default class DiagramBoard extends mixins(CanvasVarsMixin) {

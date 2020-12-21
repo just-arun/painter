@@ -63,8 +63,13 @@ export class Pencil {
         return this;
     }
 
-    move(e: RelativePositionType) {
+    move(e: RelativePositionType, target?: { clientX: number, clientY: number }) {
         if (this.canMove) {
+            if (!!target) {
+                this.x = e.clientX - target.clientX;
+                this.y = e.clientY - target.clientY;
+                return;
+            }
             this.x = e.clientX - (this.w / 2);
             this.y = e.clientY - (this.h / 2);
         }

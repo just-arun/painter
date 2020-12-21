@@ -62,7 +62,13 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
         return `left: ${x};top: ${y};`;
     }
 
+    updateLocalDiagramFillMode() {
+        let mode: any = localStorage.getItem("fillMode");
+        this.fillMode = !!mode ? mode : ShapeFillType.stroke;
+    }
+
     mounted() {
+        this.updateLocalDiagramFillMode(); 
         document.addEventListener("loadeddata", () => { });
         this.mouseScroll();
         document.addEventListener("keydown", (e) => {
@@ -99,6 +105,8 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     changeFillMode(val: ShapeFillType) {
         this.$router.push(this.$route.path + `?mode=${val}`)
+        let nVal: any = val;
+        localStorage.setItem("fillMode", nVal);
         this.fillMode = val;
     }
 
@@ -198,6 +206,11 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             if (e.ctrlKey || e.metaKey) {
                 this.zoomInOut(e);
             } else {
+                if (this.originChanged) {
+                    // this.matrix.tx = (this.origin.x / this.scale) * 100;
+                    // this.matrix.ty = (this.origin.y / this.scale) * 100;
+                    // this.originChanged = false;
+                }
                 this.matrix.tx -= e.deltaX;
                 this.matrix.ty -= e.deltaY;
             }
@@ -479,7 +492,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                 ) {
                     let elem: any = this.selectedElements[0];
                     if (elem[this.selectedElements[0].type].canMove) {
-                        elem[this.selectedElements[0].type].move(e);
+                        elem[this.selectedElements[0].type].move(e, this.targetElement);
                     }
                 }
             }
@@ -624,5 +637,30 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     onDragLeave() {
         this.dragOver = false;
+    }
+
+    focusToShape(shape: Shape) {
+        const mainGroup: any = this.$refs.mainGroup
+        mainGroup.style.transition = '.5s';
+        this.selectedElements = [shape];
+        let mat: any = shape[shape.type];
+        this.matrix.s = 1;
+        this.scale = 100;
+        this.matrix.tx = -mat.x -(mat.w / 2) + (this.canvas.width / 2);
+        this.matrix.ty = -mat.y -(mat.h / 2) + (this.canvas.height / 2);
+        setTimeout(() => {
+            mainGroup.style.transition = '0s';
+        }, 1000);
+    }
+
+    mouseDownShapeFun(evt: MouseEvent) {
+        let e: any = evt.target;
+        let dim = e.getBoundingClientRect();
+        var x = ((evt.clientX - dim.left) / this.scale) * 100;
+        var y = ((evt.clientY - dim.top) / this.scale) * 100;
+        // alert("x: "+x+" y:"+y);
+        this.targetElement.clientX = x;
+        this.targetElement.clientY = y;
+        console.log("[some #] ", "x: "+x+" y:"+y);
     }
 }

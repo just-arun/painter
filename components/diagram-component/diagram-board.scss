@@ -10,10 +10,7 @@
     margin-top: 0px;
     user-select: none;
     -moz-user-select: none;
-    cursor: url('./../../assets/images/cursor.svg'), auto;
-    &.over-shape {
-      // cursor: grabbing;
-    }
+    cursor: url('./../../#{$default-cursor}'), auto;
   }
 
   .context-menu {
@@ -68,8 +65,9 @@
 .resize-hand {
   fill:rgb(0, 119, 255);
   stroke: transparent;
+  // stroke: rgba(255, 0, 0, 0.514);
   &:hover {
-    stroke-width: 30px;
+    stroke-width: 150px;
   }
 }
 

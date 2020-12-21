@@ -1,0 +1,19 @@
+<div class="shapes-list" :style="`width: ${width}px; transform: translateX(-${show ? 0 : width}px);`">
+  <div class="shapes-list__header">
+    shapes
+  </div>
+  <input placeholder="search..." type="search" v-model="search" class="shapes-list__search">
+  <div class="shapes-list__wrapper">
+    <div @click="focusToShape(item)" class="shapes-list__wrapper__item" v-for="(item, i) in listShape" :key="i">
+      {{ item.name }}
+    </div>
+  </div>
+
+  <div @click="show = !show" class="shapes-list__show">
+    <img :src="require(`./../../../assets/icons/${show ? 'left' : 'right'}.svg`)">
+    <span>{{ show ? 'Hide' : 'Show' }}</span>
+  </div>
+
+  <div class="shapes-list__expand" @mousedown="mouseDown($event)" @mouseup="mouseUp($event)"
+    @mouseleave="mouseUp($event)" @mousemove="mouseMove($event)"></div>
+</div>

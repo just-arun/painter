@@ -110,8 +110,13 @@ export class Rect {
         this.w1 = this.w;
     }
 
-    move(e: RelativePositionType) {
+    move(e: RelativePositionType, target?: { clientX: number, clientY: number }) {
         if (this.canMove) {
+            if (!!target) {
+                this.x = e.clientX - target.clientX;
+                this.y = e.clientY - target.clientY;
+                return;
+            }
             this.x = e.clientX - (this.w / 2);
             this.y = e.clientY - (this.h / 2);
         }
@@ -155,8 +160,8 @@ export class Rect {
         let w = e.clientX - this.x;
         if (e.event?.ctrlKey || e.event?.metaKey) {
             let ration = this.w / this.h;
-            let mx = e.event.movementX;
-            let my = e.event.movementY;
+            let mx = e.event.movementX / 2;
+            let my = e.event.movementY / 2;
             let ma = (mx + my) / 2;
             let w = ma * ration;
             this.h = this.h + ma;

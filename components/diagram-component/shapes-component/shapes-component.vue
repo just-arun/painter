@@ -1,19 +1,35 @@
 <template>
-  <g class="shape" :id="`shapeWrapper${shape._id}`">
+  <g 
+  @mousedown="mouseDown($event)"
+  class="shape" :id="`shapeWrapper${shape._id}`">
     <text
-    :class="`name ${stagingShape == shape._id ? 'focused' : ''}`"
-    :x="getNamePos.x"
-    :y="getNamePos.y - 6"
-    >{{ shape.name }}</text>
-    <path 
-    v-if="stagingShape == shape._id"
-    :d="getPath" 
-    fill="transparent" 
-    stroke="rgb(0, 119, 255)" />
-    <g 
-    @click="selectElement()"
-    @mouseover="mouseOver($event)"
-    @mouseout="mouseOut($event)"
+      :class="`name ${stagingShape == shape._id ? 'focused' : ''}`"
+      :x="getNamePos.x"
+      :y="getNamePos.y - 6"
+      >{{ shape.name }}</text
+    >
+    <path
+      v-if="stagingShape == shape._id"
+      :d="getPath"
+      fill="transparent"
+      stroke="rgb(0, 119, 255)"
+    />
+    <text
+      v-if="stagingShape == shape._id"
+      :x="sizeVal.x"
+      :y="sizeVal.y"
+      :style="`
+    font-size: 8px;
+    fill: rgb(0, 119, 255);
+    `"
+    >
+      {{ Math.floor(shape[shape.type].h) }} x
+      {{ Math.floor(shape[shape.type].w) }}
+    </text>
+    <g
+      @click="selectElement()"
+      @mouseover="mouseOver($event)"
+      @mouseout="mouseOut($event)"
     >
       <rect-component
         :class="shape.type"
@@ -22,12 +38,12 @@
         :data="shape.rect"
         :id="shape._id"
       />
-      <outline-image-component 
+      <outline-image-component
         :class="shape.type"
         :diagramMode="diagramMode"
         v-if="shape.type == 'image'"
         :data="shape.image"
-        />
+      />
       <triangle-component
         :class="shape.type"
         :diagramMode="diagramMode"
@@ -61,9 +77,7 @@
       />
     </g>
     <g v-if="diagramMode == 1 && showClose">
-      <switch 
-          :x="getNamePos.x + getNamePos.w + 5"
-          :y="getNamePos.y - 15">
+      <switch :x="getNamePos.x + getNamePos.w + 5" :y="getNamePos.y - 15">
         <foreignObject
           v-if="showClose"
           :x="getNamePos.x + getNamePos.w + 5"
@@ -74,10 +88,12 @@
           :class="`close-btn ${stagingShape == shape._id ? 'focused' : ''}`"
         >
           <button @click="deleteShape()">
-            <img 
-            width="24px"
-            height="24px"
-            src="./../../../assets/icons/close.svg" alt="">
+            <img
+              width="24px"
+              height="24px"
+              src="./../../../assets/icons/close.svg"
+              alt=""
+            />
           </button>
         </foreignObject>
       </switch>
@@ -86,7 +102,6 @@
 </template>
 
 <style lang="scss">
-
 .close-btn {
   text-align: left;
   display: none;
@@ -110,7 +125,6 @@
   }
 }
 
-
 .focused {
   opacity: 1;
   transform: translateY(0px);
@@ -123,7 +137,7 @@
     opacity: 0;
     font-size: 8px;
     transform: translateY(10px);
-    transition: .3s cubic-bezier(1,-0.05, 0.71, 1);
+    transition: 0.3s cubic-bezier(1, -0.05, 0.71, 1);
   }
   &:hover {
     .name {
@@ -163,18 +177,21 @@ export default class ShapeComponent extends Vue {
   @Prop({ required: true }) diagramMode!: DiagramMode;
   @Prop({ required: true }) stagingShape!: string;
   shapeType = ShapeType;
-  menuOptions = [
-    { label: '' }
-  ]
+  menuOptions = [{ label: "" }];
 
   @Emit("select-element")
   selectElement() {
     return this.shape;
   }
-  
+
   @Emit("delete-element")
   deleteShape() {
     return this.shape;
+  }
+
+  @Emit("mouse-down")
+  mouseDown(e: MouseEvent) {
+    return e;
   }
 
   @Emit("mouse-over")
@@ -194,8 +211,8 @@ export default class ShapeComponent extends Vue {
     let w = Number(s.w) + 8;
     let h = Number(s.h) + 8;
     if (this.shape.type == ShapeType.Circle) {
-      x = Number(s.x - (w/2));
-      y = Number(s.y - (h/2));
+      x = Number(s.x - w / 2);
+      y = Number(s.y - h / 2);
     }
     if (this.shape.type == ShapeType.Line) {
       let x1 = s.x1;
@@ -209,13 +226,15 @@ export default class ShapeComponent extends Vue {
   }
 
   get showClose() {
-    if (this.shape.type == ShapeType.Line ||
-      this.shape.type == ShapeType.Pencil) {
-        if (this.stagingShape == this.shape._id) {
-          return true;
-        } else {
-          return false;
-        }
+    if (
+      this.shape.type == ShapeType.Line ||
+      this.shape.type == ShapeType.Pencil
+    ) {
+      if (this.stagingShape == this.shape._id) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return true;
     }
@@ -240,6 +259,28 @@ export default class ShapeComponent extends Vue {
       pos.h = y1 - y;
     }
     return pos;
+  }
+  round(val: number) {
+    return Math.floor(val);
+  }
+
+  get sizeVal() {
+    let par = {
+      x: 0,
+      y: 0
+    }
+
+    let obj: any = this.shape;
+
+    if (this.shape.type == ShapeType.Circle) {
+      par.x = obj[obj.type].x - obj[obj.type].r
+      par.y = obj[obj.type].y + obj[obj.type].r + 15      
+      return par;
+    }
+
+    par.x = obj[obj.type].x
+    par.y = obj[obj.type].y + obj[obj.type].h + 15
+    return par;
   }
 }
 </script>
