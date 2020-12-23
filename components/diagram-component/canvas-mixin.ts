@@ -65,7 +65,6 @@ export default class CanvasMixin extends Vue {
     constructor() {
         super();
         this.deviceType = this.getDevice();
-        console.log(this.deviceType);
         
     }
     mounted() {

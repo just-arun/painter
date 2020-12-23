@@ -1,0 +1,1 @@
+echo "declare module 'vue-color';" >> /home/arun/Documents/projects/painter/node_modules/vue-color/dist/vue-color.d.ts

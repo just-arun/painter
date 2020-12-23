@@ -23,15 +23,12 @@
       justify-content: center;
       ">
       <div :contenteditable="textEdit"
-      @keypress="updateText($event)"
       @blur="blurTextEvent()"
       @keyup="keyUp($event)"
+      ref="textRef"
+      class="text-content"
       :style="`
       cursor: ${textEdit ? 'text' : 'grab'};
-      padding: 2px 15%;
-      outline: none;
-      user-select: none;
-      user-select: none;
       color: ${data.textColor};
       font-size: ${data.fontSize}px;
       max-width: ${data.w}px;
@@ -40,6 +37,7 @@
       </foreignObject>
     </switch>
     <rect 
+    :class="`${data.canMove ?'grabbing' : 'hand'}`"
     @dblclick="textEdit=true"
     v-if="!textEdit"
     :x="data.x"
@@ -66,7 +64,9 @@ export default class TriangleComponent extends Vue {
 
   @Watch("data.text")
   watchText(text: string) {
-    this.text = this.data?.text;
+    if (!this.textEdit) {
+      this.updateText();
+    }
   }
 
   created() {
@@ -79,22 +79,21 @@ export default class TriangleComponent extends Vue {
   }
 
   keyUp(e: any) {
+    this.textEdit = true;
+    // this.text = e.target.textContent;
+    this.data.text = e.target.textContent;
     let hei = e.target.clientHeight;
     let rHei: any = this.data?.h;
     let calc = rHei - hei;
-      let data: any = this.data
+    let data: any = this.data;
     if (calc < 10) {
       data.fontSize -= 1;
     }
-    console.log("height", hei, this.data?.fontSize);
   }
 
-  updateText(e: any) {
-    console.log(e.target.textContent);
-    if (this.data) {
-      let text = e.target.textContent;
-      this.data.text = text;
-    }
+  updateText() {
+    let text: any = this.$refs.textRef
+    text.textContent = this.data.text;
   }
 
   blurTextEvent() {
@@ -104,4 +103,16 @@ export default class TriangleComponent extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "./../diagram-vars.scss";
+.text-content {
+  padding: 2px 15%;
+  outline: none;
+  user-select: none;
+}
+.grabbing {
+  cursor: url("./../../../#{$grab-cursor}"), auto;
+}
+.hand {
+  cursor: url("./../../../#{$hand-cursor}"), auto;
+}
 </style>

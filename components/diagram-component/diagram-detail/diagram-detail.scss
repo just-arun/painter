@@ -41,6 +41,16 @@
     @extend .cus-scroll-bar;
     outline: none;
     border: 2px solid transparent;
+    &.empty {
+      position: relative;
+      &::before {
+        position: absolute;
+        left: 3px;
+        top: 5px;
+        color: rgba(128, 128, 128, 0.404);
+        content: 'Text Content';
+      }
+    }
     &:hover {
       border: 2px solid rgba(128, 128, 128, 0.1);
     }

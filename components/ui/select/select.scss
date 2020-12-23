@@ -1,3 +1,20 @@
+.cus-scroll-bar {
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    background: #79797917;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #79797980;
+    border-radius: 5px;
+  }
+}
+
+
 .v-select {
   position: relative;
   outline: none;
@@ -39,14 +56,16 @@
     background: transparent;
     backdrop-filter: blur(20px);
     text-align: left;
-
+    max-height: 200px;
+    overflow-y: auto;
+    @extend .cus-scroll-bar;
     li {
       list-style: none;
-      padding: 4px 6px;
+      padding: 8px;
       cursor: pointer;
       background-color: #fff;
       text-align: left;
-
+      text-transform: capitalize;
       &:hover {
         background: rgb(231, 231, 231);
       }

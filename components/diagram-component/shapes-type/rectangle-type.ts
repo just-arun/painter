@@ -1,3 +1,4 @@
+import { FontWeight, AlignItem, JustifyContent } from './../shapes-text-util';
 import { ShapeFillType, RelativePositionType } from "../shape-types";
 
 export interface RectType {
@@ -13,6 +14,9 @@ export interface RectType {
     fontSize?: number;
     textColor?: string;
     border?: number;
+    alignItem?: string;
+    justifyContent?: string;
+    fontWeight?: "thin" | "light" | "regular" | "medium" | "bold" | "bolder";
 }
 
 export class Rect {
@@ -26,15 +30,19 @@ export class Rect {
     w1: number;
     type: ShapeFillType;
     fill: string;
+    rx: number = 0;
     text: string = "";
     resize = false;
     canMove = false;
     editText = false;
     color = "#000";
     fontSize: number = 18;
+    fontWeight: any = FontWeight[1];
     border: number = 2;
-    borderColor: string = "#000";
-    textColor: string = "#000";
+    borderColor: string = "#000000";
+    textColor: string = "#000000";
+    alignItem: string;
+    justifyContent: string;
 
     get path() {
         const {
@@ -58,7 +66,10 @@ export class Rect {
         fontSize,
         borderColor,
         textColor,
-        border
+        border,
+        fontWeight,
+        alignItem,
+        justifyContent
     }: RectType) {
         this.x = x;
         this.y = y;
@@ -72,11 +83,14 @@ export class Rect {
         this.type = type;
         this.fill = fill;
         this.text = !!text ? text : '';
-        this.color = !!color ? color : '#000';
+        this.color = !!color ? color : '#000000';
         this.fontSize = !!fontSize ? fontSize : 16;
-        this.borderColor = !!borderColor ? borderColor : '#000';
-        this.textColor = !!textColor ? textColor : "#000";
+        this.borderColor = !!borderColor ? borderColor : '#000000';
+        this.textColor = !!textColor ? textColor : "#000000";
         this.border = !!border ? border : 1;
+        this.fontWeight = !!fontWeight ? fontWeight : FontWeight[1];
+        this.alignItem = !!alignItem ? alignItem : AlignItem[1];
+        this.justifyContent = !!justifyContent ? justifyContent : JustifyContent[1];
     }
 
     get getJson() {
@@ -85,6 +99,18 @@ export class Rect {
 
     startResize() {
         this.resize = true;
+    }
+
+    move(e: RelativePositionType, target?: { clientX: number, clientY: number }) {
+        if (this.canMove) {
+            if (!!target) {
+                this.x = e.clientX - target.clientX;
+                this.y = e.clientY - target.clientY;
+                return;
+            }
+            this.x = e.clientX - (this.w / 2);
+            this.y = e.clientY - (this.h / 2);
+        }
     }
 
     makeResize(e: RelativePositionType, type: string) {
@@ -108,18 +134,6 @@ export class Rect {
         this.y1 = this.h + this.y;
         this.h1 = this.h;
         this.w1 = this.w;
-    }
-
-    move(e: RelativePositionType, target?: { clientX: number, clientY: number }) {
-        if (this.canMove) {
-            if (!!target) {
-                this.x = e.clientX - target.clientX;
-                this.y = e.clientY - target.clientY;
-                return;
-            }
-            this.x = e.clientX - (this.w / 2);
-            this.y = e.clientY - (this.h / 2);
-        }
     }
 
     resizeTl(e: RelativePositionType) {

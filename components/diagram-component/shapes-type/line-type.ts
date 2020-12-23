@@ -18,6 +18,7 @@ export class Line {
     h: number;
     w: number;
     fill: string;
+    canMove = false;
     resize = false;
     editing: boolean = true;
     constructor({
@@ -48,7 +49,7 @@ export class Line {
             this.x1 = this.x;
         }
         let angle = this.angle(this.x, this.y, this.x1, this.y1);
-        console.log(angle * -1);
+        
         this.updateSize();
     }
 

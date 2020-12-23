@@ -13,6 +13,7 @@
             :src="require(`./../../../assets/icons/tools/${tool.icon}.svg`)"
             alt=""
           />
+          <div class="label">{{ tool.label }}</div>
         </button>
       </li>
     </ul>

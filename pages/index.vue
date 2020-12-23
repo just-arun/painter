@@ -1,15 +1,31 @@
 <template>
   <div class="container">
     <div>
+      <toggle :value.sync="value" :name="'damn'" :items="items"></toggle>
       <nuxt-link to="/board/my-board/d/new-stuff">new link</nuxt-link>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from "vue";
+import ToggleButton from "~/components/ui/toggle-button/toggle-button.vue";
 
-export default Vue.extend({})
+export default Vue.extend({
+  components: {
+    toggle: ToggleButton,
+  },
+  data() {
+    return {
+      value: 'left',
+      items: [
+        { value: "left", img: 'h_align_left' },
+        { value: "center", img: 'h_align_center'},
+        { value: "right", img: 'h_align_right'},
+      ],
+    };
+  },
+});
 </script>
 
 <style>
@@ -23,16 +39,8 @@ export default Vue.extend({})
 }
 
 .title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   display: block;
   font-weight: 300;
   font-size: 100px;

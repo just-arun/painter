@@ -8,33 +8,38 @@
         :height="data.h"
         requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
       >
-        <div autofocus="true" :style="`
+        <div
+          autofocus="true"
+          class="text-content"
+          :style="`
         outline: ${getOutline};
         min-width: 20px !important;
         max-width: 100%;
         min-height: 100% !important;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: ${edit ? 'text' : 'default' };
+      align-items: ${data.alignItem};
+      justify-content: ${data.justifyContent};
+        cursor: ${edit ? 'text' : 'default'};
+      font-weight: ${data.fontWeight};
+      text-align: ${alignText[data.justifyContent]}
         `"
-        :id="`text-${id}`"
-        :contenteditable="edit"
-        @keyup="keyUp($event)"
-        @blur="blurTextEvent()"
+          :id="`text-${id}`"
+          :contenteditable="edit"
+          @keyup="keyUp($event)"
+          @blur="blurTextEvent()"
         >{{ text }}</div>
       </foreignObject>
     </switch>
     <rect
-    v-if="!edit"
-    @dblclick="edit=true"
-    :x="data.x"
-    :y="data.y"
-    :height="data.h"
-    :width="data.w"
-    fill="transparent"
-    stroke="transparent"
-     />
+      v-if="!edit"
+      @dblclick="edit = true"
+      :x="data.x"
+      :y="data.y"
+      :height="data.h"
+      :width="data.w"
+      fill="transparent"
+      stroke="transparent"
+    />
   </g>
 </template>
 
@@ -51,6 +56,12 @@ export default class TextComponent extends Vue {
   edit = true;
   text: any = this.data?.text;
 
+  alignText = {
+    "flex-start": "left",
+    center: "center",
+    "flex-end": "right",
+  };
+
   keyUp(e: any) {
     let h = e.target.clientHeight;
     this.data.h = h;
@@ -63,7 +74,6 @@ export default class TextComponent extends Vue {
     this.data.text = text;
   }
 
-
   @Watch("data.text")
   watchText(text: string) {
     if (this.data.editText) {
@@ -74,13 +84,10 @@ export default class TextComponent extends Vue {
   }
 
   get getOutline() {
-    return !!(this.data.text.length) ? 'none' : '2px solid grey'
+    return !!this.data.text.length ? "none" : "2px solid grey";
   }
 
-  focusThis(e: any) {
-    console.log(e);
-  }
-
+  focusThis(e: any) {}
 
   focusOnInput() {
     this.edit = true;

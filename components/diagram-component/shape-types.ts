@@ -84,5 +84,4 @@ export interface RelativePositionType {
     offsetX: number;
     offsetY: number;
     event?: MouseEvent | null;
-  }
-  
+}

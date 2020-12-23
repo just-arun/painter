@@ -12,6 +12,7 @@
         :class="`${data.canMove ? 'grabbing' : 'hand'}`"
          :viewBox="viewBox" :width="data.w + 4" :height="data.h + 4">
           <path
+            stroke-linejoin="round"
             :d="data.path"
             fill="transparent"
             stroke-width="2"
@@ -25,6 +26,7 @@
       fill="transparent"
       stroke-width="2"
       :stroke="data.fill"
+            stroke-linejoin="round"
     />
   </g>
 </template>

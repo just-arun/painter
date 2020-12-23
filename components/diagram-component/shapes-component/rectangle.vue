@@ -1,6 +1,7 @@
 <template>
   <g class="rect">
     <rect
+      :rx="data.rx"
       :x="data.x"
       :y="data.y"
       :stroke-width="data.border"
@@ -17,14 +18,14 @@
         :height="data.h"
         requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
       >
-      <div style="
+      <div :style="`
       height: 100%;
       max-height: 100%;
       display: flex;
       overflow: hidden;
-      align-items: center;
-      justify-content: center;
-      ">
+      align-items: ${data.alignItem};
+      justify-content: ${data.justifyContent};
+      `">
       <div
       ref="localRef"
        :contenteditable="textEdit"
@@ -37,6 +38,8 @@
       font-size: ${data.fontSize}px;
       max-width: ${data.w}px;
       color: ${data.textColor};
+      font-weight: ${data.fontWeight};
+      text-align: ${alignText[data.justifyContent]}
       `" :autofocus="textEdit">{{text}}</div>
       </div>
       </foreignObject>
@@ -82,6 +85,12 @@ export default class RectangleComponent extends Mixins(CanvasMixin) {
   @Prop({ required: true, default: String }) id!: string;
   textEdit=true;
   text: any = this.data?.text;
+
+  alignText = {
+    "flex-start": "left",
+    "center": "center",
+    "flex-end": "right",
+  }
 
   @Watch("data.text")
   watchText(text: string) {
