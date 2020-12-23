@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: gray;
+    }
+
+    #svgContainer {
+      z-index: -10;
+      position: absolute;
+      background-color: silver;
+      opacity: 0.5;
+    }
+
+    div {
+      opacity: 0.6;
+    }
+
+
+    #outer {
+      margin: 0 auto;
+      width: 80%;
+    }
+
+    #teal {
+      width: 6em;
+      height: 6em;
+      background-color: teal;
+      margin-left: 10%;
+    }
+
+    #orange {
+      height: 4em;
+      width: 35%;
+      padding: 2em 8em;
+      margin-left: 8em;
+      margin-top: 6em;
+      background-color: orange;
+    }
+
+    #red {
+      width: 6em;
+      height: 4em;
+      margin-left: 30%;
+      padding: 4em 3em;
+      background-color: red;
+    }
+
+    #aqua {
+      width: 5em;
+      height: 5em;
+      margin-left: 15%;
+      background-color: aqua;
+    }
+
+    #purple {
+      width: 15em;
+      height: 5em;
+      background-color: purple;
+    }
+
+    #green {
+      width: 5em;
+      height: 7em;
+      margin-top: 2em;
+      margin-left: 50%;
+      background-color: green;
+    }
+
+  </style>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+</head>
+
+<body>
+  <div id="svgContainer" style="margin: 50px 50px;">
+    <svg id="svg1" width="0" height="0">
+      <path id="path1" d="M0 0" stroke="#000" fill="none" stroke-width="2" ; />
+      <path id="path2" d="M0 0" stroke="#000" fill="none" stroke-width="2" ; />
+      <path id="path3" d="M0 0" style="stroke:#000; fill:none;" stroke-width="2"/>
+      <path id="path4" d="M0 0" style="stroke:#000; fill:none;  stroke-width: 2;" />
+      <path id="path5" d="M0 0" style="stroke:#000; fill:none;" stroke-width="2" />
+      <path id="path6" d="M0 0" style="stroke:#000; fill:none;" stroke-width="2" />
+    </svg>
+  </div>
+
+  <div id="outer">
+    <div id="teal"></div>
+    <div id="red"></div>
+    <div id="green"></div>
+    <div id="purple"></div>
+    <div id="orange"></div>
+    <div id="aqua"></div>
+  </div>
+
+  <script src="./test.js"></script>
+</body>
+
+</html>
