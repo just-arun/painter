@@ -12,7 +12,7 @@
     "@nuxt/typescript-runtime": "^2.0.0",
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/composition-api": "^0.16.4",
-    "@nuxtjs/pwa": "^3.0.2",
+    "@nuxtjs/pwa": "^3.3.3",
     "@types/socket.io-client": "^1.4.34",
     "@vue/composition-api": "^1.0.0-beta.20",
     "core-js": "^3.6.5",
