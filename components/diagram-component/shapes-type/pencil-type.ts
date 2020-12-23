@@ -1,4 +1,4 @@
-import { RelativePositionType } from "../shape-types";
+import { RelativePositionType, ShapeFillType } from "../shape-types";
 
 
 export interface PencilType {
@@ -11,6 +11,7 @@ export interface PencilType {
     w?: number;
     editing?: boolean;
     canMove?: boolean;
+    type?: ShapeFillType;
 }
 
 export class Pencil {
@@ -28,6 +29,7 @@ export class Pencil {
     canMove: boolean = false;
     resize = false;
     border: number = 1;
+    type: ShapeFillType;
     constructor({
        path,
        fill,
@@ -37,7 +39,8 @@ export class Pencil {
        w,
        border,
        editing,
-       canMove
+       canMove,
+       type
     }: PencilType) {
         this.path = path;
         this.fill = fill;
@@ -52,6 +55,7 @@ export class Pencil {
         if (canMove != undefined) {
             this.canMove = canMove;
         }
+        this.type = !!type ? type : ShapeFillType.stroke;
     }
 
     startResize() {

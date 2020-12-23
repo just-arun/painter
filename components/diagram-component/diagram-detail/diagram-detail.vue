@@ -67,6 +67,7 @@
           name="border-width"
         />
         <v-input
+          v-if="hideTextCondition"
           style="padding: 8px 5px; margin: 0px 5px; box-sizing: border-box"
           label="Smooth"
           :value.sync="data[data.type].rx"
@@ -80,7 +81,10 @@
           label="Border Color"
         />
       </v-acordian>
-      <v-acordian label="Text">
+      <v-acordian 
+        label="Text"
+        v-if="hideTextCondition"
+      >
         <div
           ref="textRef"
           @keyup="monitorText($event)"
@@ -206,11 +210,18 @@ export default class DiagramDetail extends Vue {
   updateNewShape() {
     let data: any = this.data;
     let ele: any = this.$refs.textRef;
-    ele.textContent = data[data.type]?.text;
-    this.text = data[data.type]?.text;
+    this.text = "";
+    setTimeout(() => {
+      if (!!ele) {
+        ele.textContent = data[data.type]?.text;
+        this.text = data[data.type]?.text;
+      }
 
-    let nameEle: any = this.$refs.nameRef;
-    nameEle.textContent = data.name;
+      let nameEle: any = this.$refs.nameRef;
+      if (!!nameEle) {
+        nameEle.textContent = data.name;
+      }
+    }, 500);
   }
 
   @Watch("data.rect.text")
@@ -278,6 +289,10 @@ export default class DiagramDetail extends Vue {
   updateFontWeight(val: any) {
     let data: any = this.data;
     data[data.type].fontWeight = val;
+  }
+
+  get hideTextCondition() {
+    return !(this.data.type == "pencil" || this.data.type == 'line')
   }
 }
 </script>

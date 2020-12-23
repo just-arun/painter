@@ -2,20 +2,23 @@
   <g>
     <switch :x="data.x" :y="data.y" v-if="!data.editing">
       <foreignObject
-        :x="data.x - 2"
-        :y="data.y - 2"
-        :width="data.w + 4"
-        :height="data.h + 4"
+        :x="data.x - (2 * data.border)"
+        :y="data.y - (2 * data.border)"
+        :width="data.w + (4 * data.border)"
+        :height="data.h + (4 * data.border)"
         requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
       >
         <svg
-        :class="`${data.canMove ? 'grabbing' : 'hand'}`"
-         :viewBox="viewBox" :width="data.w + 4" :height="data.h + 4">
+          :class="`${data.canMove ? 'grabbing' : 'hand'}`"
+          :viewBox="viewBox"
+          :width="data.w + ( 4 * data.border)"
+          :height="data.h + (4 * data.border)"
+        >
           <path
             stroke-linejoin="round"
             :d="data.path"
             fill="transparent"
-            stroke-width="2"
+            :stroke-width="data.border"
             :stroke="data.fill"
           />
         </svg> </foreignObject
@@ -24,9 +27,9 @@
       v-if="data.editing"
       :d="data.path"
       fill="transparent"
-      stroke-width="2"
+      :stroke-width="data.border"
       :stroke="data.fill"
-            stroke-linejoin="round"
+      stroke-linejoin="round"
     />
   </g>
 </template>
@@ -47,9 +50,10 @@ export default class PencilComponent extends Vue {
 
   @Watch("data.editing")
   updateBox() {
-    this.viewBox = `${this.data.x - 2} ${this.data.y - 2} ${this.data.w + 4} ${
-      this.data.h + 4
-    }`;
+    let b = this.data.border;
+    this.viewBox = `${this.data.x - 2 * b} ${this.data.y - 2 * b} ${
+      this.data.w + 4 * b
+    } ${this.data.h + 4 * b}`;
   }
 }
 </script>

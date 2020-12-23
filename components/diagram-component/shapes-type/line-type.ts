@@ -1,4 +1,4 @@
-import { RelativePositionType } from "../shape-types";
+import { RelativePositionType, ShapeFillType } from "../shape-types";
 
 export interface LineType {
     x: number;
@@ -8,6 +8,8 @@ export interface LineType {
     fill: string;
     h?: number;
     w?: number;
+    type?: ShapeFillType;
+    border?: number;
 }
 
 export class Line {
@@ -21,6 +23,8 @@ export class Line {
     canMove = false;
     resize = false;
     editing: boolean = true;
+    type: ShapeFillType;
+    border: number = 2;
     constructor({
         x,
         y,
@@ -28,7 +32,9 @@ export class Line {
         y1,
         fill,
         h,
-        w
+        w,
+        type,
+        border
     }: LineType) {
         this.x = x;
         this.y = y;
@@ -37,6 +43,8 @@ export class Line {
         this.fill = fill;
         this.h = !!h ? h : 0;
         this.w = !!w ? w : 0;
+        this.type = !!type ? type : ShapeFillType.stroke;
+        this.border = !!border ? border : 1;
     }
 
     updateEnd(e: RelativePositionType) {
