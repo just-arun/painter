@@ -28,7 +28,7 @@
     "vue-socket.io": "^3.0.10"
   },
   "devDependencies": {
-    "@nuxt/types": "^2.14.6",
+    "@nuxt/types": "^2.14.12",
     "@nuxt/typescript-build": "^2.0.3",
     "@types/vue-color": "^2.4.3"
   }
