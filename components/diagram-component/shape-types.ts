@@ -36,12 +36,14 @@ export interface ShapeInterface {
     _id: string;
     name: string;
     type: ShapeType;
+    user?: string | null;
     data: Rect | Circle | Triangle | Line | Pencil | ImageClass | TextClass;
 }
 
 
 export class Shape {
     _id: string;
+    user?: string | null = null;
     name: string;
     type: ShapeType;
     rect: Rect | null = null;
@@ -55,13 +57,15 @@ export class Shape {
         _id,
         type,
         name,
-        data
+        data,
+        user
     }: ShapeInterface) {
         this._id = _id;
         this.name = name;
         this.type = type;
         let da: any = data;
         this[type] = da;
+        this.user = !!user ? user : null;
     }
 }
 

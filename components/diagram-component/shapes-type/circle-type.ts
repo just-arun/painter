@@ -59,7 +59,7 @@ export class Circle {
         this.fill = fill;
         this.text = !!text ? text : "";
         this.fontSize = !!fontSize ? fontSize : 16;
-        this.fontWeight = !!fontWeight ? fontWeight : FontWeight[1];
+        this.fontWeight = !!fontWeight ? fontWeight : FontWeight[3];
         this.textColor = !!textColor ? textColor : '#000000'
         this.borderColor = !!borderColor ? borderColor : '#000000';
         this.border = !!border ? border : 1;
