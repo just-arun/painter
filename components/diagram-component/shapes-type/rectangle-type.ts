@@ -37,7 +37,7 @@ export class Rect {
     editText = false;
     color = "#000";
     fontSize: number = 18;
-    fontWeight: any = FontWeight[1];
+    fontWeight: any = FontWeight[3];
     border: number = 2;
     borderColor: string = "#000000";
     textColor: string = "#000000";
@@ -88,7 +88,7 @@ export class Rect {
         this.borderColor = !!borderColor ? borderColor : '#000000';
         this.textColor = !!textColor ? textColor : "#000000";
         this.border = !!border ? border : 1;
-        this.fontWeight = !!fontWeight ? fontWeight : FontWeight[1];
+        this.fontWeight = !!fontWeight ? fontWeight : FontWeight[3];
         this.alignItem = !!alignItem ? alignItem : AlignItem[1];
         this.justifyContent = !!justifyContent ? justifyContent : JustifyContent[1];
     }
