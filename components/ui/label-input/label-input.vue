@@ -2,6 +2,7 @@
   <div class="label-input">
     <label :for="name">{{ label }}</label>
     <input
+      :readonly="readonly"
       :id="name"
       :type="inputType"
       v-model="value"
@@ -61,6 +62,9 @@ export default Vue.extend({
     value: {
       required: true,
     },
+    readonly: {
+      default: false,
+    }
   },
   data() {
     return {};

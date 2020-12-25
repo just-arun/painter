@@ -1,23 +1,31 @@
 <template>
-  <g 
-  @mousedown="mouseDown($event)"
-  class="shape" :id="`shapeWrapper${shape._id}`">
+  <g
+    @dragover="dragOver($event)"
+    @dragleave="dragLeave($event)"
+    :dropzone="true"
+    @drop="onDrop($event)"
+    @mousedown="mouseDown($event)"
+    class="shape"
+    :id="`shapeWrapper${shape._id}`"
+  >
     <text
-      :class="`name ${stagingShape == shape._id ? 'focused' : ''}`"
+      :class="`name editor ${stagingShape == shape._id ? 'focused' : ''}`"
       :x="getNamePos.x"
       :y="getNamePos.y - 6"
       >{{ shape.name }}</text
     >
     <path
-      v-if="stagingShape == shape._id"
+      v-if="stagingShape == shape._id && diagramMode == 1"
       :d="getPath"
+      class="editor"
       fill="transparent"
-      stroke="rgb(0, 119, 255)"
+      :stroke="`${dashedOutline ? 'red' : 'rgb(0, 119, 255)'}`"
     />
     <text
       v-if="stagingShape == shape._id"
       :x="sizeVal.x"
       :y="sizeVal.y"
+      class="editor"
       :style="`
     font-size: 8px;
     fill: rgb(0, 119, 255);
@@ -76,12 +84,12 @@
         :id="shape._id"
       />
     </g>
-    <g v-if="diagramMode == 1 && showClose">
+    <g class="editor" v-if="diagramMode == 1 && showClose">
       <switch :x="getNamePos.x + getNamePos.w + 5" :y="getNamePos.y - 15">
         <foreignObject
           v-if="showClose"
-          :x="getNamePos.x + getNamePos.w + 5"
-          :y="getNamePos.y - 15"
+          :x="getNamePos.x + getNamePos.w - 5"
+          :y="getNamePos.y - 18"
           width="24"
           height="24"
           requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
@@ -98,6 +106,31 @@
         </foreignObject>
       </switch>
     </g>
+    <switch class="editor" :x="getNamePos.x - 20" :y="getNamePos.y - 20">
+      <foreignObject
+        v-if="showClose"
+        :x="getNamePos.x - 20"
+        :y="getNamePos.y - 20"
+        width="24"
+        height="24"
+        requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+        :class="`close-btn ${stagingShape == shape._id ? 'focused' : ''}`"
+      >
+      <button
+      v-if="diagramMode == 1"
+        @dragstart="onDragStart($event)"
+        draggable="true"
+        >
+        <img
+        :id="`drager-${shape._id}`"
+          height="20"
+          width="20"
+          src="./../../../assets/icons/link.svg"
+          alt=""
+        />
+        </button>
+      </foreignObject
+    ></switch>
   </g>
 </template>
 
@@ -178,6 +211,7 @@ export default class ShapeComponent extends Vue {
   @Prop({ required: true }) stagingShape!: string;
   shapeType = ShapeType;
   menuOptions = [{ label: "" }];
+  dashedOutline = false;
 
   @Emit("select-element")
   selectElement() {
@@ -267,20 +301,53 @@ export default class ShapeComponent extends Vue {
   get sizeVal() {
     let par = {
       x: 0,
-      y: 0
-    }
+      y: 0,
+    };
 
     let obj: any = this.shape;
 
     if (this.shape.type == ShapeType.Circle) {
-      par.x = obj[obj.type].x - obj[obj.type].r
-      par.y = obj[obj.type].y + obj[obj.type].r + 15      
+      par.x = obj[obj.type].x - obj[obj.type].r;
+      par.y = obj[obj.type].y + obj[obj.type].r + 15;
       return par;
     }
 
-    par.x = obj[obj.type].x
-    par.y = obj[obj.type].y + obj[obj.type].h + 15
+    par.x = obj[obj.type].x;
+    par.y = obj[obj.type].y + obj[obj.type].h + 15;
     return par;
+  }
+
+  onDragStart(e: any) {
+    e.dataTransfer.setData("text", e.target.id);
+  }
+
+  dragOver(e: any) {
+    e.preventDefault();
+    this.dashedOutline = true;
+  }
+
+  dragLeave(e: any) {
+    this.dashedOutline = false;
+    // alert("stuff")
+  }
+
+  @Emit("link-shape")
+  linkShape(srcId: string) {
+    return {
+      src: srcId,
+      target: this.shape._id
+    }
+  }
+
+  // @Emit("data-change")
+  onDrop(e: any) {
+    e.preventDefault();
+    this.dashedOutline = false;
+    var data = e.dataTransfer.getData("text");
+    let id = String(data).split("-")
+    if (id.length > 1) {
+      this.linkShape(id[1]);
+    }
   }
 }
 </script>

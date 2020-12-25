@@ -2,7 +2,6 @@
   <div
     class="diagram-detail"
     :style="`
-  width: ${width}px;
   `"
   >
     <div class="diagram-detail__wrapper">
@@ -30,26 +29,30 @@
         </div> -->
         <div class="input-field__position">
           <v-input
+          :readonly="true"
             label="x:"
-            :value.sync="data[data.type].x"
+            :value="data[data.type].x"
             inputType="number"
             name="xPosition"
           />
           <v-input
+          :readonly="true"
             label="y:"
-            :value.sync="data[data.type].y"
+            :value="data[data.type].y"
             inputType="number"
             name="yPosition"
           />
         </div>
         <div class="input-field__position">
           <v-input
+          :readonly="true"
             label="h:"
             :value.sync="data[data.type].h"
             inputType="number"
             name="hPosition"
           />
           <v-input
+          :readonly="true"
             label="w:"
             :value.sync="data[data.type].w"
             inputType="number"
@@ -85,7 +88,8 @@
         label="Text"
         v-if="hideTextCondition"
       >
-        <div
+        <div style="padding: 0px 5px">
+          <div
           ref="textRef"
           @keyup="monitorText($event)"
           @blur="blurTextEvent($event)"
@@ -93,6 +97,7 @@
           contenteditable="true"
         >
           {{ text }}
+        </div>
         </div>
         <div style="height: 5px"></div>
         <div class="input-field-single">
@@ -139,7 +144,23 @@
         @change="data[data.type].fill = $event"
         label="Background"
       />
-      <div class="input-field"></div>
+      <div class="input-field">
+        <select>
+          <option v-for="(item, i) in shapesNameList" :key="`list-${i}`">
+            {{ item.name }}
+          </option>
+        </select>
+      </div>
+        <ul>
+          <li style="display: flex;justify-content: space-between;"
+           v-for="(item, i) in data.links" :key="`itm-${i}`">
+            <span>{{ getName(item) }}</span>
+            <button @click="removeLink(item)">
+              &Cross;
+            </button>
+          </li>
+        </ul>
+        <div style="height: 300px"></div>
     </div>
 
     <!-- <div
@@ -156,7 +177,7 @@
 @import "./diagram-detail.scss";
 </style>
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch, Emit } from "vue-property-decorator";
 import acordianVue from "~/components/ui/acordian/acordian.vue";
 import colorInputVue from "~/components/ui/color-input/color-input.vue";
 import labelInputVue from "~/components/ui/label-input/label-input.vue";
@@ -176,6 +197,7 @@ import { FontWeight } from "../shapes-text-util";
 })
 export default class DiagramDetail extends Vue {
   @Prop({ required: true, default: Object, type: Shape }) data!: Shape;
+  @Prop({ required: true }) shapesName!: { name: string, _id: string }[];
   width = 240;
   resize = false;
   lastPosition = 0;
@@ -205,6 +227,23 @@ export default class DiagramDetail extends Vue {
     { label: "Wireframe", value: ShapeFillType.stroke },
     { label: "Sticky Note", value: ShapeFillType.fill },
   ];
+
+  getName(id: string) {
+    let res = this.shapesName.find((res) => {
+      if (res._id == id) {
+        return res;
+      }
+    });
+    return !!res ? res.name : 'not found'
+  }
+
+  get shapesNameList() {
+    return this.shapesName.filter((res) => {
+      if (!this.data.links.includes(res._id)) {
+        return res;
+      }
+    })
+  }
 
   @Watch("data._id")
   updateNewShape() {
@@ -293,6 +332,11 @@ export default class DiagramDetail extends Vue {
 
   get hideTextCondition() {
     return !(this.data.type == "pencil" || this.data.type == 'line')
+  }
+
+  @Emit("data-change")
+  removeLink(id: string) {
+    this.data.removeLink(id);
   }
 }
 </script>

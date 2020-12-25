@@ -37,6 +37,7 @@ export interface ShapeInterface {
     name: string;
     type: ShapeType;
     user?: string | null;
+    links: string[];
     data: Rect | Circle | Triangle | Line | Pencil | ImageClass | TextClass;
 }
 
@@ -44,6 +45,7 @@ export interface ShapeInterface {
 export class Shape {
     _id: string;
     user?: string | null = null;
+    links: string[] = [];
     name: string;
     type: ShapeType;
     rect: Rect | null = null;
@@ -58,7 +60,8 @@ export class Shape {
         type,
         name,
         data,
-        user
+        user,
+        links
     }: ShapeInterface) {
         this._id = _id;
         this.name = name;
@@ -66,6 +69,26 @@ export class Shape {
         let da: any = data;
         this[type] = da;
         this.user = !!user ? user : null;
+        if (!!links) {
+            if (!!links.length) {
+                this.links = links;
+            }
+        }
+    }
+
+    addLinks(id: string) {
+        if (id == this._id) {
+            return;
+        }
+        if (!this.links.includes(id)) {
+            this.links.push(id);
+        }
+    }
+
+    removeLink(id: string) {
+        this.links = this.links.filter((res) => {
+            if (res != id) return res;
+        })
     }
 }
 

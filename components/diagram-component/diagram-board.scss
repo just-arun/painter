@@ -66,8 +66,9 @@
   fill:rgb(0, 119, 255);
   stroke: transparent;
   // stroke: rgba(255, 0, 0, 0.514);
+  // stroke-width: 50px;
   &:hover {
-    stroke-width: 100px;
+    stroke-width: 50px;
   }
 }
 
