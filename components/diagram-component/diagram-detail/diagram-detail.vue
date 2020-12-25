@@ -24,35 +24,28 @@
       </div>
       <hr class="divider" />
       <div class="input-field shape-position">
-        <!-- <div style="margin-bottom: 4px">
-          <b>Position</b>
-        </div> -->
         <div class="input-field__position">
           <v-input
-          :readonly="true"
             label="x:"
-            :value="data[data.type].x"
+            :value.sync="data[data.type].x"
             inputType="number"
             name="xPosition"
           />
           <v-input
-          :readonly="true"
             label="y:"
-            :value="data[data.type].y"
+            :value.sync="data[data.type].y"
             inputType="number"
             name="yPosition"
           />
         </div>
         <div class="input-field__position">
           <v-input
-          :readonly="true"
             label="h:"
             :value.sync="data[data.type].h"
             inputType="number"
             name="hPosition"
           />
           <v-input
-          :readonly="true"
             label="w:"
             :value.sync="data[data.type].w"
             inputType="number"
@@ -337,6 +330,14 @@ export default class DiagramDetail extends Vue {
   @Emit("data-change")
   removeLink(id: string) {
     this.data.removeLink(id);
+  }
+
+  @Emit("update-selected")
+  updateSelected(key: any, val: any) {
+    const cb = (shape: any) => {
+      shape[shape.type][key] = val;
+    }
+    return cb;
   }
 }
 </script>

@@ -61,7 +61,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     @Watch("shapes")
     monitorData() {
-        let eleId = this.shapes.map((res) => ({_id: res._id, name: res.name}));
+        let eleId = this.shapes.map((res) => ({ _id: res._id, name: res.name }));
         this.elementNames = eleId;
         let elems: any = [];
         elems = this.shapes.map((res) => {
@@ -543,27 +543,27 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                     if (!!rect) {
                         rect.canMove = true;
                     }
-                } else 
-                // if (!!this.selectedElements.length) {
-                //     if (!!this.selectedElements[0].rect) {
-                //         this.selectedElements[0].rect.canMove = true;
-                //     }
-                // }
-                if (this.mouseOverShape) {
-                    if (this.selectedElements.length == 1) {
-                        if (
-                            !!this.selectedElements[0].rect ||
-                            !!this.selectedElements[0].circle ||
-                            !!this.selectedElements[0].image ||
-                            !!this.selectedElements[0].triangle ||
-                            !!this.selectedElements[0].text ||
-                            !!this.selectedElements[0].pencil
-                        ) {
-                            let elem: any = this.selectedElements[0][this.selectedElements[0].type];
-                            elem.canMove = true;
+                } else
+                    // if (!!this.selectedElements.length) {
+                    //     if (!!this.selectedElements[0].rect) {
+                    //         this.selectedElements[0].rect.canMove = true;
+                    //     }
+                    // }
+                    if (this.mouseOverShape) {
+                        if (this.selectedElements.length == 1) {
+                            if (
+                                !!this.selectedElements[0].rect ||
+                                !!this.selectedElements[0].circle ||
+                                !!this.selectedElements[0].image ||
+                                !!this.selectedElements[0].triangle ||
+                                !!this.selectedElements[0].text ||
+                                !!this.selectedElements[0].pencil
+                            ) {
+                                let elem: any = this.selectedElements[0][this.selectedElements[0].type];
+                                elem.canMove = true;
+                            }
                         }
                     }
-                }
             }
         }
     }
@@ -586,24 +586,24 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             shape.move(e, this.targetElement);
             this.monitorData();
         } else
-        if (this.mouseOverShape) {
-            if (this.selectedElements.length == 1) {
-                if (
-                    !!this.selectedElements[0].rect ||
-                    !!this.selectedElements[0].circle ||
-                    !!this.selectedElements[0].image ||
-                    !!this.selectedElements[0].triangle ||
-                    !!this.selectedElements[0].text ||
-                    !!this.selectedElements[0].pencil
-                ) {
-                    let elem: any = this.selectedElements[0];
-                    if (elem[this.selectedElements[0].type].canMove) {
-                        elem[this.selectedElements[0].type].move(e, this.targetElement);
-                        this.monitorData();
+            if (this.mouseOverShape) {
+                if (this.selectedElements.length == 1) {
+                    if (
+                        !!this.selectedElements[0].rect ||
+                        !!this.selectedElements[0].circle ||
+                        !!this.selectedElements[0].image ||
+                        !!this.selectedElements[0].triangle ||
+                        !!this.selectedElements[0].text ||
+                        !!this.selectedElements[0].pencil
+                    ) {
+                        let elem: any = this.selectedElements[0];
+                        if (elem[this.selectedElements[0].type].canMove) {
+                            elem[this.selectedElements[0].type].move(e, this.targetElement);
+                            this.monitorData();
+                        }
                     }
                 }
             }
-        }
     }
 
     onMouseUp(e: MouseEvent) {
@@ -631,21 +631,21 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             shape.canMove = false;
             this.mouseOverShapeIndex = null;
         } else
-        if (this.selectedElements.length == 1) {
-            if (
-                !!this.selectedElements[0].rect ||
-                !!this.selectedElements[0].circle ||
-                !!this.selectedElements[0].image ||
-                !!this.selectedElements[0].triangle ||
-                !!this.selectedElements[0].text ||
-                !!this.selectedElements[0].pencil
-            ) {
-                let elem: any = this.selectedElements[0][this.selectedElements[0].type];
-                if (!!elem) {
-                    elem.canMove = false;
+            if (this.selectedElements.length == 1) {
+                if (
+                    !!this.selectedElements[0].rect ||
+                    !!this.selectedElements[0].circle ||
+                    !!this.selectedElements[0].image ||
+                    !!this.selectedElements[0].triangle ||
+                    !!this.selectedElements[0].text ||
+                    !!this.selectedElements[0].pencil
+                ) {
+                    let elem: any = this.selectedElements[0][this.selectedElements[0].type];
+                    if (!!elem) {
+                        elem.canMove = false;
+                    }
                 }
             }
-        }
     }
 
     onMouseOut(e: MouseEvent) {
@@ -654,19 +654,19 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             shape.canMove = false;
             this.mouseOverShapeIndex = null;
         } else
-        if (this.selectedElements.length == 1) {
-            if (
-                !!this.selectedElements[0].rect ||
-                !!this.selectedElements[0].circle ||
-                !!this.selectedElements[0].image ||
-                !!this.selectedElements[0].triangle ||
-                !!this.selectedElements[0].text ||
-                !!this.selectedElements[0].pencil
-            ) {
-                let elem: any = this.selectedElements[0][this.selectedElements[0].type];
-                elem.canMove = false;
+            if (this.selectedElements.length == 1) {
+                if (
+                    !!this.selectedElements[0].rect ||
+                    !!this.selectedElements[0].circle ||
+                    !!this.selectedElements[0].image ||
+                    !!this.selectedElements[0].triangle ||
+                    !!this.selectedElements[0].text ||
+                    !!this.selectedElements[0].pencil
+                ) {
+                    let elem: any = this.selectedElements[0][this.selectedElements[0].type];
+                    elem.canMove = false;
+                }
             }
-        }
     }
 
     contextMenu(e: MouseEvent) {
@@ -739,20 +739,20 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             let shape: any = this.shapes[this.mouseOverShapeIndex][this.shapes[this.mouseOverShapeIndex].type]
             shape.canMove = false;
         } else
-        if (!!this.selectedElements.length) {
-            if (
-                !!this.selectedElements[0].rect ||
-                !!this.selectedElements[0].circle ||
-                !!this.selectedElements[0].image ||
-                !!this.selectedElements[0].triangle ||
-                !!this.selectedElements[0].text ||
-                !!this.selectedElements[0].pencil
-            ) {
-                let elem: any = this.selectedElements[0][this.selectedElements[0].type];
-                elem.resize = false;
-                elem.canMove = false;
+            if (!!this.selectedElements.length) {
+                if (
+                    !!this.selectedElements[0].rect ||
+                    !!this.selectedElements[0].circle ||
+                    !!this.selectedElements[0].image ||
+                    !!this.selectedElements[0].triangle ||
+                    !!this.selectedElements[0].text ||
+                    !!this.selectedElements[0].pencil
+                ) {
+                    let elem: any = this.selectedElements[0][this.selectedElements[0].type];
+                    elem.resize = false;
+                    elem.canMove = false;
+                }
             }
-        }
         this.selectedElements = [];
     }
 
@@ -799,6 +799,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
         });
         this.shapes[ind].addLinks(target);
         this.monitorData();
+    }
+
+    updateSelected(cb: any) {
+        cb(this.selectedElements[0]);
     }
 
 }

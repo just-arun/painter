@@ -125,9 +125,10 @@
   />
   <d-detail
   v-if="selectedElements.length == 1 && diagramMode == 1"
-  :data="selectedElements[0]"
+  :data.sync="selectedElements[0]"
   :shapesName="elementNames"
   @data-change="monitorData($event)"
+  @update-selected="updateSelected($event)"
   />
   <d-footer :scale="scale" @change-scale="updateScale($event)" />
 </div>

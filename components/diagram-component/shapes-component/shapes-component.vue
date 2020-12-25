@@ -22,7 +22,7 @@
       :stroke="`${dashedOutline ? 'red' : 'rgb(0, 119, 255)'}`"
     />
     <text
-      v-if="stagingShape == shape._id"
+      v-if="stagingShape == shape._id && diagramMode == 1"
       :x="sizeVal.x"
       :y="sizeVal.y"
       class="editor"
@@ -106,7 +106,7 @@
         </foreignObject>
       </switch>
     </g>
-    <switch class="editor" :x="getNamePos.x - 20" :y="getNamePos.y - 20">
+    <switch class="editor link-btn-wrapper" :x="getNamePos.x - 20" :y="getNamePos.y - 20">
       <foreignObject
         v-if="showClose"
         :x="getNamePos.x - 20"
@@ -131,10 +131,29 @@
         </button>
       </foreignObject
     ></switch>
+    <!-- <text
+      class="hint"
+      :x="getNamePos.x - 35"
+      :y="getNamePos.y - 45"
+      style="font-size: 8px"
+    >
+      <tspan :x="getNamePos.x - 42" dy="1.2em">drag and drop on</tspan>
+      <tspan :x="getNamePos.x - 42" dy="1.2em">the shape to link</tspan>
+    </text> -->
   </g>
 </template>
 
 <style lang="scss">
+.link-btn-wrapper {
+  position: relative;
+  &:hover + .hint {
+    display: block;
+  }
+}
+  .hint {
+    display: none;
+    fill: rgb(161, 161, 161);
+  }
 .close-btn {
   text-align: left;
   display: none;
