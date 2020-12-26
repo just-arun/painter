@@ -1,3 +1,4 @@
+import { fObject } from './shape-util-functions';
 import { FontWeight, AlignItem, JustifyContent } from './../shapes-text-util';
 import { ShapeFillType, RelativePositionType } from "../shape-types";
 
@@ -79,7 +80,7 @@ export class Rect {
         this.w1 = w;
         this.x1 = x + w;
         this.y1 = y + h;
-        
+
         this.type = type;
         this.fill = fill;
         this.text = !!text ? text : '';
@@ -194,5 +195,31 @@ export class Rect {
 
     stopResize() {
         this.resize = false;
+    }
+
+    exportSvg() {
+        return `
+        <rect 
+            x="${this.x}" y="${this.y}"
+            height="${this.h}"
+            width="${this.w}" 
+            fill="${this.fill}"
+            stroke="${this.borderColor}"
+        ></rect>
+        ${fObject({
+            x: this.x,
+            y: this.y,
+            h: this.h,
+            w: this.w,
+            style: `
+display: flex;
+justify-content: ${this.justifyContent};
+align-items: ${this.alignItem};
+color: ${this.textColor};
+font-size: ${this.fontSize};
+font-weight: ${this.fontWeight};`,
+            text: this.text
+        })}
+        `
     }
 }

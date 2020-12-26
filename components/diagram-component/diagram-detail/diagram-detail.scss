@@ -19,8 +19,7 @@
 
 .diagram-detail {
   height: calc(100% - 40px);
-  max-height: calc(100% - 40px);
-  width: 220px;
+  max-height: calc(100% - 80px);
   position: fixed;
   right: 0px;
   top: 40px;
@@ -28,18 +27,28 @@
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px);
   text-align: left;
+  overflow-y: auto;
+  @extend .cus-scroll-bar;
+  width: 240px;
+  overflow-x: hidden;
+  &:hover {
+    // width: 600px;
+  }
   .text-content {
     max-height: 100px;
     overflow-y: auto;
-    overflow-x: hidden;
-    max-width: 100%;
+    // overflow-x: hidden;
+    // max-width: 100%;
+    width: 240px;
     box-sizing: border-box;
     border-radius: 2px;
     transition: .3s;
     padding: 5px 5px;
-    margin: 0px 5px;
+    // margin: 0px 5px;
     @extend .cus-scroll-bar;
     outline: none;
+    // overflow-y: auto;
+    // overflow-x: visible;
     border: 2px solid transparent;
     &.empty {
       position: relative;

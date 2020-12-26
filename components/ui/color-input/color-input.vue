@@ -93,9 +93,9 @@
       display: none;
       position: absolute;
       // height: 500px;
-      bottom: -20px;
-      left: -103%;
-      z-index: 2;
+      top: 36px;
+      right: 0px;
+      z-index: 3;
     }
   }
 }
@@ -143,7 +143,6 @@ export default Vue.extend({
         this.$emit("change", value);
       }
       let color: any = this.colors;
-      console.log(color.hex8);
       this.$emit("change", color.hex8);
     },
     hexToRGB(hex: string, a: number) {

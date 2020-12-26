@@ -2,10 +2,11 @@
   <div class="label-input">
     <label :for="name">{{ label }}</label>
     <input
+      :readonly="readonly"
       :id="name"
       :type="inputType"
-      v-model="value"
-      @input="$emit('update:value', value)"
+      :value="value"
+      @input="emitChange($event)"
     />
   </div>
 </template>
@@ -61,9 +62,19 @@ export default Vue.extend({
     value: {
       required: true,
     },
+    readonly: {
+      default: false,
+    }
   },
   data() {
     return {};
   },
+  methods: {
+    emitChange(event: any) {
+      console.log(event);
+      this.$emit('update:value', event.target.value);
+      // this.$emit('change', event.target.value)
+    }
+  }
 });
 </script>

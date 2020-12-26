@@ -43,6 +43,14 @@ export default class DiagramBoard extends mixins(CanvasVarsMixin) {
 
   }
 
+  saveImage() {
+    const mainSvg = document.querySelector("#mainSvg");
+    let newSvg: any = mainSvg?.cloneNode(true);
+    newSvg?.querySelectorAll(".editor").forEach((res: any) => {
+      res.parentElement?.removeChild(res);
+    })
+    this.saveSvg(newSvg, `${this.name}.svg`);
+  }
 }
 </script>
 

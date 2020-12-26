@@ -2,7 +2,6 @@
   <div
     class="diagram-detail"
     :style="`
-  width: ${width}px;
   `"
   >
     <div class="diagram-detail__wrapper">
@@ -25,9 +24,6 @@
       </div>
       <hr class="divider" />
       <div class="input-field shape-position">
-        <!-- <div style="margin-bottom: 4px">
-          <b>Position</b>
-        </div> -->
         <div class="input-field__position">
           <v-input
             label="x:"
@@ -85,7 +81,8 @@
         label="Text"
         v-if="hideTextCondition"
       >
-        <div
+        <div style="padding: 0px 5px">
+          <div
           ref="textRef"
           @keyup="monitorText($event)"
           @blur="blurTextEvent($event)"
@@ -93,6 +90,7 @@
           contenteditable="true"
         >
           {{ text }}
+        </div>
         </div>
         <div style="height: 5px"></div>
         <div class="input-field-single">
@@ -139,7 +137,24 @@
         @change="data[data.type].fill = $event"
         label="Background"
       />
-      <div class="input-field"></div>
+      <div class="input-field">
+        <select>
+          <option v-for="(item, i) in shapesNameList" :key="`list-${i}`">
+            {{ item.name }}
+          </option>
+        </select>
+      </div>
+        <ul>
+          <li style="display: flex;justify-content: space-between;"
+           v-for="(item, i) in data.links" :key="`itm-${i}`">
+            <span>{{ getName(item) }}</span>
+            <button @click="removeLink(item)">
+              &Cross;
+            </button>
+          </li>
+        </ul>
+        <!-- <button @click="saveBtn()">save as svg</button> -->
+        <div style="height: 300px"></div>
     </div>
 
     <!-- <div
@@ -156,12 +171,13 @@
 @import "./diagram-detail.scss";
 </style>
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch, Emit, Mixins } from "vue-property-decorator";
 import acordianVue from "~/components/ui/acordian/acordian.vue";
 import colorInputVue from "~/components/ui/color-input/color-input.vue";
 import labelInputVue from "~/components/ui/label-input/label-input.vue";
 import selectVue from "~/components/ui/select/select.vue";
 import ToggleButton from "~/components/ui/toggle-button/toggle-button.vue";
+import { ArrayFunction } from "../array-functions";
 import { Shape, ShapeFillType } from "../shape-types";
 import { FontWeight } from "../shapes-text-util";
 
@@ -174,8 +190,9 @@ import { FontWeight } from "../shapes-text-util";
     "v-toggle-button": ToggleButton,
   },
 })
-export default class DiagramDetail extends Vue {
+export default class DiagramDetail extends Mixins(ArrayFunction) {
   @Prop({ required: true, default: Object, type: Shape }) data!: Shape;
+  @Prop({ required: true }) shapesName!: { name: string, _id: string }[];
   width = 240;
   resize = false;
   lastPosition = 0;
@@ -205,6 +222,23 @@ export default class DiagramDetail extends Vue {
     { label: "Wireframe", value: ShapeFillType.stroke },
     { label: "Sticky Note", value: ShapeFillType.fill },
   ];
+
+  getName(id: string) {
+    let res = this.shapesName.find((res) => {
+      if (res._id == id) {
+        return res;
+      }
+    });
+    return !!res ? res.name : 'not found'
+  }
+
+  get shapesNameList() {
+    return this.shapesName.filter((res) => {
+      if (!this.data.links.includes(res._id)) {
+        return res;
+      }
+    })
+  }
 
   @Watch("data._id")
   updateNewShape() {
@@ -293,6 +327,44 @@ export default class DiagramDetail extends Vue {
 
   get hideTextCondition() {
     return !(this.data.type == "pencil" || this.data.type == 'line')
+  }
+
+  @Emit("data-change")
+  removeLink(id: string) {
+    this.data.removeLink(id);
+  }
+
+  @Emit("update-selected")
+  updateSelected(key: any, val: any) {
+    const cb = (shape: any) => {
+      shape[shape.type][key] = val;
+    }
+    return cb;
+  }
+
+  saveBtn() {
+    let elem = document.querySelector(`#shape-${this.data._id}`);
+    let payload = elem?.outerHTML.toString();
+    let data: any = this.data[this.data.type];
+    let svg = `
+    <svg
+    viewBox="${data.x} ${data.y} ${data.w} ${data.h}"
+    height="${data.h}"
+    width="${data.w}"
+    >
+    ${payload}
+    </svg>
+    `;
+
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(svg, "image/svg+xml").querySelector("svg");
+
+    console.log(doc);
+  
+    
+    
+    
+    this.saveSvg(doc, `${this.data.name}.svg`);
   }
 }
 </script>

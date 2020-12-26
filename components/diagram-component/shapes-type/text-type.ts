@@ -61,4 +61,18 @@ export class TextClass extends Rect {
     get getJson() {
         return this;
     }
+
+
+    exportSvg() {
+        return `
+        <rect 
+            x="${this.x}" y="${this.y}"
+            height="${this.h} 
+            width="${this.w}" 
+            fill="${this.fill}"
+            stroke="${this.borderColor}"
+        ></rect>
+        
+        `
+    }
 }

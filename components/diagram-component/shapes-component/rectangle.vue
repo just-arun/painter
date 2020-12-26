@@ -7,7 +7,7 @@
       :stroke-width="data.border"
       :height="data.h"
       :width="data.w"
-      :fill="fillAble ? data.fill : 'transparent'"
+      :fill="fillAble ? data.fill : '#f4f4f4'"
       :stroke="!fillAble ? data.borderColor : 'transparent'"
     />
     <switch :x="data.x" :y="data.y">
@@ -45,7 +45,7 @@
       </foreignObject>
     </switch>
     <rect 
-      :class="`${data.canMove ?'grabbing' : 'hand'}`"
+      :class="`${data.canMove ?'grabbing' : 'hand'} editor`"
       v-if="!textEdit"
       @dblclick="focusOnInput()"
       @mousedown="mouseDown($event)"

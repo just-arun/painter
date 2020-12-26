@@ -1,8 +1,10 @@
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import { RelativePositionType, DeviceType } from './shape-types';
+import { ArrayFunction } from './array-functions';
+import { Component, Vue, Watch, Mixins } from 'vue-property-decorator';
+import { RelativePositionType, DeviceType, DiagramMode, ShapeType, Shape, ShapeFillType } from './shape-types';
 
 @Component({})
-export default class CanvasMixin extends Vue {
+export default class CanvasMixin extends Mixins(ArrayFunction) {
+    mouseOverCanvas = false;
     deviceType: DeviceType;
     canvas = {
         height: 0,
@@ -65,7 +67,7 @@ export default class CanvasMixin extends Vue {
     constructor() {
         super();
         this.deviceType = this.getDevice();
-        
+
     }
     mounted() {
         this.initCanvas();
@@ -160,6 +162,79 @@ export default class CanvasMixin extends Vue {
         }
     }
 
+
+
+    drawPath(s: any, e: any) {
+        let startX: number = s.x;
+        let startY: number = s.y;
+        let endX: number = e.x;
+        let endY: number = e.y;
+        const signum = (x: number) => {
+            return (x < 0) ? -1 : 1;
+        }
+        const absolute = (x: number) => {
+            return (x < 0) ? -x : x;
+        }
+        // get the path's stroke width (if one wanted to be  really precize, one could use half the stroke size)
+        var stroke = 2;
+
+        let startXR = startX;
+        let startYR = startY;
+        let sw = s.w;
+        let sh = s.h;
+        let endXR = endX;
+        let endYR = endY;
+        let ew = e.w;
+        let eh = e.h;
+
+        let isCircle1 = false;
+        let isCircle2 = false;
+
+        if (startY > endY) {
+            startX = endXR;
+            startY = endYR;
+            sw = e.w;
+            sh = e.h;
+            ew = s.w;
+            eh = s.h;
+            endX = startXR;
+            endY = startYR;
+            if (s.type == ShapeType.Circle) { isCircle2 = true; }
+            if (e.type == ShapeType.Circle) { isCircle1 = true; }
+        } else {
+            if (s.type == ShapeType.Circle) { isCircle1 = true; }
+            if (e.type == ShapeType.Circle) { isCircle2 = true; }
+        }
+
+        if (!isCircle1) {
+            startX += (sw / 2);
+            startY += (sh / 2);
+        }
+        if (!isCircle2) {
+            endX += (ew / 2);
+            endY += (eh / 2);
+        }
+
+        var deltaX = (endX - startX) * 0.15;
+        var deltaY = (endY - startY) * 0.15;
+        var delta = deltaY < absolute(deltaX) ? deltaY : absolute(deltaX);
+        var arc1 = 0;
+        var arc2 = 1;
+        if (startX > endX) {
+            arc1 = 1;
+            arc2 = 0;
+        }
+        // draw tha pipe-like path
+        // 1. move a bit down, 2. arch,  3. move a bit to the right, 4.arch, 5. move down to the end 
+        let path = "M" + startX + " " + startY +
+            " V" + (startY + delta) +
+            " A" + delta + " " + delta + " 0 0 " + arc1 + " " + (startX + delta * signum(deltaX)) + " " + (startY + 2 * delta) +
+            " H" + (endX - delta * signum(deltaX)) +
+            " A" + delta + " " + delta + " 0 0 " + arc2 + " " + endX + " " + (startY + 3 * delta) +
+            " V" + endY;
+        return path;
+    }
+
     getDevice(): DeviceType {
         const ua = navigator.userAgent;
         if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
@@ -167,7 +242,7 @@ export default class CanvasMixin extends Vue {
         }
         if (
             /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
-            ua
+                ua
             )
         ) {
             return DeviceType.Mobile;

@@ -1,4 +1,5 @@
 import { RelativePositionType, ShapeFillType } from "../shape-types";
+import { fObject } from "./shape-util-functions";
 
 export interface LineType {
     x: number;
@@ -107,5 +108,16 @@ export class Line {
 
     resizeBr(e: RelativePositionType) {
         this.updateEnd(e);
+    }
+    exportSvg() {
+        return `
+        <rect 
+            x="${this.x}" y="${this.y}"
+            height="${this.h} 
+            width="${this.w}" 
+            fill="${this.fill}"
+        ></rect>
+        
+        `
     }
 }

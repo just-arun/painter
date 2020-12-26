@@ -26,7 +26,7 @@
             font-weight: ${data.fontWeight};
             `"
             ref="textRef"
-            :contenteditable="editText"
+            :contenteditable="editText && diagramMode == 1"
             @blur="blurOut($event)"
             @keyup="keyUp($event)"
           >
@@ -36,7 +36,7 @@
       </foreignObject>
     </switch>
     <rect
-      v-if="!editText"
+      v-if="!editText || diagramMode == 0"
       @dblclick="editTextAction()"
       :x="data.x - data.r"
       :y="data.y - data.r"
@@ -75,18 +75,24 @@
 </style>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from "vue-property-decorator";
-import { ShapeFillType } from "../shape-types";
+import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { DiagramMode, ShapeFillType } from "../shape-types";
 import { Circle } from "../shapes-type/circle-type";
 
 @Component({})
 export default class CircleComponent extends Vue {
+  @Prop({ required: true }) diagramMode!: DiagramMode;
   @Prop({ required: true, default: Object, type: Circle }) data!: Circle;
-  text = "";
+  text = this.data.text;
   editText = true;
 
   get fillAble() {
     return this.data?.type == ShapeFillType.fill;
+  }
+
+  @Watch("diagramMode")
+  watchDiagramMode(val: number) {
+    this.editText = false;
   }
 
   @Emit("data.text")
