@@ -494,6 +494,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
         }
     }
 
+    onMouseOver(event: MouseEvent) {
+        this.mouseOverCanvas = true;
+    }
+
     onMouseDown(event: MouseEvent) {
         this.editing = true;
         // edit mode
@@ -649,6 +653,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     }
 
     onMouseOut(e: MouseEvent) {
+        this.mouseOverCanvas = false;
         if (this.mouseOverShapeIndex != null) {
             let shape: any = this.shapes[this.mouseOverShapeIndex][this.shapes[this.mouseOverShapeIndex].type]
             shape.canMove = false;

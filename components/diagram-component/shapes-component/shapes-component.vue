@@ -35,6 +35,7 @@
       {{ Math.floor(shape[shape.type].w) }}
     </text>
     <g
+      :id="`shape-${shape._id}`"
       @click="selectElement()"
       @mouseover="mouseOver($event)"
       @mouseout="mouseOut($event)"

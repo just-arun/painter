@@ -153,6 +153,7 @@
             </button>
           </li>
         </ul>
+        <!-- <button @click="saveBtn()">save as svg</button> -->
         <div style="height: 300px"></div>
     </div>
 
@@ -170,12 +171,13 @@
 @import "./diagram-detail.scss";
 </style>
 <script lang="ts">
-import { Vue, Component, Prop, Watch, Emit } from "vue-property-decorator";
+import { Vue, Component, Prop, Watch, Emit, Mixins } from "vue-property-decorator";
 import acordianVue from "~/components/ui/acordian/acordian.vue";
 import colorInputVue from "~/components/ui/color-input/color-input.vue";
 import labelInputVue from "~/components/ui/label-input/label-input.vue";
 import selectVue from "~/components/ui/select/select.vue";
 import ToggleButton from "~/components/ui/toggle-button/toggle-button.vue";
+import { ArrayFunction } from "../array-functions";
 import { Shape, ShapeFillType } from "../shape-types";
 import { FontWeight } from "../shapes-text-util";
 
@@ -188,7 +190,7 @@ import { FontWeight } from "../shapes-text-util";
     "v-toggle-button": ToggleButton,
   },
 })
-export default class DiagramDetail extends Vue {
+export default class DiagramDetail extends Mixins(ArrayFunction) {
   @Prop({ required: true, default: Object, type: Shape }) data!: Shape;
   @Prop({ required: true }) shapesName!: { name: string, _id: string }[];
   width = 240;
@@ -338,6 +340,31 @@ export default class DiagramDetail extends Vue {
       shape[shape.type][key] = val;
     }
     return cb;
+  }
+
+  saveBtn() {
+    let elem = document.querySelector(`#shape-${this.data._id}`);
+    let payload = elem?.outerHTML.toString();
+    let data: any = this.data[this.data.type];
+    let svg = `
+    <svg
+    viewBox="${data.x} ${data.y} ${data.w} ${data.h}"
+    height="${data.h}"
+    width="${data.w}"
+    >
+    ${payload}
+    </svg>
+    `;
+
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(svg, "image/svg+xml").querySelector("svg");
+
+    console.log(doc);
+  
+    
+    
+    
+    this.saveSvg(doc, `${this.data.name}.svg`);
   }
 }
 </script>

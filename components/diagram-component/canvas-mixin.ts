@@ -4,6 +4,7 @@ import { RelativePositionType, DeviceType, DiagramMode, ShapeType, Shape, ShapeF
 
 @Component({})
 export default class CanvasMixin extends Mixins(ArrayFunction) {
+    mouseOverCanvas = false;
     deviceType: DeviceType;
     canvas = {
         height: 0,
@@ -204,7 +205,7 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
             if (s.type == ShapeType.Circle) { isCircle1 = true; }
             if (e.type == ShapeType.Circle) { isCircle2 = true; }
         }
-        
+
         if (!isCircle1) {
             startX += (sw / 2);
             startY += (sh / 2);

@@ -1,4 +1,5 @@
 import { RelativePositionType, ShapeFillType } from "../shape-types";
+import { fObject } from "./shape-util-functions";
 
 
 export interface PencilType {
@@ -192,5 +193,17 @@ export class Pencil {
     resizeBc(e: RelativePositionType) {
         let h = e.clientY - this.y;
         this.h = h > 10 ? h : 10;
+    }
+
+
+    exportSvg() {
+        return `
+        <rect 
+            x="${this.x}" y="${this.y}"
+            height="${this.h} 
+            width="${this.w}" 
+            fill="${this.fill}"
+        ></rect>
+       `;
     }
 }
