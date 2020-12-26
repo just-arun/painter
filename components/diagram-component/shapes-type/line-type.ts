@@ -120,4 +120,7 @@ export class Line {
         
         `
     }
+    move(e: RelativePositionType, target?: { clientX: number, clientY: number }) {
+
+    }
 }

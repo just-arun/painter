@@ -2,55 +2,25 @@
   <!-- <div style="position: fixed;top: 200px;left: 300px; z-index: 2;">
     <button @click="saveImage()">save</button>
   </div> -->
-  <d-header
-  :name="name"
-  :fillMode="fillMode"
-  :diagramMode="diagramMode"
-  @switch-mode="switchMode($event)"
-  @update-name="updateName($event)"
-  @change-fill-mode="changeFillMode($event)" />
-  <shapes-list
-  :shapes="shapes"
-  :selectedElement="selectedElementsIds"
-  @focus-to-shape="focusToShape($event)"
-  :show="showShapesList"
-  @toggle-show="showShapesList=$event"
-  />
+  <d-header :name="name" :fillMode="fillMode" :diagramMode="diagramMode" @switch-mode="switchMode($event)"
+    @update-name="updateName($event)" @change-fill-mode="changeFillMode($event)" />
+  <shapes-list :shapes="shapes" :selectedElement="selectedElementsIds" @focus-to-shape="focusToShape($event)"
+    :show="showShapesList" @toggle-show="showShapesList=$event" />
   <div @dragenter="onDragEnter($event)" @dragleave="onDragLeave()" ref="canvasWrapper" id="canvasWrapper">
-    <svg 
-    id="mainSvg"
-    @click="onClick($event)"
-    @mousedown="onMouseDown($event)"
-    @mousemove="onMouseMove($event)"
-    @mouseup="onMouseUp($event)"
-    @mouseover="onMouseOver($event)"
-    @mouseout="onMouseOut($event)"
-    @contextmenu="contextMenu($event)"
-    :class="`canvas ${mouseOverShape ? 'over-shape' : ''}`" 
-    :height="canvas.height" 
-    :width="canvas.width"
-    :viewBox="viewBoxValue"
-    >
-      <rect x="0" y="0" 
-      :height="canvas.height" 
-      :width="canvas.width" 
-      fill="#f4f4f4"
-      class="canvas-background" 
-      @click="focusOut()"
-      />
+    <svg id="mainSvg" @click="onClick($event)" @mousedown="onMouseDown($event)" @mousemove="onMouseMove($event)"
+      @mouseup="onMouseUp($event)" @mouseover="onMouseOver($event)" @mouseout="onMouseOut($event)"
+      @contextmenu="contextMenu($event)" :class="`canvas ${mouseOverShape ? 'over-shape' : ''}`" :height="canvas.height"
+      :width="canvas.width" :viewBox="viewBoxValue">
+      <rect x="0" y="0" :height="canvas.height" :width="canvas.width" fill="#f4f4f4" class="canvas-background"
+        @click="focusOut()" />
       <!-- <path @click="focusOut()"
        fill="transparent"
        class="bg-cross"
       :d="mousePos" /> -->
-      <g 
-      ref="mainGroup"
-      id="mainGroup"
-      :transform="`${matrixValue}`"
-      :transform-origin="transformOrigin"
-      >
+      <g ref="mainGroup" id="mainGroup" :transform="`${matrixValue}`" :transform-origin="transformOrigin">
 
-      
-      <!-- <path 
+
+        <!-- <path 
       v-if="selectedElements.length == 1 && selectElementDimension"
       :d="selectElementDimension.path"
       fill="transparent"
@@ -64,53 +34,29 @@
        {{ selectElementDimension.path }}
       </text> -->
 
-        <path
-        v-for="(item, i) in getLinkPath"
-        :key="`link-path-${i}`"
-        fill="none"
-        stroke="#000"
-        :d="item"
-        />
+        <path v-for="(item, i) in getLinkPath" :key="`link-path-${i}`" fill="none" stroke="#000" :d="item" />
 
 
-        <shapes-component
-        :diagramMode="diagramMode"
-        @link-shape="linkShape($event)"
-        v-for="(shape, i) in shapes"
-        :key="shape._id"
-        :shape="shape"
-        :stagingShape="selectedElements.length == 1 ? selectedElements[0]._id : null"
-        @select-element="selectElement($event)"
-        @mouse-down="mouseDownShapeFun($event)"
-        @mouse-over="mouseOverShapeFun($event, i)"
-        @mouse-out="mouseOutShapeFun($event)"
-        @delete-element="deleteElement($event)"
-        ></shapes-component>
+        <shapes-component :diagramMode="diagramMode" @link-shape="linkShape($event)" v-for="(shape, i) in shapes"
+          :key="shape._id" :shape="shape" :stagingShape="selectedElements.length == 1 ? selectedElements[0]._id : null"
+          @select-element="selectElement($event)" @mouse-down="mouseDownShapeFun($event)"
+          @mouse-over="mouseOverShapeFun($event, i)" @mouse-out="mouseOutShapeFun($event)"
+          @delete-element="deleteElement($event)"></shapes-component>
 
         <g v-if="selectedElements.length == 1 && selectElementDimension && diagramMode == 1">
-          <rect
-          draggable="true"
-          v-for="(itm, i) in selectElementDimension.dragPart"
-          :key="`dragabl-${i}`"
-          :x="itm.x"
-          :y="itm.y"
-          height="6"
-          width="6"
-          @mousedown="startResizeFun()"
-          @mouseup="stopResizeFun()"
-          @mouseout="stopResizeFun()"
-          @mousemove="startResize($event, itm.type)"
-          :class="`resize-hand ${itm.type} ${selectedElements[0].canMove ? 'can-move': ''}`"
-          />
+          <rect draggable="true" v-for="(itm, i) in selectElementDimension.dragPart" :key="`dragabl-${i}`" :x="itm.x"
+            :y="itm.y" height="6" width="6" @mousedown="startResizeFun()" @mouseup="stopResizeFun()"
+            @mouseout="stopResizeFun()" @mousemove="startResize($event, itm.type)"
+            :class="`resize-hand ${itm.type} ${selectedElements[0].canMove ? 'can-move': ''}`" />
         </g>
-        <text v-if="selectedTool && lastMousePosition" 
-        :x="lastMousePosition.clientX + 10"
-        :y="lastMousePosition.clientY + 22"
-        style="font-size: 10px;"
-        >
+        <text v-if="selectedTool && lastMousePosition" :x="lastMousePosition.clientX + 10"
+          :y="lastMousePosition.clientY + 22" style="font-size: 10px;">
           {{ cursorVal[selectedTool] }}
         </text>
       </g>
+      <!-- <path v-if="!!getOldMousePosition" 
+      :d="getOldMousePosition"
+       stroke="#04e2ff" fill="#04e2ff59" /> -->
     </svg>
     <!-- <div @dragenter="onDragEnter($event)" v-if="dragOver" class="drop-zone">
       <div class="drop">
@@ -118,18 +64,9 @@
       </div>
     </div> -->
   </div>
-  <d-tool
-  :diagramMode="diagramMode" 
-  :selected="selectedTool" 
-  :fillMode="fillMode"
-  @change="updateSelectedTool($event)" 
-  />
-  <d-detail
-  v-if="selectedElements.length == 1 && diagramMode == 1"
-  :data.sync="selectedElements[0]"
-  :shapesName="elementNames"
-  @data-change="monitorData($event)"
-  @update-selected="updateSelected($event)"
-  />
+  <d-tool :diagramMode="diagramMode" :selected="selectedTool" :fillMode="fillMode"
+    @change="updateSelectedTool($event)" />
+  <d-detail v-if="selectedElements.length == 1 && diagramMode == 1" :data.sync="selectedElements[0]"
+    :shapesName="elementNames" @data-change="monitorData($event)" @update-selected="updateSelected($event)" />
   <d-footer :scale="scale" @change-scale="updateScale($event)" />
 </div>

@@ -23,6 +23,22 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
         tx: 0,
         ty: 0
     }
+    oldMousePosition = {
+        x: 0,
+        y: 0,
+        x1: 0,
+        y1: 0,
+        draw: false
+    }
+
+    get getOldMousePosition() {
+        const { x, x1, y, y1, draw } = this.oldMousePosition;
+        let w = x1 - x;
+        let h = y1 - y;
+        if (draw) {
+            return `M${x},${y} h${w} v${h} h${-w} v${-h}`;
+        } return false;
+    }
     targetElement = {
         clientX: 0,
         clientY: 0,

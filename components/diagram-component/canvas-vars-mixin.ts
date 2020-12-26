@@ -239,23 +239,25 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             y: y - 6,
                         });
 
-                        dragPart.push({
-                            type: "cl",
-                            x: x - 5,
-                            y: y + h / 2 - 3,
-                        });
-                        dragPart.push({
-                            type: "cr",
-                            x: x + w - 1,
-                            y: y + h / 2 - 3,
-                        });
+                        if (this.selectedElements[0].type != ShapeType.Triangle) {
+                            dragPart.push({
+                                type: "cl",
+                                x: x - 5,
+                                y: y + h / 2 - 3,
+                            });
+                            dragPart.push({
+                                type: "cr",
+                                x: x + w - 1,
+                                y: y + h / 2 - 3,
+                            });
+                        }
 
                         dragPart.push({
                             type: "bl",
                             x: x - 5,
                             y: y + h - 1,
                         });
-                        
+
 
                         let bcHand = {
                             type: "bc",
@@ -507,6 +509,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     onMouseDown(event: MouseEvent) {
         this.editing = true;
+        this.startSelectDraw(event);
         // edit mode
         if (this.diagramMode == DiagramMode.Edit) {
             let e = this.relativePosition(event);
@@ -581,6 +584,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     onMouseMove(event: MouseEvent) {
         this.updateLastPosition(event);
+        this.moveSelectDraw(event);
         const e = this.relativePosition(event);
         if (this.diagramMode == DiagramMode.Edit) {
             if (this.editing) {
@@ -596,28 +600,28 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             let shape: any = this.shapes[this.mouseOverShapeIndex][this.shapes[this.mouseOverShapeIndex].type];
             shape.move(e, this.targetElement);
             this.monitorData();
-        } else
-            if (this.mouseOverShape) {
-                if (this.selectedElements.length == 1) {
-                    if (
-                        !!this.selectedElements[0].rect ||
-                        !!this.selectedElements[0].circle ||
-                        !!this.selectedElements[0].image ||
-                        !!this.selectedElements[0].triangle ||
-                        !!this.selectedElements[0].text ||
-                        !!this.selectedElements[0].pencil
-                    ) {
-                        let elem: any = this.selectedElements[0];
-                        if (elem[this.selectedElements[0].type].canMove) {
-                            elem[this.selectedElements[0].type].move(e, this.targetElement);
-                            this.monitorData();
-                        }
+        } else if (this.mouseOverShape) {
+            if (this.selectedElements.length == 1) {
+                if (
+                    !!this.selectedElements[0].rect ||
+                    !!this.selectedElements[0].circle ||
+                    !!this.selectedElements[0].image ||
+                    !!this.selectedElements[0].triangle ||
+                    !!this.selectedElements[0].text ||
+                    !!this.selectedElements[0].pencil
+                ) {
+                    let elem: any = this.selectedElements[0];
+                    if (elem[this.selectedElements[0].type].canMove) {
+                        elem[this.selectedElements[0].type].move(e, this.targetElement);
+                        this.monitorData();
                     }
                 }
             }
+        }
     }
 
     onMouseUp(e: MouseEvent) {
+        this.resetSelectDraw();
         if (
             this.selectedTool == ShapeType.Pencil ||
             this.selectedTool == ShapeType.Line
@@ -660,6 +664,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     }
 
     onMouseOut(e: MouseEvent) {
+        // this.resetSelectDraw();
         this.mouseOverCanvas = false;
         if (this.mouseOverShapeIndex != null) {
             let shape: any = this.shapes[this.mouseOverShapeIndex][this.shapes[this.mouseOverShapeIndex].type]
@@ -815,6 +820,33 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     updateSelected(cb: any) {
         cb(this.selectedElements[0]);
+    }
+
+
+    startSelectDraw(e: MouseEvent) {
+        if (!!!this.selectedTool && this.mouseOverShapeIndex == null) {
+            this.oldMousePosition = {
+                x: e.clientX,
+                y: e.clientY,
+                x1: e.clientX,
+                y1: e.clientY,
+                draw: true,
+            };
+        }
+    }
+
+    moveSelectDraw(e: MouseEvent) {
+        if (
+            !!!this.selectedTool && 
+            this.oldMousePosition.draw
+        ) {
+            this.oldMousePosition.x1 = e.clientX;
+            this.oldMousePosition.y1 = e.clientY;
+        }
+    }
+
+    resetSelectDraw() {
+        this.oldMousePosition = { x: 0, x1: 0, y: 0, y1: 0, draw: false }
     }
 
 }

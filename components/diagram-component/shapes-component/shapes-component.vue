@@ -21,7 +21,7 @@
       fill="transparent"
       :stroke="`${dashedOutline ? 'red' : 'rgb(0, 119, 255)'}`"
     />
-    <polygon
+    <!-- <polygon
     v-if="(
       stagingShape == shape._id && 
       diagramMode == 1 && 
@@ -30,7 +30,7 @@
       :points="trianglePoint"
       fill="transparent"
       :stroke="`${dashedOutline ? 'red' : 'rgb(0, 119, 255)'}`"
-    />
+    /> -->
     <text
       v-if="stagingShape == shape._id && diagramMode == 1"
       :x="sizeVal.x"
@@ -296,7 +296,7 @@ export default class ShapeComponent extends Vue {
     let w = Number(s.w) + 8;
     let h = Number(s.h) + 8;
     let bottomPeak = Number(s.bottomPeak);
-    return `${x},${y} ${x+w},${y} ${x+w},${y+h} ${x+(w/2)},${y + h + bottomPeak + 2} ${x},${y+h}`
+    return `${x+(w/2)},${y - 2} ${x+(w/2)},${y - 2} ${x+w + 2},${y+h} ${x+(w/2)},${y + h + bottomPeak} ${x-2},${y+h}`
   }
 
   get showClose() {
@@ -358,6 +358,7 @@ export default class ShapeComponent extends Vue {
   }
 
   onDragStart(e: any) {
+    // e.target.style.display = "none";
     e.dataTransfer.setData("text", e.target.id);
   }
 
