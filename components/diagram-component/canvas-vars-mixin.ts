@@ -255,11 +255,18 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             x: x - 5,
                             y: y + h - 1,
                         });
-                        dragPart.push({
+                        
+
+                        let bcHand = {
                             type: "bc",
                             x: x + w / 2 - 3,
                             y: y + h - 1,
-                        });
+                        };
+
+                        if (!!this.selectedElements[0].triangle) {
+                            bcHand.y = bcHand.y + elem.bottomPeak + 1;
+                        }
+                        dragPart.push(bcHand);
                     }
                     if (!!this.selectedElements[0].circle) {
                         x = this.selectedElements[0].circle.x - this.selectedElements[0].circle.r - 2;

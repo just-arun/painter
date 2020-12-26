@@ -33,7 +33,7 @@ export default class DiagramTool extends Vue {
     { label: "Pencil", value: "pencil", icon: "pencil" },
     { label: "Line", value: "line", icon: "line" },
     { label: "Rectangle", value: "rect", icon: "rectangle" },
-    { label: "Triangle", value: "triangle", icon: "triangle" },
+    { label: "Poligon", value: "triangle", icon: "triangle" },
     { label: "Circle", value: "circle", icon: "circle" },
     { label: "Text", value: "text", icon: "text" },
     { label: "Image", value: "image", icon: "img", stroke: true },

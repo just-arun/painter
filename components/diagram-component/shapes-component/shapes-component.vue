@@ -15,16 +15,26 @@
       >{{ shape.name }}</text
     >
     <path
-      v-if="stagingShape == shape._id && diagramMode == 1"
+      v-if="stagingShape == shape._id && diagramMode == 1 && this.shape.type != 'triangle'"
       :d="getPath"
       class="editor"
+      fill="transparent"
+      :stroke="`${dashedOutline ? 'red' : 'rgb(0, 119, 255)'}`"
+    />
+    <polygon
+    v-if="(
+      stagingShape == shape._id && 
+      diagramMode == 1 && 
+      this.shape.type == 'triangle'
+    )"
+      :points="trianglePoint"
       fill="transparent"
       :stroke="`${dashedOutline ? 'red' : 'rgb(0, 119, 255)'}`"
     />
     <text
       v-if="stagingShape == shape._id && diagramMode == 1"
       :x="sizeVal.x"
-      :y="sizeVal.y"
+      :y="sizeVal.y + (!!shape[shape.type].bottomPeak ? shape[shape.type].bottomPeak : 0)"
       class="editor"
       :style="`
     font-size: 8px;
@@ -277,6 +287,16 @@ export default class ShapeComponent extends Vue {
       y = y + 2;
     }
     return `M ${x} ${y} h ${w} v ${h} h ${-w} v ${-h}`;
+  }
+
+  get trianglePoint() {
+    let s: any = this.shape[this.shape.type];
+    let x = Number(s.x) - 4;
+    let y = Number(s.y) - 4;
+    let w = Number(s.w) + 8;
+    let h = Number(s.h) + 8;
+    let bottomPeak = Number(s.bottomPeak);
+    return `${x},${y} ${x+w},${y} ${x+w},${y+h} ${x+(w/2)},${y + h + bottomPeak + 2} ${x},${y+h}`
   }
 
   get showClose() {
