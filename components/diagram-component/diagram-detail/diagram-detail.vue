@@ -17,6 +17,7 @@
       <hr class="divider" />
       <div class="single-field" style="padding: 10px; 5px;">
         <v-select
+        name="Shape Type"
           :value="selectList[data[data.type].type]"
           :items="selectList"
           @change="data[data.type].type = $event.value"
@@ -104,6 +105,7 @@
         </div>
         <div class="input-field-single" style="padding: 10px; 5px;">
           <v-select
+          name="Font Weight"
             style="width: 100%; z-index: 2"
             :value="data[data.type].fontWeight"
             :items="fontWeight"
@@ -137,17 +139,22 @@
         @change="data[data.type].fill = $event"
         label="Background"
       />
-      <div class="input-field">
-        <select>
-          <option v-for="(item, i) in shapesNameList" :key="`list-${i}`">
-            {{ item.name }}
-          </option>
-        </select>
+      <div  class="single-field" style="padding: 10px; 5px;">
+        <v-select
+            labelName="name"
+            style="width: 100%; z-index: 2"
+            name="Link Shape"
+            :items="shapesNameList"
+            @change="addLink($event)"
+          />
       </div>
-        <ul>
-          <li style="display: flex;justify-content: space-between;"
+        <!-- <v-search-option
+          :items="shapesNameList"
+        /> -->
+        <ul class="linked-shapes">
+          <li style="display: flex;"
            v-for="(item, i) in data.links" :key="`itm-${i}`">
-            <span>{{ getName(item) }}</span>
+            <span style="flex: 1;" @click="$emit('new-select', item._id)">{{ getName(item) }}</span>
             <button @click="removeLink(item)">
               &Cross;
             </button>
@@ -175,6 +182,7 @@ import { Vue, Component, Prop, Watch, Emit, Mixins } from "vue-property-decorato
 import acordianVue from "~/components/ui/acordian/acordian.vue";
 import colorInputVue from "~/components/ui/color-input/color-input.vue";
 import labelInputVue from "~/components/ui/label-input/label-input.vue";
+import SearchOption from "~/components/ui/search-with-option/search-with-option.vue";
 import selectVue from "~/components/ui/select/select.vue";
 import ToggleButton from "~/components/ui/toggle-button/toggle-button.vue";
 import { ArrayFunction } from "../array-functions";
@@ -188,6 +196,7 @@ import { FontWeight } from "../shapes-text-util";
     "v-color-input": colorInputVue,
     "v-input": labelInputVue,
     "v-toggle-button": ToggleButton,
+    "v-search-option": SearchOption
   },
 })
 export default class DiagramDetail extends Mixins(ArrayFunction) {
@@ -234,8 +243,10 @@ export default class DiagramDetail extends Mixins(ArrayFunction) {
 
   get shapesNameList() {
     return this.shapesName.filter((res) => {
-      if (!this.data.links.includes(res._id)) {
-        return res;
+      if (res._id !== this.data._id) {
+        if (!this.data.links.includes(res._id)) {
+          return res;
+        }
       }
     })
   }
@@ -334,6 +345,12 @@ export default class DiagramDetail extends Mixins(ArrayFunction) {
     this.data.removeLink(id);
   }
 
+
+  @Emit("data-change")
+  addLink(data: any) {
+    this.data.addLinks(data._id);
+  }
+
   @Emit("update-selected")
   updateSelected(key: any, val: any) {
     const cb = (shape: any) => {
@@ -360,10 +377,7 @@ export default class DiagramDetail extends Mixins(ArrayFunction) {
     let doc = parser.parseFromString(svg, "image/svg+xml").querySelector("svg");
 
     console.log(doc);
-  
-    
-    
-    
+
     this.saveSvg(doc, `${this.data.name}.svg`);
   }
 }

@@ -468,8 +468,9 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                         data: new Triangle({
                             x: e.clientX - 50,
                             y: e.clientY - 50,
-                            h: 100,
+                            h: 50,
                             w: 100,
+                            bottomPeak: 50,
                             type: this.fillMode,
                             fill: "#FF5959FF",
                         }),
@@ -779,6 +780,14 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     onDragLeave() {
         this.dragOver = false;
+    }
+
+    selectLinkedShape(id: string) {
+        let sorted = this.sortElements(this.shapes, 0, this.shapes.length, "_id");
+        let i = this.searchElements(sorted, id, "_id");
+        if (i != null) {
+            this.focusToShape(this.shapes[i]);
+        }
     }
 
     focusToShape(shape: Shape) {
