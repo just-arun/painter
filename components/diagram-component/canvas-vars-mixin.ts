@@ -221,12 +221,12 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                     let h = Number(Number(elem.h) + Number(4 * 1));
                     let w = Number(Number(elem.w) + Number(4 * 1));
                     let dragPart = [];
-                    if (!!!this.selectedElements[0].circle) {
-                        // dragPart.push({
-                        //     type: "tl",
-                        //     x: x - 5,
-                        //     y: y - 5,
-                        // });
+                    if (!!this.selectedElements[0].line || !!this.selectedElements[0].pencil) {
+                        dragPart.push({
+                            type: "tl",
+                            x: x - 5,
+                            y: y - 5,
+                        });
                     }
                     if (
                         !!this.selectedElements[0].rect ||

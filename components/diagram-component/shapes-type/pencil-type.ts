@@ -26,6 +26,10 @@ export class Pencil {
     y1 = 0;
     h1 = 0;
     w1 = 0;
+    tl = 0;
+    tt = 0;
+    initShape = false;
+    viewBox = ``;
     editing: boolean = true;
     canMove: boolean = false;
     resize = false;
@@ -112,8 +116,14 @@ export class Pencil {
         this.w = Math.abs(newPa[newPa.length - 1] - newPa[0]);
         this.y = newPaY[0];
         this.h = Math.abs(newPaY[newPaY.length - 1] - newPaY[0]);
+        this.tl = newPa[0];
+        this.tt = newPa[1];
+        this.viewBox = `${this.x - 5} ${this.y - 5} ${this.w + 10} ${this.h + 10}`;
     }
 
+    get getTL() {
+        return 
+    }
 
 
     makeResize(e: RelativePositionType, type: string) {

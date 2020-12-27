@@ -117,7 +117,11 @@
         </foreignObject>
       </switch>
     </g>
-    <switch class="editor link-btn-wrapper" :x="getNamePos.x - 20" :y="getNamePos.y - 20">
+    <switch 
+    v-if="!(shape.type == 'pencil' || shape.type == 'line')"
+    class="editor link-btn-wrapper" 
+    :x="getNamePos.x - 20" 
+    :y="getNamePos.y - 20">
       <foreignObject
         v-if="showClose"
         :x="getNamePos.x - 20"
