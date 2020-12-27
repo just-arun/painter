@@ -39,15 +39,21 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     'nuxt-socket-io',
+    '@nuxtjs/proxy',
     '@nuxtjs/composition-api'
   ],
 
   io: {
     // module options
-    sockets: [{
-      name: 'main',
-      url: 'http://localhost:4000'
-    }]
+    // sockets: [{
+    //   name: 'main',
+    //   url: 'http://localhost:8000'
+    // }]
+  },
+  proxy: {
+    '/api': {
+      target: 'http://localhost:9000',
+    },
   },
 
   env: {

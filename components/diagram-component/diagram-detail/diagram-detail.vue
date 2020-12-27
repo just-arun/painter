@@ -17,7 +17,7 @@
       <hr class="divider" />
       <div class="single-field" style="padding: 10px; 5px;">
         <v-select
-        name="Shape Type"
+          name="Shape Type"
           :value="selectList[data[data.type].type]"
           :items="selectList"
           @change="data[data.type].type = $event.value"

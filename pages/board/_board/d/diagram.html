@@ -1,7 +1,14 @@
 <div class="center">
   <div>
-    <client-only>
-      <diagram-board-component></diagram-board-component>
-    </client-only>
+    <div v-if="socket">
+      <client-only>
+        <diagram-board-component
+        :connection="socket"
+        ></diagram-board-component>
+      </client-only>
+    </div>
+    <div v-else>
+      loading...
+    </div>
   </div>
 </div>

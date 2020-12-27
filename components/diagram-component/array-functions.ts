@@ -1,8 +1,8 @@
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Mixins } from 'vue-property-decorator';
+import DiagramRoot from './diagram-root';
 
 @Component({})
-export class ArrayFunction extends Vue {
-
+export class ArrayFunction extends Mixins(DiagramRoot) {
 
     private oC = (itm: any, key: any) =>
         typeof itm == "object"

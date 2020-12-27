@@ -33,7 +33,6 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
         x: 0,
         y: 0,
     };
-    socket: any;
     mouseOverShape = false;
     showShapesList = true;
     cursorVal = {
@@ -141,6 +140,9 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     }
 
     mounted() {
+        this.socket.on("connect", (eve: any) => {
+            console.log("shit\n\n\n\n\n\n\n\n");
+        });
         this.updateLocalDiagramFillMode();
         document.addEventListener("loadeddata", () => { });
         this.mouseScroll();

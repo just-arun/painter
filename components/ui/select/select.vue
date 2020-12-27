@@ -19,7 +19,7 @@ export default Vue.extend({
   name: "Select",
   props: {
     value: {
-      required: true,
+      
     },
     items: {
       required: true,
@@ -32,8 +32,10 @@ export default Vue.extend({
       type: String
     }
   },
-  data: {
-    labelN: ""
+  data () {
+    return {
+      labelN: ""
+    }
   },
   computed: {
     itemList(): any {
