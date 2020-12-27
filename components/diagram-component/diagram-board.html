@@ -2,6 +2,7 @@
   <!-- <div style="position: fixed;top: 200px;left: 300px; z-index: 2;">
     <button @click="saveImage()">save</button>
   </div> -->
+    <input type="file" id="imagePicker" ref="imagePicker">
   <d-header :name="name" :fillMode="fillMode" :diagramMode="diagramMode" @switch-mode="switchMode($event)"
     @update-name="updateName($event)" @change-fill-mode="changeFillMode($event)" />
   <shapes-list :shapes="shapes" :selectedElement="selectedElementsIds" @focus-to-shape="focusToShape($event)"

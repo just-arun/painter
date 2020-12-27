@@ -72,6 +72,16 @@
   }
 }
 
+
+input.image-import {
+  position: absolute;
+  transform: scale(0);
+  height: 0;
+  width: 0;
+  z-index: -2;
+}
+
+
 .br { cursor: se-resize; }
 .bl { cursor: sw-resize; }
 .bc { cursor: s-resize; }
