@@ -90,6 +90,7 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
         this.monitorResize(() => {
             this.initCanvas();
         });
+        
     }
 
     monitorResize(cb: Function) {

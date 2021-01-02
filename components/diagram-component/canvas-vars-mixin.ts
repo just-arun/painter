@@ -6,7 +6,7 @@ import {
     Mixins,
     Watch
 } from 'vue-property-decorator';
-import { ShapeType, DiagramMode, Shape, ShapeFillType, RelativePositionType, mapObjToShape } from './shape-types';
+import { ShapeType, DiagramMode, Shape, ShapeFillType, RelativePositionType, mapObjToShape, DeviceType, Colors } from './shape-types';
 import { Rect } from './shapes-type/rectangle-type';
 import { Triangle } from './shapes-type/triangle-type';
 import { Circle } from './shapes-type/circle-type';
@@ -26,9 +26,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     selectedElements: Shape[] = [];
     mouseOverShapeIndex: number | null = null;
     stagingShape: Shape | null = null;
-    fillMode: ShapeFillType = ShapeFillType.stroke;
+    fillMode: ShapeFillType = ShapeFillType.fill;
     openMenu = false;
     dragOver = false;
+    colors = Colors;
     menuPosition = {
         x: 0,
         y: 0,
@@ -157,6 +158,48 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             // this.onKeyCode(e);
         });
         this.monitorData();
+        this.touchEvents();
+        if (this.deviceType == DeviceType.Mobile) {
+            this.showShapesList = false;
+            this.diagramMode = DiagramMode.View;
+        }
+    }
+
+    touchStart: any = null;
+    touchX: any = 0;
+    touchY: any = 0;
+    touchEvents() {
+        let svg: any = document.querySelector("#mainSvg");
+        svg.addEventListener("touchstart", (e: any) => {
+            let eve: any = e.touches[0];
+            console.log("damn", eve);
+            this.touchX = this.matrix.tx;
+            this.touchY = this.matrix.ty;
+            this.touchStart = eve;
+            // this.onMouseDown(eve);
+        });
+        svg.addEventListener("touchmove", (e: any) => {
+            let eve: any = e.touches[0];
+            console.log("damn", eve);
+            // this.onMouseMove(eve);
+            if (!!this.touchStart) {
+                let dX = this.touchStart.clientX - eve.clientX;
+                let dY = this.touchStart.clientY - eve.clientY;
+                this.matrix.tx = this.touchX - dX;
+                this.matrix.ty = this.touchY - dY;
+                // this.panCanvas(delta);
+            }
+        });
+        svg.addEventListener("touchend", (e: any) => {
+            let eve: any = e.touches[0];
+            this.onMouseUp(eve);
+            this.touchStart = null;
+        });
+        svg.addEventListener("touchcancel", (e: any) => {
+            let eve: any = e.touches[0];
+            this.onMouseUp(eve);
+            this.touchStart = null;
+        });
     }
 
     deleteElement(ele?: Shape) {
@@ -210,6 +253,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     mouseOutShapeFun() {
         this.mouseOverShape = false;
         this.mouseOverShapeIndex = null;
+    }
+
+    getRandomColor() {
+        return this.colors[Math.floor(Math.random() * (this.colors.length - 1))]
     }
 
     get selectElementDimension() {
@@ -301,7 +348,8 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     }
 
     mouseScroll() {
-        document.addEventListener("wheel", (e) => {
+        let svgElem: any = document.querySelector("#mainSvg")
+        svgElem.addEventListener("wheel", (e: any) => {
             if (e.ctrlKey || e.metaKey) {
                 this.zoomInOut(e);
             } else {
@@ -310,10 +358,14 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                     // this.matrix.ty = (this.origin.y / this.scale) * 100;
                     // this.originChanged = false;
                 }
-                this.matrix.tx -= e.deltaX;
-                this.matrix.ty -= e.deltaY;
+                this.panCanvas(e);
             }
         });
+    }
+
+    panCanvas(e: any) {
+        this.matrix.tx -= e.deltaX;
+        this.matrix.ty -= e.deltaY;
     }
 
     globalKeyCode(e: KeyboardEvent) {
@@ -418,7 +470,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             h: 100,
                             w: 100,
                             type: this.fillMode,
-                            fill: "#FF5959FF",
+                            fill: this.getRandomColor(),
                         }),
                     });
                     this.shapes.push(shape);
@@ -439,7 +491,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             h: 100,
                             w: 150,
                             type: this.fillMode,
-                            fill: "#FF5959FF",
+                            fill: this.getRandomColor(),
                         }),
                     });
                     this.shapes.push(shape);
@@ -460,7 +512,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             h: 20,
                             w: 100,
                             type: this.fillMode,
-                            fill: "#FF5959FF",
+                            fill: this.getRandomColor(),
                             text: ''
                         }),
                     });
@@ -483,7 +535,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             w: 100,
                             bottomPeak: 50,
                             type: this.fillMode,
-                            fill: "#FF5959FF",
+                            fill: this.getRandomColor(),
                         }),
                     });
                     this.shapes.push(shape);
@@ -502,7 +554,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             y: e.clientY,
                             r: 50,
                             type: this.fillMode,
-                            fill: "#FF5959FF",
+                            fill: this.getRandomColor(),
                         }),
                     });
                     this.shapes.push(shape);
@@ -535,7 +587,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                         links: [],
                         data: new Pencil({
                             path: "",
-                            fill: "#FF5959FF",
+                            fill: "#000000",
                             border: 1,
                         }),
                     });
@@ -556,7 +608,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             y: e.clientY,
                             x1: e.clientX,
                             y1: e.clientY,
-                            fill: "#FF5959FF",
+                            fill: "#000000",
                         }),
                     });
                     shape.pencil?.draw(e);
@@ -566,8 +618,14 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                 }
                 if (this.mouseOverShapeIndex != null) {
                     let rect = this.shapes[this.mouseOverShapeIndex].rect;
-                    if (!!rect) {
-                        rect.canMove = true;
+                    let circle = this.shapes[this.mouseOverShapeIndex].circle;
+                    let triangle = this.shapes[this.mouseOverShapeIndex].triangle;
+                    let pencil = this.shapes[this.mouseOverShapeIndex].pencil;
+                    if (!this.selectedTool) {
+                        if (!!rect) rect.canMove = true;
+                        if (!!circle) circle.canMove = true;
+                        if (!!triangle) triangle.canMove = true;
+                        if (!!pencil) pencil.canMove = true;
                     }
                 } else
                     // if (!!this.selectedElements.length) {
@@ -785,8 +843,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
         this.selectedElements = [];
     }
 
-    onDragEnter() {
-        this.dragOver = true;
+    onDragEnter(e: DragEvent) {
+        if (!!e.dataTransfer?.files.length) {
+            this.dragOver = true;
+        }
     }
 
     onDragLeave() {

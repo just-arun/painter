@@ -1,6 +1,6 @@
 <template>
   <div class="diagram-header">
-    <div class="tool-section">
+    <div class="tool-section" v-if="showOptions">
       <button class="diagram-header__mode">
       <div class="text">
         <span>{{ modeList[diagramMode].label }}</span>
@@ -71,8 +71,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-import { DiagramMode, ShapeFillType } from "../shape-types";
+import { Vue, Component, Prop, Mixins } from "vue-property-decorator";
+import { ArrayFunction } from "../array-functions";
+import { DeviceType, DiagramMode, getDevice, ShapeFillType } from "../shape-types";
 
 @Component({})
 export default class DiagramHeader extends Vue {
@@ -110,6 +111,9 @@ export default class DiagramHeader extends Vue {
       index.push(this.users.length - i);
     }
     return index;
+  }
+  get showOptions() {
+    return getDevice() != DeviceType.Mobile
   }
   nameFocusOut(e: Event) {
     let name: any = this.$refs.name;

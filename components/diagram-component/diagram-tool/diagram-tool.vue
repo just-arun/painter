@@ -37,7 +37,7 @@ export default class DiagramTool extends Vue {
     { label: "Circle", value: "circle", icon: "circle" },
     { label: "Text", value: "text", icon: "text" },
     { label: "Image", value: "image", icon: "img", stroke: true },
-    { label: "Import Image", value: "import-image", icon: "import-img", stroke: true },
+    // { label: "Import Image", value: "import-image", icon: "import-img", stroke: true },
   ];
 
   get toolList() {

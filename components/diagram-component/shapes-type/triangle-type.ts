@@ -8,34 +8,9 @@ export interface TriangleType extends RectType  {
 
 export class Triangle extends Rect {
     bottomPeak: number = 0;
-    constructor({
-            x,
-            y,
-            h,
-            w,
-            type,
-            fill,
-            text,
-            color,
-            fontSize,
-            borderColor,
-            textColor,
-            bottomPeak
-        }: TriangleType) {
-        super({
-            x,
-            y,
-            h,
-            w,
-            type,
-            fill,
-            text,
-            color,
-            fontSize,
-            borderColor,
-            textColor
-        });
-        this.bottomPeak = !!bottomPeak ? bottomPeak : 0;
+    constructor(par: TriangleType) {
+        super(par);
+        this.bottomPeak = !!par.bottomPeak ? par.bottomPeak : 0;
     }
 
     get points() {

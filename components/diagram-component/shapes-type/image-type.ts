@@ -1,8 +1,16 @@
 import { Rect, RectType } from './rectangle-type';
 
+export interface ImageType extends RectType {
+    imageUrl?: string;
+}
+
+
 export class ImageClass extends Rect {
-    constructor({ x, y, h, w, type, fill, text, color, fontSize }: RectType) {
-        super({ x, y, h, w, type, fill, text, color, fontSize });
+    imageUrl?: string;
+
+    constructor(par: ImageType) {
+        super(par);
+        this.imageUrl = !!par.imageUrl ? par.imageUrl : '';
     }
 
     get getJson() {

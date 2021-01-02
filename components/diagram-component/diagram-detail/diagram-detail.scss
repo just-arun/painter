@@ -1,17 +1,14 @@
 .cus-scroll-bar {
-  &::-webkit-scrollbar-track
-  {
+  &::-webkit-scrollbar-track {
     background-color: transparent;
   }
 
-  &::-webkit-scrollbar
-  {
+  &::-webkit-scrollbar {
     width: 5px;
     background: #79797917;
   }
 
-  &::-webkit-scrollbar-thumb
-  {
+  &::-webkit-scrollbar-thumb {
     background: #79797980;
     border-radius: 5px;
   }
@@ -31,9 +28,11 @@
   @extend .cus-scroll-bar;
   width: 240px;
   overflow-x: hidden;
+
   &:hover {
     // width: 600px;
   }
+
   .text-content {
     max-height: 100px;
     overflow-y: auto;
@@ -50,8 +49,10 @@
     // overflow-y: auto;
     // overflow-x: visible;
     border: 2px solid transparent;
+
     &.empty {
       position: relative;
+
       &::before {
         position: absolute;
         left: 3px;
@@ -60,13 +61,16 @@
         content: 'Text Content';
       }
     }
+
     &:hover {
       border: 2px solid rgba(128, 128, 128, 0.1);
     }
+
     &:focus-within {
       border: 2px solid rgb(0, 255, 242);
     }
   }
+
   &__resize {
     background: transparent;
     width: 3px;
@@ -219,9 +223,11 @@ input,
 textarea {
   border: none;
   outline: none;
+
   &:hover {
     outline: 1px solid rgba(128, 128, 128, 0.527);
   }
+
   &:focus {
     outline: 2px solid grey;
   }
@@ -247,12 +253,17 @@ textarea {
 
 .linked-shapes {
   padding: 0px 10px;
+
   li {
     cursor: pointer;
     padding: 5px 10px;
     border-radius: 0px;
     border-bottom: 1px solid rgba(128, 128, 128, 0.295);
-    &:hover { background: rgba(202, 197, 197, 0.2); }
+
+    &:hover {
+      background: rgba(202, 197, 197, 0.2);
+    }
+
     button {
       cursor: pointer;
       border: none;
@@ -264,9 +275,45 @@ textarea {
       justify-content: center;
       align-items: center;
       background: transparent;
+
       &:hover {
         background: rgb(228, 228, 228);
       }
+    }
+  }
+}
+
+.tabs {
+  position: sticky;
+  top: 0px;
+  padding-top: 10px;
+  background: #fff;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  .tab {
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: transparent;
+    flex: 1;
+    padding: 5px 8px;
+    box-sizing: border-box;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    border-bottom: 1px solid #fff;
+    color: grey;
+    &:hover {
+      color: #000;
+    }
+    &.selected {
+      color: #000;
+      border-bottom: 1px solid grey;
     }
   }
 }

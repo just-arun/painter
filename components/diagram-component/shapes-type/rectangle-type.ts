@@ -55,23 +55,24 @@ export class Rect {
         return `M${x} ${y} h${w} v${h} h${-w} v${-h}`;
     }
 
-    constructor({
-        x,
-        y,
-        h,
-        w,
-        type,
-        fill,
-        text,
-        color,
-        fontSize,
-        borderColor,
-        textColor,
-        border,
-        fontWeight,
-        alignItem,
-        justifyContent
-    }: RectType) {
+    constructor(par: RectType) {
+        const {
+            x,
+            y,
+            h,
+            w,
+            type,
+            fill,
+            text,
+            color,
+            fontSize,
+            borderColor,
+            textColor,
+            border,
+            fontWeight,
+            alignItem,
+            justifyContent
+        } = par;
         this.x = x;
         this.y = y;
         this.h = h;

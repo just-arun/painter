@@ -6,6 +6,8 @@ import { Triangle } from "./shapes-type/triangle-type";
 import { Line, LineType } from "./shapes-type/line-type";
 import { Pencil } from "./shapes-type/pencil-type";
 
+export const Colors = ["#FF5959", "#F7FF93", "#FF5D90", "#59CEFF", "#FFF000"];
+
 export enum ShapeFillType {
     fill = 1,
     stroke = 0
@@ -111,4 +113,23 @@ export interface RelativePositionType {
     offsetX: number;
     offsetY: number;
     event?: MouseEvent | null;
+}
+
+
+
+
+
+export const getDevice = (): DeviceType => {
+    const ua = navigator.userAgent;
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+        return DeviceType.Tablet;
+    }
+    if (
+        /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(
+            ua
+        )
+    ) {
+        return DeviceType.Mobile;
+    }
+    return DeviceType.Desktop;
 }

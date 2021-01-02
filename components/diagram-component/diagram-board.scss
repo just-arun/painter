@@ -11,6 +11,15 @@
     user-select: none;
     -moz-user-select: none;
     cursor: url('./../../#{$default-cursor}'), auto;
+    &.rect {
+      cursor: url('./../../#{$rectangle-cursor}'), auto;
+    }
+    &.circle {
+      cursor: url('./../../#{$circle-cursor}'), auto;
+    }
+    &.line {
+      cursor: crosshair !important;
+    }
   }
 
   .context-menu {

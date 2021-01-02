@@ -1,5 +1,5 @@
 <template>
-  <g class="rect">
+  <g class="rect-wrapper">
     <rect
       :rx="data.rx"
       :x="data.x"
@@ -45,7 +45,7 @@
       </foreignObject>
     </switch>
     <rect 
-      :class="`${data.canMove ?'grabbing' : 'hand'} editor`"
+      :class="`${grabClass} editor`"
       v-if="!textEdit"
       @dblclick="focusOnInput()"
       @mousedown="mouseDown($event)"
@@ -71,6 +71,16 @@
 .hand {
   cursor: url("./../../../#{$hand-cursor}"), auto;
 }
+
+.rect {
+  cursor: url('./../../../#{$rectangle-cursor}'), auto;
+}
+.circle {
+  cursor: url('./../../../#{$circle-cursor}'), auto;
+}
+.line {
+  cursor: crosshair !important;
+}
 </style>
 <script lang="ts">
 import { Vue, Component, Prop, Emit, Mixins, Watch } from "vue-property-decorator";
@@ -83,6 +93,15 @@ export default class RectangleComponent extends Mixins(CanvasMixin) {
   @Prop({ required: true }) diagramMode!: DiagramMode;
   @Prop({ required: true, default: Object, type: Rect }) data!: Rect;
   @Prop({ required: true, default: String }) id!: string;
+  @Prop({}) selectedTool?: any;
+
+  get grabClass() {
+    if (!this.selectedTool) {
+      return `${this.data.canMove ?'grabbing' : 'hand'}`;
+    }
+    return this.selectedTool;
+  }
+
   textEdit=true;
   text: any = this.data?.text;
 

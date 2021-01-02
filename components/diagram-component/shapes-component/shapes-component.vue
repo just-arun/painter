@@ -8,6 +8,22 @@
     class="shape"
     :id="`shapeWrapper${shape._id}`"
   >
+  <foreignObject
+    v-if="stagingShape == shape._id && diagramMode == 1"
+    :x="getNamePos.x - 40"
+    :y="getNamePos.y"
+    width="30"
+    height="110">
+    <div class="colors">
+      <div 
+      @click="changeColor(color)"
+      :class="`color ${color}`" 
+      v-for="color in colors"
+      :style="`background-color: ${color};`"
+      :key="color"
+      ></div>
+    </div>
+  </foreignObject>
     <text
       :class="`name editor ${stagingShape == shape._id ? 'focused' : ''}`"
       :x="getNamePos.x"
@@ -51,44 +67,45 @@
       @mouseout="mouseOut($event)"
     >
       <rect-component
-        :class="shape.type"
+        :selectedTool="selectedTool"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'rect'"
         :data="shape.rect"
         :id="shape._id"
       />
       <outline-image-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'image'"
         :data="shape.image"
       />
       <triangle-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'triangle'"
         :data="shape.triangle"
       />
       <circle-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'circle'"
         :data="shape.circle"
       />
       <pencil-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'pencil'"
         :data="shape.pencil"
       />
       <line-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'line'"
         :data="shape.line"
       />
       <text-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'text'"
         :data="shape.text"
@@ -146,19 +163,27 @@
         </button>
       </foreignObject
     ></switch>
-    <!-- <text
-      class="hint"
-      :x="getNamePos.x - 35"
-      :y="getNamePos.y - 45"
-      style="font-size: 8px"
-    >
-      <tspan :x="getNamePos.x - 42" dy="1.2em">drag and drop on</tspan>
-      <tspan :x="getNamePos.x - 42" dy="1.2em">the shape to link</tspan>
-    </text> -->
   </g>
 </template>
 
 <style lang="scss">
+@import "./../diagram-vars.scss";
+.colors {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  width: 25px;
+  border-radius: 25px;
+  padding: 5px 0px;
+  .color {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    cursor: pointer;
+  }
+}
 .link-btn-wrapper {
   position: relative;
   &:hover + .hint {
@@ -215,11 +240,24 @@
     }
   }
 }
+
+
+
+.rect {
+  cursor: url('./../../../#{$rectangle-cursor}'), auto;
+}
+.circle {
+  cursor: url('./../../../#{$circle-cursor}'), auto;
+}
+.line {
+  cursor: crosshair !important;
+}
+
 </style>
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
-import { DiagramMode, Shape, ShapeType } from "../shape-types";
+import { Colors, DiagramMode, Shape, ShapeType } from "../shape-types";
 import CircleComponent from "./circle.vue";
 import LineComponent from "./line.vue";
 import OutlineImageComponent from "./outline-image.vue";
@@ -227,6 +265,7 @@ import PencilComponent from "./pencil.vue";
 import RectangleComponent from "./rectangle.vue";
 import TextComponent from "./text.vue";
 import TriangleComponent from "./triangle.vue";
+
 
 @Component({
   components: {
@@ -243,9 +282,13 @@ export default class ShapeComponent extends Vue {
   @Prop({ default: Object, required: true, type: Shape }) shape!: Shape;
   @Prop({ required: true }) diagramMode!: DiagramMode;
   @Prop({ required: true }) stagingShape!: string;
+  @Prop({}) selectedTool?: any;
+  @Prop({ required: true }) scale!: number;
+
   shapeType = ShapeType;
   menuOptions = [{ label: "" }];
   dashedOutline = false;
+  colors = [...Colors];
 
   @Emit("select-element")
   selectElement() {
@@ -315,6 +358,14 @@ export default class ShapeComponent extends Vue {
       }
     } else {
       return true;
+    }
+  }
+
+  changeColor(color: string) {
+    let ele: any = this.shape[this.shape.type]
+    if(!!ele) {
+      ele.fill = color;
+      if(!!ele.borderColor) {ele.borderColor = color;}
     }
   }
 
@@ -391,6 +442,7 @@ export default class ShapeComponent extends Vue {
     var data = e.dataTransfer.getData("text");
     let id = String(data).split("-")
     if (id.length > 1) {
+      if (this.shape.type == ShapeType.Pencil || this.shape.type == ShapeType.Line) return;
       this.linkShape(id[1]);
     }
   }
