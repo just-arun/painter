@@ -17,11 +17,13 @@
         max-width: 100%;
         min-height: 100% !important;
         display: flex;
-      align-items: ${data.alignItem};
-      justify-content: ${data.justifyContent};
+        color: ${data.textColor};
+        align-items: ${data.alignItem};
+        justify-content: ${data.justifyContent};
         cursor: ${edit ? 'text' : 'default'};
-      font-weight: ${data.fontWeight};
-      text-align: ${alignText[data.justifyContent]}
+        font-weight: ${data.fontWeight};
+      font-size: ${data.fontSize}px;
+        text-align: ${alignText[data.justifyContent]}
         `"
           :id="`text-${id}`"
           :contenteditable="edit"

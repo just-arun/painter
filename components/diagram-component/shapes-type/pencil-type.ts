@@ -53,7 +53,7 @@ export class Pencil {
         this.y = !!y ? y : 0;
         this.h = !!h ? h : 0;
         this.w = !!w ? w : 0;
-        this.border = !!border ? border : 1;
+        this.border = !!border ? border : 3;
         if(editing != undefined) {
             this.editing = editing;
         }

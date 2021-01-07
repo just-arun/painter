@@ -20,6 +20,9 @@
     &.line {
       cursor: crosshair !important;
     }
+    // &.pencil {
+    //   cursor: url('./../../#{$pencil-cursor}'), auto;
+    // }
   }
 
   .context-menu {

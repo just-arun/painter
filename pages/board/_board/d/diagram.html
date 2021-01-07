@@ -3,6 +3,7 @@
     <div v-if="socket">
       <client-only>
         <diagram-board-component
+        :shapes="shapes"
         :connection="socket"
         ></diagram-board-component>
       </client-only>

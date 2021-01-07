@@ -26,6 +26,8 @@ import CanvasVarsMixin from './canvas-vars-mixin';
 import DiagramDetail from "./diagram-detail/diagram-detail.vue";
 import rotateIconVue from "../icons/rotate-icon.vue";
 import ShapeList from "./shapes-list/shapes-list.vue";
+import { DiagramService } from "~/service/diagram";
+import UserCursor from "../icons/cursor.vue";
 
 @Component({
   components: {
@@ -35,15 +37,37 @@ import ShapeList from "./shapes-list/shapes-list.vue";
     "d-detail": DiagramDetail,
     "shapes-component": ShapeComponent,
     "rotate-component": rotateIconVue,
-    "shapes-list": ShapeList
+    "shapes-list": ShapeList,
+    "user-cursor": UserCursor
   },
 })
 export default class DiagramBoard extends mixins(CanvasVarsMixin) {
   @Prop({ required: true }) connection!: Socket;
+  showCursors = false;
+  cursors: any[] = [];
+
+  async asyncData({isDev, route, store, env, params, query, req, res, redirect, error}: any) {
+    try {
+      const { data } = await DiagramService
+      .getOneDiagram(route.params.d);
+      return {
+        diagramName: data.data.name
+      }
+    } catch (err) {
+      return {
+        diagramName: "failed"
+      }
+    }
+  }
 
   constructor() {
     super();
     this.socket = this.connection;
+    console.log(this.$route.params.d);
+  }
+
+  mounted() {
+    this.userCursor();
   }
 
   mouseImage() {
@@ -57,6 +81,15 @@ export default class DiagramBoard extends mixins(CanvasVarsMixin) {
       res.parentElement?.removeChild(res);
     })
     this.saveSvg(newSvg, `${this.name}.svg`);
+  }
+
+  userCursor() {
+    setTimeout(() => {
+    this.showCursors = true;
+    this.cursors = [
+      { x: 0, y: 0, fill: 'red' },
+    ]
+    }, 2000);
   }
 }
 </script>

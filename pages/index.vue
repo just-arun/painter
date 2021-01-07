@@ -1,8 +1,10 @@
 <template>
   <div class="container">
     <div>
-      <toggle :value.sync="value" :name="'damn'" :items="items"></toggle>
-      <nuxt-link to="/board/my-board/d/new-stuff">new link</nuxt-link>
+      <b>Note:</b> <em>still under construction a extream rearly preview</em>
+      <br>
+      <nuxt-link to="/board/my-board/d/new-project">Playaround</nuxt-link>
+      <!-- <button @click="crateDiagram()">Create Diagram</button> -->
     </div>
   </div>
 </template>
@@ -10,6 +12,7 @@
 <script lang="ts">
 import Vue from "vue";
 import ToggleButton from "~/components/ui/toggle-button/toggle-button.vue";
+import { DiagramService } from './../service/diagram';
 
 export default Vue.extend({
   components: {
@@ -25,6 +28,25 @@ export default Vue.extend({
       ],
     };
   },
+  methods: {
+    async crateDiagram() {
+      try {
+        const { data } = await DiagramService
+        .createDiagram({
+          name: "new-diagram",
+          users: {
+            id: localStorage.getItem("user"),
+            access: 1
+          },
+          shapes: []
+        });
+        let id = data.data._id;
+        this.$router.push(`/board/my-board/d/${id}`);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
 });
 </script>
 

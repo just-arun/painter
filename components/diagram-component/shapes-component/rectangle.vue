@@ -1,5 +1,10 @@
 <template>
   <g class="rect-wrapper">
+    <!-- <text
+      :x="data.x"
+      :y="data.y - 20">
+      {{ id }}
+    </text> -->
     <rect
       :rx="data.rx"
       :x="data.x"

@@ -24,6 +24,7 @@
         </svg> </foreignObject
     ></switch>
     <path
+    class="line"
       v-if="data.editing"
       :d="data.path"
       fill="transparent"
@@ -66,5 +67,9 @@ export default class PencilComponent extends Vue {
 }
 .hand {
   cursor: url("./../../../#{$hand-cursor}"), auto;
+}
+
+.line {
+  cursor: url('./../../../#{$default-cursor}'), auto;
 }
 </style>

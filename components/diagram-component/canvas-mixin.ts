@@ -17,7 +17,7 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
         w: 0
     };
     matrix = {
-        s: 1,
+        s: 2,
         b: 0,
         c: 0,
         tx: 0,
@@ -54,7 +54,7 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
 
     lastMousePosition: RelativePositionType | null = null;
 
-    scale = 100;
+    scale = 200;
 
     @Watch("scale")
     updateMatrix() {
@@ -97,6 +97,7 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
         window.addEventListener("resize", () => {
             cb();
         })
+        this.updateOrigin();
     }
 
     initCanvas() {
@@ -125,7 +126,7 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
     }
 
     zoomInOut(e: WheelEvent) {
-        // this.updateOrigin();
+        this.updateOrigin();
         let calVal = (e.deltaY / 15);
         let size = this.scale - calVal;
         if (size > 2 && size < 1000) {
@@ -136,7 +137,7 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
     }
 
     updateOrigin() {
-        let main: SVGElement | any = document.querySelector("#mainGroup");
+        let main: SVGElement | any = document.querySelector("#mainSvg");
         let x = (!!this.lastMousePosition?.event ? this.lastMousePosition.event.offsetX : 0);
         let y = (!!this.lastMousePosition?.event ? this.lastMousePosition.event.offsetY : 0);
         this.origin = { x, y };

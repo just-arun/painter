@@ -6,7 +6,7 @@ import { Triangle } from "./shapes-type/triangle-type";
 import { Line, LineType } from "./shapes-type/line-type";
 import { Pencil } from "./shapes-type/pencil-type";
 
-export const Colors = ["#FF5959", "#F7FF93", "#FF5D90", "#59CEFF", "#FFF000"];
+export const Colors = ["#FF5959", "#F7FF93", "#FF5D90", "#59CEFF", "#000000"];
 
 export enum ShapeFillType {
     fill = 1,

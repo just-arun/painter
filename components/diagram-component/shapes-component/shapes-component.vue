@@ -8,9 +8,13 @@
     class="shape"
     :id="`shapeWrapper${shape._id}`"
   >
+  <!-- <text 
+    :x="getNamePos.x"
+    :y="getNamePos.y - 6"
+  >{{ shape.user }}</text> -->
   <foreignObject
     v-if="stagingShape == shape._id && diagramMode == 1"
-    :x="getNamePos.x - 40"
+    :x="getNamePos.x - 35"
     :y="getNamePos.y"
     width="30"
     height="110">
@@ -120,6 +124,7 @@
           :y="getNamePos.y - 18"
           width="24"
           height="24"
+          :style="`display: ${stagingShape == shape._id ? 'block': 'none'}`"
           requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
           :class="`close-btn ${stagingShape == shape._id ? 'focused' : ''}`"
         >
@@ -145,6 +150,7 @@
         :y="getNamePos.y - 20"
         width="24"
         height="24"
+        :style="`display: ${stagingShape == shape._id ? 'block': 'none'}`"
         requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
         :class="`close-btn ${stagingShape == shape._id ? 'focused' : ''}`"
       >
@@ -196,10 +202,10 @@
   }
 .close-btn {
   text-align: left;
-  display: none;
-  &.focused {
-    display: block;
-  }
+  // display: none;
+  // &.focused {
+  //   display: block;
+  // }
   button {
     height: 20px;
     width: 20px;
@@ -211,9 +217,6 @@
     border: none;
     cursor: pointer;
     background: white;
-    &:focus {
-      display: flex;
-    }
   }
 }
 
@@ -236,7 +239,7 @@
       @extend .focused;
     }
     .close-btn {
-      display: block;
+      // display: block;
     }
   }
 }
