@@ -8,6 +8,7 @@ export interface RectType {
     h: number;
     w: number;
     type: ShapeFillType;
+    rx?: number;
     fill: string;
     text?: string;
     color?: string;
@@ -71,7 +72,8 @@ export class Rect {
             border,
             fontWeight,
             alignItem,
-            justifyContent
+            justifyContent,
+            rx
         } = par;
         this.x = x;
         this.y = y;
@@ -93,6 +95,7 @@ export class Rect {
         this.fontWeight = !!fontWeight ? fontWeight : FontWeight[3];
         this.alignItem = !!alignItem ? alignItem : AlignItem[1];
         this.justifyContent = !!justifyContent ? justifyContent : JustifyContent[1];
+        this.rx = !!rx ? rx : 0;
     }
 
     get getJson() {

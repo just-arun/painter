@@ -137,7 +137,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     updateLocalDiagramFillMode() {
         let mode: any = localStorage.getItem("fillMode");
-        this.fillMode = !!mode ? mode : ShapeFillType.stroke;
+        this.fillMode = !!mode ? mode : ShapeFillType.fill;
     }
 
     mounted() {
@@ -463,25 +463,6 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             this.editing = true;
             if (this.editing) {
                 if (this.selectedTool == ShapeType.Rect) {
-                    // let id = Date.now().toString();
-                    // let shape = new Shape({
-                    //     _id: id,
-                    //     name: 'Rectangle',
-                    //     type: ShapeType.Rect,
-                    //     links: [],
-                    //     data: new Rect({
-                    //         x: e.clientX - 50,
-                    //         y: e.clientY - 50,
-                    //         h: 100,
-                    //         w: 100,
-                    //         type: this.fillMode,
-                    //         fill: this.getRandomColor(),
-                    //     }),
-                    // });
-                    // this.shapes.push(shape);
-                    // this.focusOut();
-                    // this.selectedElements.push(shape);
-                    // this.showShapesList = true;
                 }
                 if (this.selectedTool == ShapeType.Image) {
                     let id = Date.now().toString();
@@ -547,25 +528,25 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                     // this.showShapesList = true;
                     this.focusOut();
                 }
-                if (this.selectedTool == ShapeType.Circle) {
-                    let id = Date.now().toString();
-                    let shape = new Shape({
-                        _id: id,
-                        name: 'Circle',
-                        type: ShapeType.Circle,
-                        links: [],
-                        data: new Circle({
-                            x: e.clientX,
-                            y: e.clientY,
-                            r: 50,
-                            type: this.fillMode,
-                            fill: this.getRandomColor(),
-                        }),
-                    });
-                    this.shapes.push(shape);
-                    // this.showShapesList = true;
-                    this.focusOut();
-                }
+                // if (this.selectedTool == ShapeType.Circle) {
+                //     let id = Date.now().toString();
+                //     let shape = new Shape({
+                //         _id: id,
+                //         name: 'Circle',
+                //         type: ShapeType.Circle,
+                //         links: [],
+                //         data: new Circle({
+                //             x: e.clientX,
+                //             y: e.clientY,
+                //             r: 50,
+                //             type: this.fillMode,
+                //             fill: this.getRandomColor(),
+                //         }),
+                //     });
+                //     this.shapes.push(shape);
+                //     // this.showShapesList = true;
+                //     this.focusOut();
+                // }
             }
             this.editing = false;
             this.selectedTool = null;
@@ -583,11 +564,13 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
         if (this.diagramMode == DiagramMode.Edit) {
             let e = this.relativePosition(event);
             if (this.editing) {
-                if (this.selectedTool == ShapeType.Rect) {
+                if (this.selectedTool == ShapeType.Rect || this.selectedTool == ShapeType.Circle) {
                     let id = Date.now().toString();
+                    let name = this.selectedTool == ShapeType.Rect ? 'Rectangle' : 'Circle'
+                    let borderR = this.selectedTool == ShapeType.Rect ? 0 : 1500;
                     let shape = new Shape({
                         _id: id,
-                        name: 'Rectangle',
+                        name: name,
                         type: ShapeType.Rect,
                         links: [],
                         data: new Rect({
@@ -595,6 +578,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             y: e.clientY,
                             h: 0,
                             w: 0,
+                            rx: borderR,
                             type: this.fillMode,
                             fill: this.getRandomColor(),
                         }),
@@ -693,6 +677,9 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                 if (this.selectedTool == ShapeType.Rect) {
                     this.stagingShape?.rect?.resizeBr(e);
                 }
+                if (this.selectedTool == ShapeType.Circle) {
+                    this.stagingShape?.rect?.resizeBr(e);
+                }
             }
         }
         if (this.mouseOverShapeIndex != null) {
@@ -725,7 +712,8 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
         if (
             this.selectedTool == ShapeType.Pencil ||
             this.selectedTool == ShapeType.Line ||
-            this.selectedTool == ShapeType.Rect
+            this.selectedTool == ShapeType.Rect ||
+            this.selectedTool == ShapeType.Circle
         ) {
             this.editing = false;
             this.selectedTool = null;

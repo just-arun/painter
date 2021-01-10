@@ -5,14 +5,14 @@
     :dropzone="true"
     @drop="onDrop($event)"
     @mousedown="mouseDown($event)"
-    class="shape"
+    :class="`shape ${dashedOutline ? 'linking' : ''}`"
     :id="`shapeWrapper${shape._id}`"
   >
   <!-- <text 
     :x="getNamePos.x"
     :y="getNamePos.y - 6"
   >{{ shape.user }}</text> -->
-  <foreignObject
+  <!-- <foreignObject
     v-if="stagingShape == shape._id && diagramMode == 1"
     :x="getNamePos.x - 35"
     :y="getNamePos.y"
@@ -27,7 +27,31 @@
       :key="color"
       ></div>
     </div>
-  </foreignObject>
+  </foreignObject> -->
+  <g
+  v-if="stagingShape == shape._id && diagramMode == 1">
+    <rect
+      :x="getNamePos.x - 35"
+      :y="getNamePos.y"
+      width="26"
+      rx="12"
+      height="112"
+      fill="#fff"
+      stroke="none"
+    ></rect>
+    <rect
+      @click="changeColor(color)"
+      v-for="(color, i) in colors"
+      :x="getNamePos.x - 32"
+      :y="getNamePos.y + (i * 22) + 2"
+      rx="30"
+      width="20"
+      height="20"
+      :fill="color"
+      :key="color"
+      style="cursor: pointer"
+    ></rect>
+  </g>
     <text
       :class="`name editor ${stagingShape == shape._id ? 'focused' : ''}`"
       :x="getNamePos.x"
@@ -40,6 +64,12 @@
       class="editor"
       fill="transparent"
       :stroke="`${dashedOutline ? 'red' : 'rgb(0, 119, 255)'}`"
+    />
+    <path
+      :d="getPath"
+      class="editor"
+      fill="transparent"
+      :stroke="`${dashedOutline ? 'blue' : 'transparent'}`"
     />
     <!-- <polygon
     v-if="(
@@ -228,6 +258,9 @@
 .shape {
   position: relative;
   cursor: grab;
+  &.linking {
+    stroke: red !important;
+  }
   .name {
     opacity: 0;
     font-size: 8px;

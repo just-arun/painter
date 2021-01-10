@@ -3,7 +3,9 @@
     <div>
       <b>Note:</b> <em>still under construction a extream rearly preview</em>
       <br>
-      <nuxt-link to="/board/my-board/d/new-project">Playaround</nuxt-link>
+      <nuxt-link to="/board/my-board/d/new-project">Playaround</nuxt-link> <br><br>
+      <nuxt-link to="/login">Login</nuxt-link>
+      
       <!-- <button @click="crateDiagram()">Create Diagram</button> -->
     </div>
   </div>
@@ -27,6 +29,9 @@ export default Vue.extend({
         { value: "right", img: 'h_align_right'},
       ],
     };
+  },
+  mounted() {
+    // this.$router.push("/board/my-board/d/new-project");
   },
   methods: {
     async crateDiagram() {
