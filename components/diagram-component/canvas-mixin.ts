@@ -30,6 +30,10 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
         y1: 0,
         draw: false
     }
+    oldScalePos = {
+        x: 0,
+        y: 0
+    }
 
     get getOldMousePosition() {
         const { x, x1, y, y1, draw } = this.oldMousePosition;
@@ -90,7 +94,7 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
         this.monitorResize(() => {
             this.initCanvas();
         });
-        
+
     }
 
     monitorResize(cb: Function) {
@@ -126,14 +130,15 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
     }
 
     zoomInOut(e: WheelEvent) {
-        this.updateOrigin();
-        let calVal = (e.deltaY / 15);
+        let calVal = e.deltaY > 0 ? 8 : -8;
         let size = this.scale - calVal;
-        if (size > 2 && size < 1000) {
-            this.scale = Math.floor(size);
+        if (size > 10) {
+            if (size < 1000) {
+                this.beforeResize(e);
+                this.scale = size;
+                this.afterResize(e);
+            }
         }
-        // this.resetOrigin();
-        // this.updateOrigin();
     }
 
     updateOrigin() {
@@ -153,6 +158,26 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
     updateLastPosition(e: MouseEvent) {
         const position = this.relativePosition(e);
         this.lastMousePosition = position;
+    }
+
+    beforeResize(e: WheelEvent) {
+        let rel = this.relativePosition(e);
+        this.oldScalePos = {
+            x: rel.clientX,
+            y: rel.clientY,
+        }
+    }
+
+    afterResize(e: WheelEvent) {
+        let cal = this.relativePosition(e);
+        let x1 = this.oldScalePos.x;
+        let y1 = this.oldScalePos.y;
+        let x2 = cal.clientX;
+        let y2 = cal.clientY;
+        let calcX = (x2 - x1) * this.matrix.s;
+        let calcY = (y2 - y1) * this.matrix.s;
+        this.matrix.tx += calcX;
+        this.matrix.ty += calcY;
     }
 
     relativePosition(e?: MouseEvent): RelativePositionType {
