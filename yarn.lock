@@ -1695,12 +1695,19 @@
   optionalDependencies:
     prettier "^1.18.2"
 
-"@vue/composition-api@1.0.0-beta.20", "@vue/composition-api@^1.0.0-beta.20":
+"@vue/composition-api@1.0.0-beta.20":
   version "1.0.0-beta.20"
   resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.0.0-beta.20.tgz#9909ed5844b7bf565a220b26d85b9f0158856dd7"
   integrity sha512-Lpaxt9+3cy97QJoCJ81qNe6TeGg092iHtqilKdbE5NapHqoSwiuYUSHX2ANIaO+C1Q1J7bITv1/saLUMNuwQOg==
   dependencies:
     tslib "^2.0.1"
+
+"@vue/composition-api@^1.0.0-beta.25":
+  version "1.0.0-beta.25"
+  resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.0.0-beta.25.tgz#fb8fcce4df9ee6c617320d4e49bf6f802a2aa8fa"
+  integrity sha512-Dmbq9jMS82BUrrjOkofRJtHOunq711HRJRwjyoWEVPh/UkKa5MdHqV8UcICsQTN8ExqmDBREvkzdon3jH1G0IA==
+  dependencies:
+    tslib "^2.0.3"
 
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
