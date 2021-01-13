@@ -10,7 +10,7 @@
       >
         <svg
           :class="`${data.canMove ? 'grabbing' : 'hand'}`"
-          :viewBox="viewBox"
+          :viewBox="data.viewBox"
           :width="data.w + ( 4 * data.border)"
           :height="data.h + (4 * data.border)"
         >
@@ -24,6 +24,7 @@
         </svg> </foreignObject
     ></switch>
     <path
+    class="line"
       v-if="data.editing"
       :d="data.path"
       fill="transparent"
@@ -51,9 +52,10 @@ export default class PencilComponent extends Vue {
   @Watch("data.editing")
   updateBox() {
     let b = this.data.border;
-    this.viewBox = `${this.data.x - 2 * b} ${this.data.y - 2 * b} ${
-      this.data.w + 4 * b
-    } ${this.data.h + 4 * b}`;
+    const { x, y, h, w, tl, tt } = this.data;
+    this.viewBox = `${tl - 2 * b} ${tt - 2 * b} ${
+      w + 4 * b
+    } ${h + 4 * b}`;
   }
 }
 </script>
@@ -65,5 +67,9 @@ export default class PencilComponent extends Vue {
 }
 .hand {
   cursor: url("./../../../#{$hand-cursor}"), auto;
+}
+
+.line {
+  cursor: url('./../../../#{$default-cursor}'), auto;
 }
 </style>

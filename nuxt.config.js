@@ -2,11 +2,11 @@ export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   target: 'static',
   head: {
-    title: 'painter',
+    title: 'Data Painter',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' }
+      { hid: 'description', name: 'description', content: 'Under Construction' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -39,15 +39,21 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     'nuxt-socket-io',
+    '@nuxtjs/proxy',
     '@nuxtjs/composition-api'
   ],
 
   io: {
     // module options
-    sockets: [{
-      name: 'main',
-      url: 'http://localhost:4000'
-    }]
+    // sockets: [{
+    //   name: 'main',
+    //   url: 'http://localhost:8000'
+    // }]
+  },
+  proxy: {
+    '/api': {
+      target: 'http://localhost:9000',
+    },
   },
 
   env: {

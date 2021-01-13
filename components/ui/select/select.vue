@@ -1,9 +1,10 @@
 <template>
   <button class="v-select">
-    <div>{{ typeof value == "object" ? value.label : value }}</div>
+    <div v-if="value">{{ typeof value == "object" ? value[labelN] : value }}</div>
+    <div v-else>{{ name }}</div>
     <ul class="v-select__list">
       <li v-for="(item, i) in itemList" :key="i" @click="update(item)">
-        {{ typeof item == "object" ? item.label : item }}
+        {{ typeof item == "object" ? item[labelN] : item }}
       </li>
     </ul>
   </button>
@@ -18,12 +19,23 @@ export default Vue.extend({
   name: "Select",
   props: {
     value: {
-      required: true,
+      
     },
     items: {
       required: true,
       type: Array
     },
+    labelName: {
+      type: String
+    },
+    name: {
+      type: String
+    }
+  },
+  data () {
+    return {
+      labelN: ""
+    }
   },
   computed: {
     itemList(): any {
@@ -41,5 +53,8 @@ export default Vue.extend({
       focusOut.focus();
     },
   },
+  created() {
+    this.labelN = !!this.labelName ? this.labelName : 'label';
+  }
 });
 </script>

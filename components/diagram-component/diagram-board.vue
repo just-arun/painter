@@ -1,7 +1,7 @@
 <template src="./diagram-board.html"></template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { defineComponent } from "@nuxtjs/composition-api";
 import diagramToolVue from "./diagram-tool/diagram-tool.vue";
 import diagramFooterVue from "./diagram-footer/footer-component.vue";
@@ -21,11 +21,13 @@ import { Circle } from "./shapes-type/circle-type";
 import { Triangle } from "./shapes-type/triangle-type";
 import { Pencil } from "./shapes-type/pencil-type";
 import { Line } from "./shapes-type/line-type";
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 import CanvasVarsMixin from './canvas-vars-mixin';
 import DiagramDetail from "./diagram-detail/diagram-detail.vue";
 import rotateIconVue from "../icons/rotate-icon.vue";
 import ShapeList from "./shapes-list/shapes-list.vue";
+import { DiagramService } from "~/service/diagram";
+import UserCursor from "../icons/cursor.vue";
 
 @Component({
   components: {
@@ -35,10 +37,39 @@ import ShapeList from "./shapes-list/shapes-list.vue";
     "d-detail": DiagramDetail,
     "shapes-component": ShapeComponent,
     "rotate-component": rotateIconVue,
-    "shapes-list": ShapeList
+    "shapes-list": ShapeList,
+    "user-cursor": UserCursor
   },
 })
 export default class DiagramBoard extends mixins(CanvasVarsMixin) {
+  @Prop({ required: true }) connection!: Socket;
+  showCursors = false;
+  cursors: any[] = [];
+
+  async asyncData({isDev, route, store, env, params, query, req, res, redirect, error}: any) {
+    try {
+      const { data } = await DiagramService
+      .getOneDiagram(route.params.d);
+      return {
+        diagramName: data.data.name
+      }
+    } catch (err) {
+      return {
+        diagramName: "failed"
+      }
+    }
+  }
+
+  constructor() {
+    super();
+    this.socket = this.connection;
+    console.log(this.$route.params.d);
+  }
+
+  mounted() {
+    this.userCursor();
+  }
+
   mouseImage() {
 
   }
@@ -50,6 +81,15 @@ export default class DiagramBoard extends mixins(CanvasVarsMixin) {
       res.parentElement?.removeChild(res);
     })
     this.saveSvg(newSvg, `${this.name}.svg`);
+  }
+
+  userCursor() {
+    setTimeout(() => {
+    this.showCursors = true;
+    this.cursors = [
+      { x: 0, y: 0, fill: 'red' },
+    ]
+    }, 2000);
   }
 }
 </script>

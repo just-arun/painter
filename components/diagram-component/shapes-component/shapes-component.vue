@@ -5,9 +5,53 @@
     :dropzone="true"
     @drop="onDrop($event)"
     @mousedown="mouseDown($event)"
-    class="shape"
+    :class="`shape ${dashedOutline ? 'linking' : ''}`"
     :id="`shapeWrapper${shape._id}`"
   >
+  <!-- <text 
+    :x="getNamePos.x"
+    :y="getNamePos.y - 6"
+  >{{ shape.user }}</text> -->
+  <!-- <foreignObject
+    v-if="stagingShape == shape._id && diagramMode == 1"
+    :x="getNamePos.x - 35"
+    :y="getNamePos.y"
+    width="30"
+    height="110">
+    <div class="colors">
+      <div 
+      @click="changeColor(color)"
+      :class="`color ${color}`" 
+      v-for="color in colors"
+      :style="`background-color: ${color};`"
+      :key="color"
+      ></div>
+    </div>
+  </foreignObject> -->
+  <g
+  v-if="stagingShape == shape._id && diagramMode == 1">
+    <rect
+      :x="getNamePos.x - 35"
+      :y="getNamePos.y"
+      width="26"
+      rx="12"
+      height="112"
+      fill="#fff"
+      stroke="none"
+    ></rect>
+    <rect
+      @click="changeColor(color)"
+      v-for="(color, i) in colors"
+      :x="getNamePos.x - 32"
+      :y="getNamePos.y + (i * 22) + 2"
+      rx="30"
+      width="20"
+      height="20"
+      :fill="color"
+      :key="color"
+      style="cursor: pointer"
+    ></rect>
+  </g>
     <text
       :class="`name editor ${stagingShape == shape._id ? 'focused' : ''}`"
       :x="getNamePos.x"
@@ -15,16 +59,32 @@
       >{{ shape.name }}</text
     >
     <path
-      v-if="stagingShape == shape._id && diagramMode == 1"
+      v-if="stagingShape == shape._id && diagramMode == 1 && this.shape.type != 'triangle'"
       :d="getPath"
       class="editor"
       fill="transparent"
       :stroke="`${dashedOutline ? 'red' : 'rgb(0, 119, 255)'}`"
     />
+    <path
+      :d="getPath"
+      class="editor"
+      fill="transparent"
+      :stroke="`${dashedOutline ? 'blue' : 'transparent'}`"
+    />
+    <!-- <polygon
+    v-if="(
+      stagingShape == shape._id && 
+      diagramMode == 1 && 
+      this.shape.type == 'triangle'
+    )"
+      :points="trianglePoint"
+      fill="transparent"
+      :stroke="`${dashedOutline ? 'red' : 'rgb(0, 119, 255)'}`"
+    /> -->
     <text
       v-if="stagingShape == shape._id && diagramMode == 1"
       :x="sizeVal.x"
-      :y="sizeVal.y"
+      :y="sizeVal.y + (!!shape[shape.type].bottomPeak ? shape[shape.type].bottomPeak : 0)"
       class="editor"
       :style="`
     font-size: 8px;
@@ -41,44 +101,45 @@
       @mouseout="mouseOut($event)"
     >
       <rect-component
-        :class="shape.type"
+        :selectedTool="selectedTool"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'rect'"
         :data="shape.rect"
         :id="shape._id"
       />
       <outline-image-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'image'"
         :data="shape.image"
       />
       <triangle-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'triangle'"
         :data="shape.triangle"
       />
       <circle-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'circle'"
         :data="shape.circle"
       />
       <pencil-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'pencil'"
         :data="shape.pencil"
       />
       <line-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'line'"
         :data="shape.line"
       />
       <text-component
-        :class="shape.type"
+        
         :diagramMode="diagramMode"
         v-if="shape.type == 'text'"
         :data="shape.text"
@@ -93,6 +154,7 @@
           :y="getNamePos.y - 18"
           width="24"
           height="24"
+          :style="`display: ${stagingShape == shape._id ? 'block': 'none'}`"
           requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
           :class="`close-btn ${stagingShape == shape._id ? 'focused' : ''}`"
         >
@@ -107,13 +169,18 @@
         </foreignObject>
       </switch>
     </g>
-    <switch class="editor link-btn-wrapper" :x="getNamePos.x - 20" :y="getNamePos.y - 20">
+    <switch 
+    v-if="!(shape.type == 'pencil' || shape.type == 'line')"
+    class="editor link-btn-wrapper" 
+    :x="getNamePos.x - 20" 
+    :y="getNamePos.y - 20">
       <foreignObject
         v-if="showClose"
         :x="getNamePos.x - 20"
         :y="getNamePos.y - 20"
         width="24"
         height="24"
+        :style="`display: ${stagingShape == shape._id ? 'block': 'none'}`"
         requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
         :class="`close-btn ${stagingShape == shape._id ? 'focused' : ''}`"
       >
@@ -132,19 +199,27 @@
         </button>
       </foreignObject
     ></switch>
-    <!-- <text
-      class="hint"
-      :x="getNamePos.x - 35"
-      :y="getNamePos.y - 45"
-      style="font-size: 8px"
-    >
-      <tspan :x="getNamePos.x - 42" dy="1.2em">drag and drop on</tspan>
-      <tspan :x="getNamePos.x - 42" dy="1.2em">the shape to link</tspan>
-    </text> -->
   </g>
 </template>
 
 <style lang="scss">
+@import "./../diagram-vars.scss";
+.colors {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  width: 25px;
+  border-radius: 25px;
+  padding: 5px 0px;
+  .color {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    cursor: pointer;
+  }
+}
 .link-btn-wrapper {
   position: relative;
   &:hover + .hint {
@@ -157,10 +232,10 @@
   }
 .close-btn {
   text-align: left;
-  display: none;
-  &.focused {
-    display: block;
-  }
+  // display: none;
+  // &.focused {
+  //   display: block;
+  // }
   button {
     height: 20px;
     width: 20px;
@@ -172,9 +247,6 @@
     border: none;
     cursor: pointer;
     background: white;
-    &:focus {
-      display: flex;
-    }
   }
 }
 
@@ -186,6 +258,9 @@
 .shape {
   position: relative;
   cursor: grab;
+  &.linking {
+    stroke: red !important;
+  }
   .name {
     opacity: 0;
     font-size: 8px;
@@ -197,15 +272,28 @@
       @extend .focused;
     }
     .close-btn {
-      display: block;
+      // display: block;
     }
   }
 }
+
+
+
+.rect {
+  cursor: url('./../../../#{$rectangle-cursor}'), auto;
+}
+.circle {
+  cursor: url('./../../../#{$circle-cursor}'), auto;
+}
+.line {
+  cursor: crosshair !important;
+}
+
 </style>
 
 <script lang="ts">
 import { Component, Emit, Prop, Vue } from "vue-property-decorator";
-import { DiagramMode, Shape, ShapeType } from "../shape-types";
+import { Colors, DiagramMode, Shape, ShapeType } from "../shape-types";
 import CircleComponent from "./circle.vue";
 import LineComponent from "./line.vue";
 import OutlineImageComponent from "./outline-image.vue";
@@ -213,6 +301,7 @@ import PencilComponent from "./pencil.vue";
 import RectangleComponent from "./rectangle.vue";
 import TextComponent from "./text.vue";
 import TriangleComponent from "./triangle.vue";
+
 
 @Component({
   components: {
@@ -229,9 +318,13 @@ export default class ShapeComponent extends Vue {
   @Prop({ default: Object, required: true, type: Shape }) shape!: Shape;
   @Prop({ required: true }) diagramMode!: DiagramMode;
   @Prop({ required: true }) stagingShape!: string;
+  @Prop({}) selectedTool?: any;
+  @Prop({ required: true }) scale!: number;
+
   shapeType = ShapeType;
   menuOptions = [{ label: "" }];
   dashedOutline = false;
+  colors = [...Colors];
 
   @Emit("select-element")
   selectElement() {
@@ -279,6 +372,16 @@ export default class ShapeComponent extends Vue {
     return `M ${x} ${y} h ${w} v ${h} h ${-w} v ${-h}`;
   }
 
+  get trianglePoint() {
+    let s: any = this.shape[this.shape.type];
+    let x = Number(s.x) - 4;
+    let y = Number(s.y) - 4;
+    let w = Number(s.w) + 8;
+    let h = Number(s.h) + 8;
+    let bottomPeak = Number(s.bottomPeak);
+    return `${x+(w/2)},${y - 2} ${x+(w/2)},${y - 2} ${x+w + 2},${y+h} ${x+(w/2)},${y + h + bottomPeak} ${x-2},${y+h}`
+  }
+
   get showClose() {
     if (
       this.shape.type == ShapeType.Line ||
@@ -291,6 +394,14 @@ export default class ShapeComponent extends Vue {
       }
     } else {
       return true;
+    }
+  }
+
+  changeColor(color: string) {
+    let ele: any = this.shape[this.shape.type]
+    if(!!ele) {
+      ele.fill = color;
+      if(!!ele.borderColor) {ele.borderColor = color;}
     }
   }
 
@@ -338,6 +449,7 @@ export default class ShapeComponent extends Vue {
   }
 
   onDragStart(e: any) {
+    // e.target.style.display = "none";
     e.dataTransfer.setData("text", e.target.id);
   }
 
@@ -366,6 +478,7 @@ export default class ShapeComponent extends Vue {
     var data = e.dataTransfer.getData("text");
     let id = String(data).split("-")
     if (id.length > 1) {
+      if (this.shape.type == ShapeType.Pencil || this.shape.type == ShapeType.Line) return;
       this.linkShape(id[1]);
     }
   }

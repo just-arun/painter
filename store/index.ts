@@ -1,5 +1,12 @@
-// import io from 'socket.io-client';
 
-// const AppSocket = io('http://localhost:8000');
 
-// export default AppSocket;
+export const state = () => ({
+  authUser: null
+})
+
+export const mutations = {
+  
+}
+
+export const actions = {
+}

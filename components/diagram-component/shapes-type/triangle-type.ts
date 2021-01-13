@@ -1,52 +1,31 @@
+import { RelativePositionType } from './../shape-types';
 import { Rect, RectType } from './rectangle-type';
 import { ShapeFillType } from "../shape-types";
 
-export interface TriangleType {
-    x: number;
-    y: number;
-    h: number;
-    w: number;
-    type: ShapeFillType;
-    fill: string;
-    text?: string;
+export interface TriangleType extends RectType  {
+    bottomPeak?: number;
 }
 
 export class Triangle extends Rect {
-    constructor({
-            x,
-            y,
-            h,
-            w,
-            type,
-            fill,
-            text,
-            color,
-            fontSize,
-            borderColor,
-            textColor
-        }: RectType) {
-        super({
-            x,
-            y,
-            h,
-            w,
-            type,
-            fill,
-            text,
-            color,
-            fontSize,
-            borderColor,
-            textColor
-        });
+    bottomPeak: number = 0;
+    constructor(par: TriangleType) {
+        super(par);
+        this.bottomPeak = !!par.bottomPeak ? par.bottomPeak : 0;
     }
 
     get points() {
         const { h, y, w, x } = this;
-        let point = `${x},${y+h} ${x+(w/2)},${y} ${x+w},${y+h}`;
+        let point = `${x},${y+h} ${x+(w/2)},${y} ${x+w},${y+h} ${x+(w/2)},${y + this.h + this.bottomPeak}`;
         return point;
     }
 
     get getJson() {
         return this;
     }
+
+    resizeBc(e: RelativePositionType) {
+        let dif = e.clientY - (this.y + this.h);
+        this.bottomPeak = dif;
+    }
+
 }

@@ -9,9 +9,10 @@
     <switch :x="data.x" :y="data.y">
       <foreignObject
         :x="data.x"
-        :y="data.y + 20"
+        :y="data.y"
         :width="data.w"
-        :height="data.h - 20"
+        style="position: relative;"
+        :height="data.h + data.bottomPeak"
         requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
       >
       <div style="
@@ -36,17 +37,15 @@
       </div>
       </foreignObject>
     </switch>
-    <rect 
-    :class="`${data.canMove ?'grabbing' : 'hand'}`"
-    @dblclick="textEdit=true"
-    v-if="!textEdit"
-    :x="data.x"
-    :y="data.y"
-    :width="data.w"
-    :height="data.h"
-    fill="transparent"
-    stroke="transparent"
-    ></rect>
+    <polygon
+      :class="`${data.canMove ?'grabbing' : 'hand'}`"
+      @dblclick="textEdit=true"
+      v-if="!textEdit"
+      stroke-width="2"
+      :points="data.points"
+      fill="transparent"
+      stroke="transparent"
+    />
   </g>
 </template>
 

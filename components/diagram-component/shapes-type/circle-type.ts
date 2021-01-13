@@ -14,6 +14,11 @@ export interface CircleType {
     borderColor?: string;
     textColor?: string;
     border?: number;
+
+    rx?: number;
+    ry?: number;
+    h?: number;
+    w?: number;
 }
 
 export class Circle {

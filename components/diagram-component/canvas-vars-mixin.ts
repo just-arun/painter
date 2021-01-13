@@ -6,7 +6,7 @@ import {
     Mixins,
     Watch
 } from 'vue-property-decorator';
-import { ShapeType, DiagramMode, Shape, ShapeFillType, RelativePositionType, mapObjToShape } from './shape-types';
+import { ShapeType, DiagramMode, Shape, ShapeFillType, RelativePositionType, mapObjToShape, DeviceType, Colors } from './shape-types';
 import { Rect } from './shapes-type/rectangle-type';
 import { Triangle } from './shapes-type/triangle-type';
 import { Circle } from './shapes-type/circle-type';
@@ -26,14 +26,14 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     selectedElements: Shape[] = [];
     mouseOverShapeIndex: number | null = null;
     stagingShape: Shape | null = null;
-    fillMode: ShapeFillType = ShapeFillType.stroke;
+    fillMode: ShapeFillType = ShapeFillType.fill;
     openMenu = false;
     dragOver = false;
+    colors = Colors;
     menuPosition = {
         x: 0,
         y: 0,
     };
-    socket: any;
     mouseOverShape = false;
     showShapesList = true;
     cursorVal = {
@@ -137,10 +137,13 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     updateLocalDiagramFillMode() {
         let mode: any = localStorage.getItem("fillMode");
-        this.fillMode = !!mode ? mode : ShapeFillType.stroke;
+        this.fillMode = !!mode ? mode : ShapeFillType.fill;
     }
 
     mounted() {
+        this.socket.on("connect", (eve: any) => {
+            console.log("shit\n\n\n\n\n\n\n\n");
+        });
         this.updateLocalDiagramFillMode();
         document.addEventListener("loadeddata", () => { });
         this.mouseScroll();
@@ -155,6 +158,48 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             // this.onKeyCode(e);
         });
         this.monitorData();
+        this.touchEvents();
+        if (this.deviceType == DeviceType.Mobile) {
+            this.showShapesList = false;
+            this.diagramMode = DiagramMode.View;
+        }
+    }
+
+    touchStart: any = null;
+    touchX: any = 0;
+    touchY: any = 0;
+    touchEvents() {
+        let svg: any = document.querySelector("#mainSvg");
+        svg.addEventListener("touchstart", (e: any) => {
+            let eve: any = e.touches[0];
+            console.log("damn", eve);
+            this.touchX = this.matrix.tx;
+            this.touchY = this.matrix.ty;
+            this.touchStart = eve;
+            // this.onMouseDown(eve);
+        });
+        svg.addEventListener("touchmove", (e: any) => {
+            let eve: any = e.touches[0];
+            console.log("damn", eve);
+            // this.onMouseMove(eve);
+            if (!!this.touchStart) {
+                let dX = this.touchStart.clientX - eve.clientX;
+                let dY = this.touchStart.clientY - eve.clientY;
+                this.matrix.tx = this.touchX - dX;
+                this.matrix.ty = this.touchY - dY;
+                // this.panCanvas(delta);
+            }
+        });
+        svg.addEventListener("touchend", (e: any) => {
+            let eve: any = e.touches[0];
+            this.onMouseUp(eve);
+            this.touchStart = null;
+        });
+        svg.addEventListener("touchcancel", (e: any) => {
+            let eve: any = e.touches[0];
+            this.onMouseUp(eve);
+            this.touchStart = null;
+        });
     }
 
     deleteElement(ele?: Shape) {
@@ -169,8 +214,17 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
         this.name = String(e).trim();
     }
 
-    updateSelectedTool(val: ShapeType) {
+    updateSelectedTool(val: any) {
+        if (val == "import-image") {
+            this.imagePicker();
+            return;
+        }
         this.selectedTool = val;
+    }
+
+    imagePicker() {
+        let imagePicker: any = this.$refs.imagePicker
+        imagePicker.click();
     }
 
     switchMode(val: DiagramMode) {
@@ -188,8 +242,13 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
         if (this.diagramMode == DiagramMode.View) {
             return;
         }
+        shape.user = localStorage.getItem("user");
         this.selectedElements = [shape];
-        this.showShapesList = true;
+        // this.selectedElements = this.selectedElements.map((res) => {
+        //     res.user = localStorage.getItem("user");
+        //     return res;
+        // })
+        // this.showShapesList = true;
     }
 
     mouseOverShapeFun(e: any, index: number) {
@@ -199,6 +258,10 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     mouseOutShapeFun() {
         this.mouseOverShape = false;
         this.mouseOverShapeIndex = null;
+    }
+
+    getRandomColor() {
+        return this.colors[Math.floor(Math.random() * (this.colors.length - 1))]
     }
 
     get selectElementDimension() {
@@ -219,12 +282,12 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                     let h = Number(Number(elem.h) + Number(4 * 1));
                     let w = Number(Number(elem.w) + Number(4 * 1));
                     let dragPart = [];
-                    if (!!!this.selectedElements[0].circle) {
-                        // dragPart.push({
-                        //     type: "tl",
-                        //     x: x - 5,
-                        //     y: y - 5,
-                        // });
+                    if (!!this.selectedElements[0].line || !!this.selectedElements[0].pencil) {
+                        dragPart.push({
+                            type: "tl",
+                            x: x - 5,
+                            y: y - 5,
+                        });
                     }
                     if (
                         !!this.selectedElements[0].rect ||
@@ -239,27 +302,36 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             y: y - 6,
                         });
 
-                        dragPart.push({
-                            type: "cl",
-                            x: x - 5,
-                            y: y + h / 2 - 3,
-                        });
-                        dragPart.push({
-                            type: "cr",
-                            x: x + w - 1,
-                            y: y + h / 2 - 3,
-                        });
+                        if (this.selectedElements[0].type != ShapeType.Triangle) {
+                            dragPart.push({
+                                type: "cl",
+                                x: x - 5,
+                                y: y + h / 2 - 3,
+                            });
+                            dragPart.push({
+                                type: "cr",
+                                x: x + w - 1,
+                                y: y + h / 2 - 3,
+                            });
+                        }
 
                         dragPart.push({
                             type: "bl",
                             x: x - 5,
                             y: y + h - 1,
                         });
-                        dragPart.push({
+
+
+                        let bcHand = {
                             type: "bc",
                             x: x + w / 2 - 3,
                             y: y + h - 1,
-                        });
+                        };
+
+                        if (!!this.selectedElements[0].triangle) {
+                            bcHand.y = bcHand.y + elem.bottomPeak + 1;
+                        }
+                        dragPart.push(bcHand);
                     }
                     if (!!this.selectedElements[0].circle) {
                         x = this.selectedElements[0].circle.x - this.selectedElements[0].circle.r - 2;
@@ -281,7 +353,8 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     }
 
     mouseScroll() {
-        document.addEventListener("wheel", (e) => {
+        let svgElem: any = document.querySelector("#mainSvg")
+        svgElem.addEventListener("wheel", (e: any) => {
             if (e.ctrlKey || e.metaKey) {
                 this.zoomInOut(e);
             } else {
@@ -290,10 +363,14 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                     // this.matrix.ty = (this.origin.y / this.scale) * 100;
                     // this.originChanged = false;
                 }
-                this.matrix.tx -= e.deltaX;
-                this.matrix.ty -= e.deltaY;
+                this.panCanvas(e);
             }
         });
+    }
+
+    panCanvas(e: any) {
+        this.matrix.tx -= e.deltaX;
+        this.matrix.ty -= e.deltaY;
     }
 
     globalKeyCode(e: KeyboardEvent) {
@@ -341,7 +418,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             newEle.push(newData)
         });
         this.selectedElements = [...newEle];
-        this.showShapesList = true;
+        // this.showShapesList = true;
         this.shapes = [...this.shapes, ...this.selectedElements];
     }
 
@@ -386,25 +463,6 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
             this.editing = true;
             if (this.editing) {
                 if (this.selectedTool == ShapeType.Rect) {
-                    let id = Date.now().toString();
-                    let shape = new Shape({
-                        _id: id,
-                        name: 'Rectangle',
-                        type: ShapeType.Rect,
-                        links: [],
-                        data: new Rect({
-                            x: e.clientX - 50,
-                            y: e.clientY - 50,
-                            h: 100,
-                            w: 100,
-                            type: this.fillMode,
-                            fill: "#FF5959FF",
-                        }),
-                    });
-                    this.shapes.push(shape);
-                    this.focusOut();
-                    this.selectedElements.push(shape);
-                    this.showShapesList = true;
                 }
                 if (this.selectedTool == ShapeType.Image) {
                     let id = Date.now().toString();
@@ -419,13 +477,13 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             h: 100,
                             w: 150,
                             type: this.fillMode,
-                            fill: "#FF5959FF",
+                            fill: this.getRandomColor(),
                         }),
                     });
                     this.shapes.push(shape);
                     this.focusOut();
                     this.selectedElements.push(shape);
-                    this.showShapesList = true;
+                    // this.showShapesList = true;
                 }
                 if (this.selectedTool == ShapeType.Text) {
                     let id = Date.now().toString();
@@ -440,14 +498,14 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             h: 20,
                             w: 100,
                             type: this.fillMode,
-                            fill: "#FF5959FF",
+                            fill: this.getRandomColor(),
                             text: ''
                         }),
                     });
                     this.shapes.push(shape);
                     this.focusOut();
                     this.selectedElements.push(shape);
-                    this.showShapesList = true;
+                    // this.showShapesList = true;
                 }
                 if (this.selectedTool == ShapeType.Triangle) {
                     let id = Date.now().toString();
@@ -459,35 +517,36 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                         data: new Triangle({
                             x: e.clientX - 50,
                             y: e.clientY - 50,
-                            h: 100,
+                            h: 50,
                             w: 100,
+                            bottomPeak: 50,
                             type: this.fillMode,
-                            fill: "#FF5959FF",
+                            fill: this.getRandomColor(),
                         }),
                     });
                     this.shapes.push(shape);
-                    this.showShapesList = true;
+                    // this.showShapesList = true;
                     this.focusOut();
                 }
-                if (this.selectedTool == ShapeType.Circle) {
-                    let id = Date.now().toString();
-                    let shape = new Shape({
-                        _id: id,
-                        name: 'Circle',
-                        type: ShapeType.Circle,
-                        links: [],
-                        data: new Circle({
-                            x: e.clientX,
-                            y: e.clientY,
-                            r: 50,
-                            type: this.fillMode,
-                            fill: "#FF5959FF",
-                        }),
-                    });
-                    this.shapes.push(shape);
-                    this.showShapesList = true;
-                    this.focusOut();
-                }
+                // if (this.selectedTool == ShapeType.Circle) {
+                //     let id = Date.now().toString();
+                //     let shape = new Shape({
+                //         _id: id,
+                //         name: 'Circle',
+                //         type: ShapeType.Circle,
+                //         links: [],
+                //         data: new Circle({
+                //             x: e.clientX,
+                //             y: e.clientY,
+                //             r: 50,
+                //             type: this.fillMode,
+                //             fill: this.getRandomColor(),
+                //         }),
+                //     });
+                //     this.shapes.push(shape);
+                //     // this.showShapesList = true;
+                //     this.focusOut();
+                // }
             }
             this.editing = false;
             this.selectedTool = null;
@@ -500,10 +559,35 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     onMouseDown(event: MouseEvent) {
         this.editing = true;
+        this.startSelectDraw(event);
         // edit mode
         if (this.diagramMode == DiagramMode.Edit) {
             let e = this.relativePosition(event);
             if (this.editing) {
+                if (this.selectedTool == ShapeType.Rect || this.selectedTool == ShapeType.Circle) {
+                    let id = Date.now().toString();
+                    let name = this.selectedTool == ShapeType.Rect ? 'Rectangle' : 'Circle'
+                    let borderR = this.selectedTool == ShapeType.Rect ? 0 : 1500;
+                    let shape = new Shape({
+                        _id: id,
+                        name: name,
+                        type: ShapeType.Rect,
+                        links: [],
+                        data: new Rect({
+                            x: e.clientX,
+                            y: e.clientY,
+                            h: 0,
+                            w: 0,
+                            rx: borderR,
+                            type: this.fillMode,
+                            fill: this.getRandomColor(),
+                        }),
+                    });
+                    this.shapes.push(shape);
+                    this.stagingShape = shape;
+                    this.focusOut();
+                    // this.selectedElements.push(shape);
+                }
                 if (this.selectedTool == ShapeType.Pencil) {
                     let id = Date.now().toString();
                     let shape = new Shape({
@@ -513,14 +597,14 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                         links: [],
                         data: new Pencil({
                             path: "",
-                            fill: "#FF5959FF",
-                            border: 1,
+                            fill: "#000000",
+                            border: 2,
                         }),
                     });
                     shape.pencil?.draw(e);
                     this.stagingShape = shape;
                     this.shapes.push(this.stagingShape);
-                    this.showShapesList = true;
+                    // this.showShapesList = true;
                 }
                 if (this.selectedTool == ShapeType.Line) {
                     let id = Date.now().toString();
@@ -534,18 +618,24 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                             y: e.clientY,
                             x1: e.clientX,
                             y1: e.clientY,
-                            fill: "#FF5959FF",
+                            fill: "#000000",
                         }),
                     });
                     shape.pencil?.draw(e);
                     this.stagingShape = shape;
                     this.shapes.push(this.stagingShape);
-                    this.showShapesList = true;
+                    // this.showShapesList = true;
                 }
                 if (this.mouseOverShapeIndex != null) {
                     let rect = this.shapes[this.mouseOverShapeIndex].rect;
-                    if (!!rect) {
-                        rect.canMove = true;
+                    let circle = this.shapes[this.mouseOverShapeIndex].circle;
+                    let triangle = this.shapes[this.mouseOverShapeIndex].triangle;
+                    let pencil = this.shapes[this.mouseOverShapeIndex].pencil;
+                    if (!this.selectedTool) {
+                        if (!!rect) rect.canMove = true;
+                        if (!!circle) circle.canMove = true;
+                        if (!!triangle) triangle.canMove = true;
+                        if (!!pencil) pencil.canMove = true;
                     }
                 } else
                     // if (!!this.selectedElements.length) {
@@ -574,6 +664,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     onMouseMove(event: MouseEvent) {
         this.updateLastPosition(event);
+        this.moveSelectDraw(event);
         const e = this.relativePosition(event);
         if (this.diagramMode == DiagramMode.Edit) {
             if (this.editing) {
@@ -583,37 +674,46 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                 if (this.selectedTool == ShapeType.Line) {
                     this.stagingShape?.line?.updateEnd(e);
                 }
+                if (this.selectedTool == ShapeType.Rect) {
+                    this.stagingShape?.rect?.resizeBr(e);
+                }
+                if (this.selectedTool == ShapeType.Circle) {
+                    this.stagingShape?.rect?.resizeBr(e);
+                }
             }
         }
         if (this.mouseOverShapeIndex != null) {
             let shape: any = this.shapes[this.mouseOverShapeIndex][this.shapes[this.mouseOverShapeIndex].type];
             shape.move(e, this.targetElement);
             this.monitorData();
-        } else
-            if (this.mouseOverShape) {
-                if (this.selectedElements.length == 1) {
-                    if (
-                        !!this.selectedElements[0].rect ||
-                        !!this.selectedElements[0].circle ||
-                        !!this.selectedElements[0].image ||
-                        !!this.selectedElements[0].triangle ||
-                        !!this.selectedElements[0].text ||
-                        !!this.selectedElements[0].pencil
-                    ) {
-                        let elem: any = this.selectedElements[0];
-                        if (elem[this.selectedElements[0].type].canMove) {
-                            elem[this.selectedElements[0].type].move(e, this.targetElement);
-                            this.monitorData();
-                        }
+        } else 
+        if (this.mouseOverShape) {
+            if (this.selectedElements.length == 1) {
+                if (
+                    !!this.selectedElements[0].rect ||
+                    !!this.selectedElements[0].circle ||
+                    !!this.selectedElements[0].image ||
+                    !!this.selectedElements[0].triangle ||
+                    !!this.selectedElements[0].text ||
+                    !!this.selectedElements[0].pencil
+                ) {
+                    let elem: any = this.selectedElements[0];
+                    if (elem[this.selectedElements[0].type].canMove) {
+                        elem[this.selectedElements[0].type].move(e, this.targetElement);
+                        this.monitorData();
                     }
                 }
             }
+        }
     }
 
     onMouseUp(e: MouseEvent) {
+        this.resetSelectDraw();
         if (
             this.selectedTool == ShapeType.Pencil ||
-            this.selectedTool == ShapeType.Line
+            this.selectedTool == ShapeType.Line ||
+            this.selectedTool == ShapeType.Rect ||
+            this.selectedTool == ShapeType.Circle
         ) {
             this.editing = false;
             this.selectedTool = null;
@@ -624,6 +724,17 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                 ) {
                     let shape: any = this.stagingShape[this.stagingShape.type];
                     shape.editing = false;
+                }
+                if (this.stagingShape.type == ShapeType.Rect) {
+                    let rect: any = this.stagingShape.rect;
+                    if (rect.h == 0 || rect.w == 0) {
+                        rect.x -= 50;
+                        rect.y -= 50;
+                        rect.h = 100;
+                        rect.w = 100;
+                    }
+                    this.selectedElements.push(this.stagingShape);
+                    this.stagingShape = null;
                 }
             }
         }
@@ -653,6 +764,7 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
     }
 
     onMouseOut(e: MouseEvent) {
+        // this.resetSelectDraw();
         this.mouseOverCanvas = false;
         if (this.mouseOverShapeIndex != null) {
             let shape: any = this.shapes[this.mouseOverShapeIndex][this.shapes[this.mouseOverShapeIndex].type]
@@ -758,22 +870,43 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
                     elem.canMove = false;
                 }
             }
+            if (!!this.selectedElements.length) {
+                this.selectedElements = this.selectedElements.map((res) => {
+                    res.user = null;
+                    return res;
+                })
+            }
         this.selectedElements = [];
     }
 
-    onDragEnter() {
-        this.dragOver = true;
+    onDragEnter(e: DragEvent) {
+        if (!!e.dataTransfer?.files.length) {
+            this.dragOver = true;
+        }
     }
 
     onDragLeave() {
         this.dragOver = false;
     }
 
+    selectLinkedShape(id: string) {
+        let sorted = this.sortElements(this.shapes, 0, this.shapes.length, "_id");
+        let i = this.searchElements(sorted, id, "_id");
+        if (i != null) {
+            this.focusToShape(this.shapes[i]);
+        }
+    }
+
     focusToShape(shape: Shape) {
+        this.selectedElements = this.selectedElements.map((res) => {
+            res.user = null;
+            return res;
+        });
+        shape.user = localStorage.getItem("user");
         const mainGroup: any = this.$refs.mainGroup
         mainGroup.style.transition = '.5s';
         this.selectedElements = [shape];
-        this.showShapesList = true;
+        // this.showShapesList = true;
         let mat: any = shape[shape.type];
         this.matrix.s = 1;
         this.scale = 100;
@@ -808,6 +941,33 @@ export default class CanvasVarsMixin extends Mixins(CanvasMixin) {
 
     updateSelected(cb: any) {
         cb(this.selectedElements[0]);
+    }
+
+
+    startSelectDraw(e: MouseEvent) {
+        if (!!!this.selectedTool && this.mouseOverShapeIndex == null) {
+            this.oldMousePosition = {
+                x: e.clientX,
+                y: e.clientY,
+                x1: e.clientX,
+                y1: e.clientY,
+                draw: true,
+            };
+        }
+    }
+
+    moveSelectDraw(e: MouseEvent) {
+        if (
+            !!!this.selectedTool &&
+            this.oldMousePosition.draw
+        ) {
+            this.oldMousePosition.x1 = e.clientX;
+            this.oldMousePosition.y1 = e.clientY;
+        }
+    }
+
+    resetSelectDraw() {
+        this.oldMousePosition = { x: 0, x1: 0, y: 0, y1: 0, draw: false }
     }
 
 }

@@ -17,11 +17,31 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
         w: 0
     };
     matrix = {
-        s: 1,
+        s: 2,
         b: 0,
         c: 0,
         tx: 0,
         ty: 0
+    }
+    oldMousePosition = {
+        x: 0,
+        y: 0,
+        x1: 0,
+        y1: 0,
+        draw: false
+    }
+    oldScalePos = {
+        x: 0,
+        y: 0
+    }
+
+    get getOldMousePosition() {
+        const { x, x1, y, y1, draw } = this.oldMousePosition;
+        let w = x1 - x;
+        let h = y1 - y;
+        if (draw) {
+            return `M${x},${y} h${w} v${h} h${-w} v${-h}`;
+        } return false;
     }
     targetElement = {
         clientX: 0,
@@ -38,7 +58,7 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
 
     lastMousePosition: RelativePositionType | null = null;
 
-    scale = 100;
+    scale = 200;
 
     @Watch("scale")
     updateMatrix() {
@@ -74,12 +94,14 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
         this.monitorResize(() => {
             this.initCanvas();
         });
+
     }
 
     monitorResize(cb: Function) {
         window.addEventListener("resize", () => {
             cb();
         })
+        this.updateOrigin();
     }
 
     initCanvas() {
@@ -108,18 +130,19 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
     }
 
     zoomInOut(e: WheelEvent) {
-        // this.updateOrigin();
-        let calVal = (e.deltaY / 15);
+        let calVal = e.deltaY > 0 ? 8 : -8;
         let size = this.scale - calVal;
-        if (size > 2 && size < 1000) {
-            this.scale = Math.floor(size);
+        if (size > 10) {
+            if (size < 1000) {
+                this.maintainPosition(e, () => {
+                    this.scale = size;
+                })
+            }
         }
-        // this.resetOrigin();
-        // this.updateOrigin();
     }
 
     updateOrigin() {
-        let main: SVGElement | any = document.querySelector("#mainGroup");
+        let main: SVGElement | any = document.querySelector("#mainSvg");
         let x = (!!this.lastMousePosition?.event ? this.lastMousePosition.event.offsetX : 0);
         let y = (!!this.lastMousePosition?.event ? this.lastMousePosition.event.offsetY : 0);
         this.origin = { x, y };
@@ -135,6 +158,32 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
     updateLastPosition(e: MouseEvent) {
         const position = this.relativePosition(e);
         this.lastMousePosition = position;
+    }
+
+    beforeResize(e: WheelEvent) {
+        let rel = this.relativePosition(e);
+        this.oldScalePos = {
+            x: rel.clientX,
+            y: rel.clientY,
+        }
+    }
+
+    afterResize(e: WheelEvent) {
+        let cal = this.relativePosition(e);
+        let x1 = this.oldScalePos.x;
+        let y1 = this.oldScalePos.y;
+        let x2 = cal.clientX;
+        let y2 = cal.clientY;
+        let calcX = (x2 - x1) * this.matrix.s;
+        let calcY = (y2 - y1) * this.matrix.s;
+        this.matrix.tx += calcX;
+        this.matrix.ty += calcY;
+    }
+
+    maintainPosition(e: WheelEvent, cb: Function) {
+        this.beforeResize(e);
+        cb();
+        this.afterResize(e);
     }
 
     relativePosition(e?: MouseEvent): RelativePositionType {

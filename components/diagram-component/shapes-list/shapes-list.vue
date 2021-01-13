@@ -1,15 +1,16 @@
 <template src="./shapes-list.html"></template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Emit, Mixins, Prop, Vue, Watch } from "vue-property-decorator";
+import { ArrayFunction } from "../array-functions";
 import { Shape } from "../shape-types";
 
 @Component({})
-export default class ShapeList extends Vue {
+export default class ShapeList extends Mixins(ArrayFunction) {
   @Prop({ required: true }) shapes!: Shape[];
   @Prop({ required: true }) selectedElement!: string[];
   @Prop({ required: true }) show!: boolean;
-  width = 220;
+  width = 180;
   resize = false;
   search = "";
   editName = false;

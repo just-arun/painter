@@ -11,6 +11,18 @@
     user-select: none;
     -moz-user-select: none;
     cursor: url('./../../#{$default-cursor}'), auto;
+    &.rect {
+      cursor: url('./../../#{$rectangle-cursor}'), auto;
+    }
+    &.circle {
+      cursor: url('./../../#{$circle-cursor}'), auto;
+    }
+    &.line {
+      cursor: crosshair !important;
+    }
+    // &.pencil {
+    //   cursor: url('./../../#{$pencil-cursor}'), auto;
+    // }
   }
 
   .context-menu {
@@ -71,6 +83,16 @@
     stroke-width: 50px;
   }
 }
+
+
+input.image-import {
+  position: absolute;
+  transform: scale(0);
+  height: 0;
+  width: 0;
+  z-index: -2;
+}
+
 
 .br { cursor: se-resize; }
 .bl { cursor: sw-resize; }

@@ -1,7 +1,17 @@
 <div class="center">
   <div>
-    <client-only>
-      <diagram-board-component></diagram-board-component>
-    </client-only>
+    <div v-if="socket">
+      <client-only>
+        <diagram-board-component
+        :shapes="shapes"
+        :connection="socket"
+        ></diagram-board-component>
+      </client-only>
+    </div>
+    <div v-else>
+      loading...
+    </div>
+    <div class="work-under-construction"
+    >Work In Progress</div>
   </div>
 </div>

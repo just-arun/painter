@@ -1,0 +1,13 @@
+<div class="login-component">
+  <form @submit.prevent="login()">
+    <div class="input">
+      <label for="email">email</label>
+      <input v-model="email" type="email" id="email" placeholder="Email">
+    </div>
+    <div class="input">
+      <label for="password">password</label>
+      <input v-model="password" type="password" id="password" placeholder="Password">
+    </div>
+    <button type="submit">Login</button>
+  </form>
+</div>
