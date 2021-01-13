@@ -134,9 +134,9 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
         let size = this.scale - calVal;
         if (size > 10) {
             if (size < 1000) {
-                this.beforeResize(e);
-                this.scale = size;
-                this.afterResize(e);
+                this.maintainPosition(e, () => {
+                    this.scale = size;
+                })
             }
         }
     }
@@ -178,6 +178,12 @@ export default class CanvasMixin extends Mixins(ArrayFunction) {
         let calcY = (y2 - y1) * this.matrix.s;
         this.matrix.tx += calcX;
         this.matrix.ty += calcY;
+    }
+
+    maintainPosition(e: WheelEvent, cb: Function) {
+        this.beforeResize(e);
+        cb();
+        this.afterResize(e);
     }
 
     relativePosition(e?: MouseEvent): RelativePositionType {
