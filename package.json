@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@nuxt/types": "^2.14.6",
-    "@nuxt/typescript-build": "^2.0.3",
+    "@nuxt/typescript-build": "^2.1.0",
     "@types/vue-color": "^2.4.3"
   }
 }
