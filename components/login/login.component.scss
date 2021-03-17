@@ -1,3 +1,74 @@
 .login-component {
-    
+    &__btns {
+        display: flex;
+        align-items: center;
+        label {
+            user-select: none;
+            cursor: pointer;
+        }
+    }
+    &__t-and-c {
+        width: 270px;
+        max-width: 100%;
+        color: #353535;
+        font-size: 12px;
+    }
+    &__description {
+        padding-top: 10px;
+        text-align: center;
+        color: #000;
+        a {
+            text-decoration: none;
+            color: grey;
+            transition: .3s;
+            &:hover {
+                color: #000;
+            }
+        }
+    }
+    form {
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            width: 270px;
+            max-width: 100%;
+            margin: 5px 0;
+            label {
+                color: grey;
+                text-transform: uppercase;
+                font-size: 14px;
+                padding-bottom: 2px;
+            }
+            input {
+                border: 1px solid grey;
+                padding: 8px;
+                border-radius: 4px;
+                outline-color: none;
+                cursor: pointer;
+                background: #fff;
+                background-color: #fff;
+                &:focus {
+                    background: #fff;
+                    background-color: #fff;
+                    cursor: text;
+                    outline: none;
+                    border-color: transparent;
+                    box-shadow: 0 0 0 2pt rgb(105, 255, 255);
+                }
+            }
+        }
+        button {
+            padding: 6px 30px;
+            margin-top: 5px;
+            background: #fff;
+            box-shadow: 0 0 0 1pt rgb(66, 66, 66);
+            border-radius: 4px;
+            border: 0px solid transparent;
+            outline: none;
+            cursor: pointer;
+            &:focus {
+                box-shadow: 0 0 0 2pt rgb(1, 136, 136);
+            }
+        }
+    }
 }

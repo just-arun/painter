@@ -1,6 +1,6 @@
 <template>
   <div class="login-page">
-    <login-component></login-component>
+    <login-component type="login"></login-component>
   </div>
 </template>
 

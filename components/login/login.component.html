@@ -1,13 +1,39 @@
-<div class="login-component">
-  <form @submit.prevent="login()">
-    <div class="input">
+<div class="login-component"> 
+  <form @submit.prevent="submit()">
+    <h2 v-if="type == 'login'"> Login </h2>
+    <h2 v-if="type == 'register'"> Register </h2>
+    <div class="input-field">
       <label for="email">email</label>
       <input v-model="email" type="email" id="email" placeholder="Email">
     </div>
-    <div class="input">
+    <div v-if="type == 'register'" class="input-field">
+      <label for="userName">User Name</label>
+      <input v-model="userName" type="text" id="userName" placeholder="User Name">
+    </div>
+    <div class="input-field">
       <label for="password">password</label>
       <input v-model="password" type="password" id="password" placeholder="Password">
     </div>
-    <button type="submit">Login</button>
+    <div class="login-component__t-and-c" v-if="type == 'register'">
+      <p>
+        <input type="checkbox" id="tandc">
+        <label for="tandc">by checking this you have aggrade to terms & condition</label>
+      </p>
+    </div>
+    <div class="login-component__btns">
+      <div v-if="type == 'login'" style="flex: 1;display: flex; align-items: center;">
+        <input type="checkbox" id="rememberMe" style="margin-right: 5px;">
+        <label for="rememberMe">remember me</label>
+      </div>
+      <button type="submit">
+        <span v-if="type == 'login'">Login</span>
+        <span v-if="type == 'register'">Register</span>
+      </button>
+    </div>
+    <div class="login-component__description">
+      <p v-if="type == 'login'">don't have a account? <nuxt-link to="/register">register</nuxt-link></p>
+      <p v-if="type == 'register'">already have a account? <nuxt-link to="/login">login</nuxt-link></p>
+    </div>
   </form>
+  {{ $store.state.auth.user }}
 </div>

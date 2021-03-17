@@ -1,0 +1,11 @@
+
+
+<aside class="dashboard-aside">
+    <ul>
+        <li v-for="(item, i) in links" :key="i">
+            <nuxt-link :to="item.to">{{ item.label }}</nuxt-link>
+        </li>
+    </ul>
+</aside>
+
+

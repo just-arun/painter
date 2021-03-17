@@ -1,0 +1,22 @@
+.dashboard-aside {
+    grid-area: aside;
+    background: #fff;
+    ul {
+        padding-left: 0px;
+        li {
+            list-style: none;
+            a {
+                text-decoration: none;
+                color: grey;
+                display: block;
+                padding: 10px 15px;
+                cursor: pointer;
+                border-right: 4px solid transparent;
+                &.nuxt-link-active {
+                    color: rgb(0, 225, 255);
+                    border-right: 4px solid rgb(0, 247, 255);
+                }
+            }
+        }
+    }
+}

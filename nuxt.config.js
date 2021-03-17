@@ -1,6 +1,6 @@
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
-  target: 'static',
+  target: 'spa',
   head: {
     title: 'Data Painter',
     meta: [
@@ -20,8 +20,50 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
-    '~/plugins/composition-api.js'
+    '~/plugins/composition-api.js',
+    // '~/plugins/vue-apollo.js'
   ],
+
+
+  apollo: {
+    // Sets up the apollo client endpoints
+    clientConfigs: {
+      // recommended: use a file to declare the client configuration (see below for example)
+      default: {
+        httpEndpoint: 'http://localhost:4000/graphql',
+        credentials: "include"
+      },
+ 
+      // you can setup multiple clients with arbitrary names
+      alternativeClient: {
+        // required
+        httpEndpoint: 'http://localhost:4000/graphql',
+ 
+        // override HTTP endpoint in browser only
+        browserHttpEndpoint: 'http://localhost:4000/graphql',
+ 
+        // See https://www.apollographql.com/docs/link/links/http.html#options
+        httpLinkOptions: {
+          credentials: 'includes'
+        },
+ 
+        // You can use `wss` for secure connection (recommended in production)
+        // Use `null` to disable subscriptions
+        wsEndpoint: 'ws://localhost:4000/sub',
+ 
+        // LocalStorage token
+        tokenName: 'apollo-token',
+ 
+        // Enable Automatic Query persisting with Apollo Engine
+        persisting: false,
+ 
+        // Use websockets for everything (no HTTP)
+        // You need to pass a `wsEndpoint` for this to work
+        websocketsOnly: false
+      },
+    },
+    
+  },
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
@@ -40,7 +82,8 @@ export default {
     '@nuxtjs/pwa',
     'nuxt-socket-io',
     '@nuxtjs/proxy',
-    '@nuxtjs/composition-api'
+    '@nuxtjs/composition-api',
+    "@nuxtjs/apollo"
   ],
 
   io: {
@@ -73,5 +116,15 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+    extend (config, ctx) {
+      if (ctx.dev && ctx.isClient) {
+        config.module.rules.push({
+          enforce: 'pre',
+          test: /\.(js|ts|gql|vue)$/,
+          loader: 'eslint-loader',
+          exclude: /(node_modules)/
+        })
+      }
+    }
   }
 }

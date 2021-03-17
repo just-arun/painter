@@ -1,0 +1,18 @@
+.dashboard-layout {
+    display: grid;
+    grid-template-areas:    "header header" 
+                            "aside body";
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: 50px 1fr;
+    min-height: 100vh;
+    min-width: 100%;
+    &__content {
+        box-shadow: inset 1px 1px 10px rgba(0, 0, 0, 0.1);
+        background: white;
+        grid-area: body;
+        overflow-y: auto;
+        box-sizing: border-box;
+        padding: 20px;
+        width: calc(100vh-50px);
+    }
+}
