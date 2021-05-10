@@ -17,7 +17,7 @@
     "@vue/composition-api": "^1.0.0-beta.20",
     "core-js": "^3.6.5",
     "fibers": "^5.0.0",
-    "nuxt": "^2.14.6",
+    "nuxt": "^2.15.5",
     "nuxt-socket-io": "^1.1.13",
     "sass": "^1.30.0",
     "sass-loader": "^10.1.0",
